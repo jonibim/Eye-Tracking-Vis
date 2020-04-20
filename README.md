@@ -11,7 +11,7 @@ We will represent the objectives needed to be fulfilled for the project.
 
 - [ ] The visualization tool should show at least four different visual techniques on different aspects (time, space, tasks, subjects etc.)
 - [ ] The visualization tool should include brushing and linking data. As an example, if the user is moving the timeline or selecting a group in one view, the other corresponding views included in the tool must also be synced to these changes. This is called a **multi coordinated view**
-- [ ] At least one out of  [7 categories of interactions](##7-categories-of-interactions) should be implemented in the project.
+- [ ] At least one out of  [7 categories of interactions](#7-categories-of-interactions) should be implemented in the project.
 - [ ] The visualization tool should be a web-based tool 
 
 Now we present some features that the final product must satisfy. Note that not all the features must be completed in order to consider the project as finished. The principle is that the more features are included with the final product, the better the end results are guaranteed to be (probably even winning prices). In the final program the user must be able to:

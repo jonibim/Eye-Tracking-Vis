@@ -126,6 +126,29 @@ These are informations not included in the abstract, which require some reading 
 6. **FILTER**
 7. **CONNECT**
 
+# Developing
+
+## Starting the webserver
+
+First make sure you have **Node.js** installed
+
+```bash
+git clone https://github.com/t0xicdream/Eye-Tracking-Vis
+cd Eye-Tracking-Vis
+npm install #Install Dependecies 
+DEBUG=myapp:* npm start #MacOS or Linux
+set DEBUG=myapp:* & npm start #Windows
+```
+## Useful Resources
+
+* https://www.sitepoint.com/a-beginners-guide-to-pug/
+* https://devhints.io/pug
+* https://pugjs.org/api/getting-started.html
+* https://auth0.com/blog/create-a-simple-and-stylish-node-express-app/
+* https://closebrace.com/tutorials/2017-03-02/creating-a-simple-restful-web-app-with-nodejs-express-and-mongodb
+* https://www.c-sharpcorner.com/article/building-web-application-using-node-js/
+* https://code.tutsplus.com/tutorials/build-web-application-using-nodejs--cms-29652
+
 
 
 

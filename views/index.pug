@@ -1,6 +1,10 @@
 extends layout
 
-block content2
-  h1= title
-  p Welcome to #{title}
-  
+block content
+    
+    div.intro
+        div.inner
+            div.content
+                h1= title
+                p Welcome to #{title}
+                a(class='btn' href='#') Button 1 

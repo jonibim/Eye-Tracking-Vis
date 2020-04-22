@@ -1,8 +1,33 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    margins:0;
+    padding:0;
+    height: 100%;
+    width: 100%;
+    font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.intro {
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    top:0;
+    display: table;
+}
+
+.intro .inner {
+    display: table-cell;
+    vertical-align: middle;
+    width:100%;
+    max-width:none;
+}
+
+.content {
+    max-width: 500px;
+    margin:0 auto;
+    text-align: center;
 }
 
 a {
-  color: #00B7FF;
+  color: #00BFFF;
+  vertical-align: middle;
 }

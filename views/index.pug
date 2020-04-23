@@ -1,10 +1,28 @@
 extends layout
 
-block content
+block welcome_screen
     
     div.intro
         div.inner
             div.content
                 h1= title
                 p Welcome to #{title}
-                a(class='btn' href='#') Button 1 
+                div#template_button(class="ui vertical animated button" tabindex="0")
+                    div(class="hidden content") Load template
+                    div(class="visible content") 
+                        i(class="ui play icon")
+                
+                div#load_button
+
+                form(action="/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")    
+                    label(for="file")
+                        div#load_button(class="ui vertical animated button" tabindex="0")
+                            div(class="hidden content") Load files
+                             input(type="file" id="file" name="sampleFile" style="display:none")
+                            div(class="visible content") 
+                                i(class="ui upload icon")
+                        
+                        input(type="submit" class="ui button" id="file" style="padding-bottom: 13px;padding-top: 9px" name="sampleFile" value='Upload')
+                       
+                        
+                

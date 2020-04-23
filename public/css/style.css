@@ -1,0 +1,39 @@
+
+.intro {
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    top:0;
+    display: table;
+}
+
+.intro .inner {
+    display: table-cell;
+    vertical-align: middle;
+    width:100%;
+    max-width:none;
+}
+
+.content {
+    max-width: 500px;
+    margin:0 auto;
+    text-align: center;
+}
+
+a {
+  color: #00BFFF;
+  vertical-align: middle;
+}
+
+#template_button{
+    width: 30%;
+}
+
+#load_button{
+    width: 30%;
+    margin:5 auto;
+}
+
+#form_edit{
+    margin:5 5 5 5;
+}

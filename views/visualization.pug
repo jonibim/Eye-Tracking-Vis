@@ -1,0 +1,16 @@
+extends layout
+
+block styles
+    link(rel = 'stylesheet', href = '/css/visualization.css')
+
+block scripts
+    script(src='scripts/visualization/main.js')
+    script(src='scripts/visualization/dataset.js')
+    script(src='scripts/visualization/visualization.js')
+    script(src='scripts/visualization/boxmanager.js')
+    script(src='scripts/visualization/box.js')
+    script(src='scripts/visualization/examplevisualization.js')
+    script(src='scripts/visualization/properties.js')
+
+block content
+    div(id='frame', class='frame')

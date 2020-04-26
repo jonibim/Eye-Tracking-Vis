@@ -1,15 +1,60 @@
-.frame {
+.container {
     width: inherit;
     height: inherit;
     display: flex;
 }
 
+.frame {
+    display: flex;
+    flex-flow: column;
+    flex-grow: 3;
+}
+
 .column {
+    border: none;
+    margin: 0;
+    /*resize: horizontal;*/
+    overflow: auto;
+    flex-flow: column;
+    flex-grow: 1;
+}
+.column .inner {
+    width: inherit;
+    height: inherit;
+    border: none;
+    margin: 0;
+    /*resize: horizontal;*/
+    overflow: auto;
+    display: flex;
+}
+
+.box {
+    border: none;
+    padding: 0;
+    margin: 0; /* */
+    /*resize: vertical;*/
+    overflow: auto;
+    flex-flow: row;
+    flex-grow: 1;
+    position: relative;
+}
+
+.sidebar {
+    max-width: 500px;
+    min-width: 250px;
     display: flex;
     flex-flow: column;
     flex-grow: 1;
 }
 
-.box {
-    flex-grow: 1;
+.options {
+
+}
+
+.browser {
+
+}
+
+.properties {
+
 }

@@ -11,6 +11,11 @@ block scripts
     script(src='scripts/visualization/box.js')
     script(src='scripts/visualization/examplevisualization.js')
     script(src='scripts/visualization/properties.js')
+    script(src='scripts/visualization/attentionmap.js')
 
 block content
-    div(id='frame', class='frame')
+    div(id='container', class='container')
+        div(id='sidebar', class='sidebar')
+            div(id='browser', class='browser')
+            div(id='properties', class='properties')
+        div(id='frame', class='frame')

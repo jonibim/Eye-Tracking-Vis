@@ -14,11 +14,13 @@ window.onload = () => {
 
     // add example visualizations
     let box = boxManager.addBox(0,0);
-    let visualization = new ExampleVisualization(box, 0);
+    new AttentionMap(box);
+    box = boxManager.addBox(0,1);
+    new ExampleVisualization(box, 1);
     box = boxManager.addBox(1,0);
-    visualization = new ExampleVisualization(box, 1);
+    new ExampleVisualization(box, 1);
     box = boxManager.addBox(1,1);
-    visualization = new ExampleVisualization(box, 2);
+    new ExampleVisualization(box, 2);
 
     console.log('main.js - Finished Loading')
 
@@ -28,6 +30,8 @@ window.onload = () => {
     const data = fetch(url, {method: 'POST'});
     data.then(data => data.text()).then(data => {
         dataset.importData(data);
+
+        properties.setImage(dataset.getImages()[0]);
 
         console.log('main.js - Dataset loaded')
     });

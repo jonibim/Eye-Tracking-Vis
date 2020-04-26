@@ -11,10 +11,10 @@ class Dataset {
 
         const lines = data.split('\n');
 
-        for (let i = 0; i < lines.length && i < 100; i++) { // limit to 100 for testing
+        for (let i = 0; i < lines.length && i < 101; i++) { // limit to 100 for testing
             const line = lines[i];
 
-            // if(i % 1000 === 0)
+            if(i % 100 === 0)
                 console.log('dataset.js - Reading line ' + (i + 1) + '/' + lines.length);
 
             if(line.startsWith('Timestamp')) // ignore the first line
@@ -93,6 +93,16 @@ class ImageData {
         this.scanpaths.push(scanPath);
     }
 
+    getScanPaths(person, color){
+        let scanPaths = [];
+        for(let i = 0; i < this.scanpaths.length; i++){
+            const scanPath = this.scanpaths[i];
+            if((!person || scanPath.person === person) && (!color || scanPath.color === color))
+                scanPaths.push(scanPath);
+        }
+        return scanPaths;
+    }
+
 }
 
 class ScanPath {
@@ -105,6 +115,18 @@ class ScanPath {
 
     addPoint(time, fixationIndex, fixationDuration, x, y) {
         this.points.push(new ScanPoint(time, fixationIndex, fixationDuration, x, y));
+    }
+
+    getPoint(time){
+        for(let i = 0; i < this.points.length; i++){
+            if(this.points[i].time === time)
+                return this.points[i];
+        }
+        return null;
+    }
+
+    getPoints(){
+        return this.points;
     }
 
 }

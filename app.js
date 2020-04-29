@@ -1,38 +1,16 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var fileUpload = require('express-fileupload');
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var parseDataset = require('./scripts/parsedataset');
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
+let fileUpload = require('express-fileupload');
+let indexRouter = require('./routes/index');
+let usersRouter = require('./routes/users');
 
-var app = express();
+let app = express();
 
 // default options
 app.use(fileUpload());
-
-app.post('/upload', function(req, res) {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
-  }
-
-  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-  let sampleFile = req.files.sampleFile;
-  let uploadPath = __dirname + '/uploads/' + sampleFile.name;
-
-  // Use the mv() method to place the file somewhere on your server
-  sampleFile.mv(uploadPath , function(err) {
-    if (err)
-      return res.status(500).send(err);
-
-      // Generate json-file of the uploaded csv-file in the same directory
-      parseDataset(uploadPath);
-
-    res.send('File uploaded!');
-  });
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

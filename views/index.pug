@@ -17,11 +17,11 @@ block content
                 
                 div#load_button
 
-                form(action="/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")    
+                form(action="/dataset/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")
                     label(for="file")
                         div#load_button(class="ui vertical animated button" tabindex="0")
                             div(class="hidden content") Load files
-                             input(type="file" id="file" name="sampleFile" style="display:none")
+                             input(type="file" id="file" name="dataset" style="display:none")
                             div(class="visible content") 
                                 i(class="ui upload icon")
                         

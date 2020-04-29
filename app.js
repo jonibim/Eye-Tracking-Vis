@@ -6,6 +6,7 @@ var logger = require('morgan');
 var fileUpload = require('express-fileupload');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var parseDataset = require('./scripts/parsedataset');
 
 var app = express();
 

@@ -6,6 +6,7 @@ var logger = require('morgan');
 var fileUpload = require('express-fileupload');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var parseDataset = require('./scripts/parsedataset');
 
 var app = express();
 
@@ -25,6 +26,9 @@ app.post('/upload', function(req, res) {
   sampleFile.mv(uploadPath , function(err) {
     if (err)
       return res.status(500).send(err);
+
+      // Generate json-file of the uploaded csv-file in the same directory
+      parseDataset(uploadPath);
 
     res.send('File uploaded!');
   });
@@ -63,4 +67,3 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
-

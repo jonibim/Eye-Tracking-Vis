@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
+    "csvtojson": "^2.0.10",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-fileupload": "^1.1.7-alpha.3",
@@ -15,6 +16,10 @@
     "jsdom": "^16.2.2",
     "morgan": "~1.9.1",
     "multipart": "^0.1.5",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "uuid": "^7.0.3"
+  },
+  "nodemonConfig": {
+    "ignore": ["uploads/*"]
   }
 }

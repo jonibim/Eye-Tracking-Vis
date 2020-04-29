@@ -26,6 +26,9 @@ app.post('/upload', function(req, res) {
     if (err)
       return res.status(500).send(err);
 
+      // Generate json-file of the uploaded csv-file in the same directory
+      parseDataset(uploadPath);
+
     res.send('File uploaded!');
   });
 });
@@ -63,4 +66,3 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
-

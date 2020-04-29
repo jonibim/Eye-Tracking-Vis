@@ -14,8 +14,17 @@ block scripts
     script(src='scripts/visualization/attentionmap.js')
 
 block content
-    div(id='container', class='container')
-        div(id='sidebar', class='sidebar')
-            div(id='browser', class='browser')
-            div(id='properties', class='properties')
-        div(id='frame', class='frame')
+    div#container(class='container')
+        div#sidebar(class='sidebar')
+            div#options(class='options')
+            div#browser(class='browser')
+                div(class='image-tab')
+                    div(class='sidebar-button image-button')
+                    div(class='sidebar-button image-button')
+                div(class='image-tab')
+                    div(class='sidebar-button')
+            div#properties(class='properties')
+        div#frame(class='frame')
+            div#topbar(class='top-bar')
+                //span#topbartext
+            div#innerframe(class='inner-frame')

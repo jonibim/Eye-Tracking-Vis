@@ -9,12 +9,14 @@ class Dataset {
         console.log('dataset.js - Importing data...')
         this.images = [];
 
+        this.name = 'Test Data Set'; // TODO add proper dataset name
+
         const lines = data.split('\n');
 
-        for (let i = 0; i < lines.length && i < 101; i++) { // limit to 100 for testing
+        for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
 
-            if(i % 100 === 0)
+            if(i % 1000 === 0)
                 console.log('dataset.js - Reading line ' + (i + 1) + '/' + lines.length);
 
             if(line.startsWith('Timestamp')) // ignore the first line

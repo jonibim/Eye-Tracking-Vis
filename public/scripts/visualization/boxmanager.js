@@ -49,18 +49,11 @@ class BoxManager {
         let div = document.createElement('div');
         div.setAttribute('class','column');
         let innerDiv = document.createElement('div');
-        innerDiv.setAttribute('class','inner');
+        innerDiv.setAttribute('class','inner-column');
         div.appendChild(innerDiv);
 
-        console.log('1 add column: ' + this.columns + ' ' + div.firstChild);
-
         this.columnDivs.push(div);
-
-        console.log('3 length: ' + this.columnDivs.length);
-
         this.frame.appendChild(div);
-
-        console.log('2 add column: ' + this.columnDivs[0].firstChild + ' ' + div.firstChild);
     }
 
     createBoxDiv(column, row){
@@ -68,8 +61,6 @@ class BoxManager {
         div.setAttribute('class','box');
 
         let columnDiv = this.columnDivs[column];
-
-        console.log('get column: ' + column + ' ' + columnDiv.firstChild);
 
         let innerDiv = columnDiv.firstChild;
         if(!innerDiv.children || innerDiv.children.length <= row)

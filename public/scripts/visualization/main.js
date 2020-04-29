@@ -2,25 +2,26 @@ let frame = null;
 let boxManager = null;
 let properties = null;
 let dataset = null;
+let topbar = null;
 
 // initialize default visualizations
 window.onload = () => {
-    console.log('main.js - Loading...')
+    console.log('main.js - Loading...');
 
     dataset = new Dataset();
-    frame = document.getElementById('frame');
+    topbar = document.getElementById('topbar');
+    dataset.onload.push(() => topbar.textContent = 'DATASET: ' + dataset.name)
+    frame = document.getElementById('innerframe');
     boxManager = new BoxManager(frame);
     properties = new Properties();
 
     // add example visualizations
     let box = boxManager.addBox(0,0);
-    new AttentionMap(box);
+    new ExampleVisualization(box);
     box = boxManager.addBox(0,1);
     new ExampleVisualization(box, 1);
     box = boxManager.addBox(1,0);
     new ExampleVisualization(box, 1);
-    box = boxManager.addBox(1,1);
-    new ExampleVisualization(box, 2);
 
     console.log('main.js - Finished Loading')
 

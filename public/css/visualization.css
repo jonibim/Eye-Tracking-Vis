@@ -1,60 +1,142 @@
 .container {
-    width: inherit;
-    height: inherit;
+    width: 100%;
+    height: 100%;
     display: flex;
+    flex-flow: row;
 }
 
 .frame {
+    flex-grow: 3;
+
     display: flex;
     flex-flow: column;
-    flex-grow: 3;
+}
+
+.top-bar {
+    width: 100%;
+    height: 50px;
+    min-height: 50px;
+    max-height: 50px;
+
+    background-color: #3c8dbc;
+    padding-top: 10px;
+    line-height: 30px;
+    text-align: center;
+    color: white;
+    font-family: monospace;
+}
+
+.top-bar span {
+    width: 100%;
+}
+
+.inner-frame {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    display: flex;
+    flex-flow: row;
+
+    background-color: #ecf0f5;
 }
 
 .column {
     border: none;
     margin: 0;
-    /*resize: horizontal;*/
     overflow: auto;
-    flex-flow: column;
     flex-grow: 1;
 }
-.column .inner {
-    width: inherit;
-    height: inherit;
+
+.column .inner-column {
+    width: 100%;
+    height: 100%;
+
     border: none;
     margin: 0;
-    /*resize: horizontal;*/
+    padding: 10px;
+
     overflow: auto;
     display: flex;
+    flex-flow: column;
 }
 
 .box {
-    border: none;
-    padding: 0;
-    margin: 0; /* */
-    /*resize: vertical;*/
-    overflow: auto;
-    flex-flow: row;
+    border: solid #00c0ef;
+    border-radius: 5px;
+    margin: 0;
+    overflow: hidden;
     flex-grow: 1;
-    position: relative;
+
+    display: flex;
+    flex-flow: column;
+}
+
+.box .inner-box {
+    width: 100%;
+    max-height: 100%;
+
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.box .title {
+    width: 100%;
+    height: 30px;
+    min-height: 30px;
+    max-height: 30px;
+    padding-top: 5px;
+    background-color: #00c0ef;
+
+    font-family: monospace;
+    font-size: 20px;
+    color: white;
+}
+
+.box + .box {
+    margin-top: 10px;
 }
 
 .sidebar {
+    background-color: #222d32;
     max-width: 500px;
     min-width: 250px;
+    flex-grow: 1;
     display: flex;
     flex-flow: column;
-    flex-grow: 1;
 }
 
 .options {
+    width: 100%;
+    height: 50px;
 
+    background-color: #367fa9;
 }
 
 .browser {
-
+    width: 100%;
+    height: 100px;
 }
 
 .properties {
+
+}
+
+.sidebar-button {
+    height: 50px;
+    text-transform: uppercase;
+}
+
+.sidebar-button:hover {
+    background-color: lightgray;
+    transition-duration: 1s;
+    transform-origin: left;
+}
+
+.image-tab {
+    cursor: pointer;
+}
+
+.image-button {
 
 }

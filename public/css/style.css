@@ -4,6 +4,11 @@
     text-align: center;
 }
 
+.pusher {
+    width: inherit;
+    height: inherit;
+}
+
 #template_button{
     width: 30%;
 }

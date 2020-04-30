@@ -9,24 +9,52 @@ html
     script(src="//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js")
 
     block styles
-
     block scripts
 
   body
-    block content
+    //-  Navigation Sidebar -//
+    div(class="ui sidebar thin vertical menu nav" onmouseover="showSidebar('nav')" onmouseleave="hideSidebar('nav')")
+        //-  Home -//
+        a(class="active item" href="/")
+            i(class="ui home icon large")
+            p(class="content") Home
+        //-  Visualize -//
+        a(class="item" href="/visualization")
+            i(class="ui eye icon large")
+            p(class="content") Visualize
+        //-  Upload Data -//
+        a(class="item" href="#")
+            i(class="ui upload icon large")
+            p(class="content") Upload Data
+        //-  About -//
+        a(class="item" href="#")
+            i(class="ui info icon large")
+            p(class="content") About
 
+    block sidebars
+
+    div.pusher
+        //-  Top Menu -//
+        div(class="ui top attached menu")
+            //-  Navigation Sidebar Button -//
+            a(class="item ui" onmouseover="showSidebar('nav')")
+                i(class="ui bars icon fitted")
+            block header_buttons
+        block content
+    
     script.
         function showSidebar(bar) {
             $('.ui.sidebar.'+bar)
             .sidebar('setting', 'transition', 'overlay')
             .sidebar('show')
         };
-    script.
-        function hideSidebar(bar) {
-            $('.ui.sidebar.'+bar)
-            .sidebar('setting', 'transition', 'overlay')
-            .sidebar('hide');
-        };
 
-    script.
-        $('.ui.accordion').accordion();
+  script.
+      function hideSidebar(bar) {
+          $('.ui.sidebar.'+bar)
+          .sidebar('setting', 'transition', 'overlay')
+          .sidebar('hide');
+      };
+  
+  script.
+      $('.ui.accordion').accordion();

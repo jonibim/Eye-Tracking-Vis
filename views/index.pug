@@ -3,90 +3,24 @@ extends layout
 block scripts
     script(src="https://d3js.org/d3.v5.min.js")
 
-
 block content
-    //-  Navigation Sidebar -//
-    div(class="ui sidebar thin vertical menu nav" onmouseover="showSidebar('nav')" onmouseleave="hideSidebar('nav')")
-        //-  Home -//
-        a(class="active item" href="/")
-            i(class="ui home icon large")
-            p(class="content") Home
-        //-  Visualize -//
-        a(class="item" href="/visualization")
-            i(class="ui eye icon large")
-            p(class="content") Visualize
-        //-  Upload Data -//
-        a(class="item" href="#")
-            i(class="ui upload icon large")
-            p(class="content") Upload Data
-        //-  About -//
-        a(class="item" href="#")
-            i(class="ui info icon large")
-            p(class="content") About
+    //-  Page Content -//
+    div.content
+        h1= title
+        p Welcome to #{title}
+        div#template_button(class="ui vertical animated button" tabindex="0")
+            div(class="hidden content") Load template
+            div(class="visible content") 
+                i(class="ui play icon")
+        
+        div#load_button
 
-    //-  Settings Sidebar -//
-    div(class="ui sidebar right vertical menu settings" onmouseover="showSidebar('settings')")
-        div(class="item")
-            header(class="ui header") Settings:
-            i(class="ui sliders floated right icon")
-        //-  Visualization type(s) -//
-        div(class="item")
-            div(class="ui styled accordion")
-                        div(class="title")
-                            i(class="ui dropdown icon")
-                            i(class="ui sliders horizontal icon")
-                        div(class="content")
-                            p Settings are not implemented yet
-        //-  Visualization parameters -//
-        div(class="item")
-            div(class="ui styled accordion")
-                        div(class="title")
-                            i(class="ui dropdown icon")
-                            i(class="ui sliders horizontal icon")
-                        div(class="content")
-                            p Settings are not implemented yet
-        div(class="item")
-            div(class="ui styled accordion")
-                        div(class="title")
-                            i(class="ui dropdown icon")
-                            i(class="ui sliders horizontal icon")
-                        div(class="content")
-                            p Settings are not implemented yet
-        div(class="item")
-            div(class="ui styled accordion")
-                        div(class="title")
-                            i(class="ui dropdown icon")
-                            i(class="ui sliders horizontal icon")
-                        div(class="content")
-                            p Settings are not implemented yet
-
-    div.pusher
-        //-  Top Menu -//
-        div(class="ui top attached menu")
-            //-  Navigation Sidebar Button -//
-            a(class="item ui" onmouseover="showSidebar('nav')")
-                i(class="ui bars icon fitted")
-            //-  Settings Sidebar Button -//
-            a(class="item right ui" onmouseover="showSidebar('settings')")
-                i(class="ui sliders icon fitted")
-
-        //-  Page Content -//
-        div.content
-            h1= title
-            p Welcome to #{title}
-            div#template_button(class="ui vertical animated button" tabindex="0")
-                div(class="hidden content") Load template
-                div(class="visible content") 
-                    i(class="ui play icon")
-            
-            div#load_button
-
-            form(action="/dataset/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")
-                label(for="file")
-                    div#load_button(class="ui vertical animated button" tabindex="0")
-                        div(class="hidden content") Load files
-                         input(type="file" id="file" name="dataset" style="display:none")
-                        div(class="visible content") 
-                            i(class="ui upload icon")
-                    
-                    input(type="submit" class="ui button" id="file" style="padding-bottom: 13px;padding-top: 9px" name="sampleFile" value='Upload')
+        form(action="/dataset/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")
+            label(for="file")
+                div#load_button(class="ui vertical animated button" tabindex="0")
+                    div(class="hidden content") Load files
+                     input(type="file" id="file" name="dataset" style="display:none")
+                    div(class="visible content") 
+                        i(class="ui upload icon")
+                
+                input(type="submit" class="ui button" id="file" style="padding-bottom: 13px;padding-top: 9px" name="sampleFile" value='Upload')

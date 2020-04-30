@@ -35,10 +35,10 @@ html
 
     div.pusher
         //-  Top Menu -//
-        div(class="ui top attached menu")
+        div(class="ui horizontal borderless small menu")
             //-  Navigation Sidebar Button -//
-            a(class="item ui" onmouseover="showSidebar('nav')")
-                i(class="ui bars icon fitted")
+            div(class="ui left item")
+                i(class="ui bars icon circular" onmouseover="showSidebar('nav')")
             block header_buttons
         block content
     

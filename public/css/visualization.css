@@ -14,24 +14,6 @@
     flex-flow: column;
 }
 
-.top-bar {
-    width: 100%;
-    height: 50px;
-    min-height: 50px;
-    max-height: 50px;
-
-    background-color: #3c8dbc;
-    padding-top: 10px;
-    line-height: 30px;
-    text-align: center;
-    color: white;
-    font-family: monospace;
-}
-
-.top-bar span {
-    width: 100%;
-}
-
 .inner-frame {
     width: 100%;
     height: 100%;
@@ -97,48 +79,4 @@
 
 .box + .box {
     margin-top: 10px;
-}
-
-.sidebar {
-    background-color: #222d32;
-    max-width: 500px;
-    min-width: 250px;
-    flex-grow: 1;
-    display: flex;
-    flex-flow: column;
-}
-
-.options {
-    width: 100%;
-    height: 50px;
-
-    background-color: #367fa9;
-}
-
-.browser {
-    width: 100%;
-    height: 100px;
-}
-
-.properties {
-
-}
-
-.sidebar-button {
-    height: 50px;
-    text-transform: uppercase;
-}
-
-.sidebar-button:hover {
-    background-color: lightgray;
-    transition-duration: 1s;
-    transform-origin: left;
-}
-
-.image-tab {
-    cursor: pointer;
-}
-
-.image-button {
-
 }

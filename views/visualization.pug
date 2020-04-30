@@ -51,23 +51,16 @@ block sidebars
                             p Settings are not implemented yet
 
 block header_buttons
+    //- Topbar Centered Text -//
+    div(class="ui center item")
+        header(class="ui centered header")
+            span#topbar
     //-  Settings Sidebar Button -//
-    a(class="item right ui" onmouseover="showSidebar('settings')")
-        i(class="ui sliders icon fitted")
+    div(class="ui right item")
+        i(class="ui sliders icon circular" onmouseover="showSidebar('settings')")
 
 
 block content
     div#container(class='container')
-        div#sidebar(class='sidebar')
-            div#options(class='options')
-            div#browser(class='browser')
-                div(class='image-tab')
-                    div(class='sidebar-button image-button')
-                    div(class='sidebar-button image-button')
-                div(class='image-tab')
-                    div(class='sidebar-button')
-            div#properties(class='properties')
         div#frame(class='frame')
-            div#topbar(class='top-bar')
-                //span#topbartext
             div#innerframe(class='inner-frame')

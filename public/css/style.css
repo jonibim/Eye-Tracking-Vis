@@ -1,4 +1,5 @@
 .content {
+    width: 100%;
     max-width: 500px;
     margin:0 auto;
     text-align: center;
@@ -7,6 +8,10 @@
 .pusher {
     width: inherit;
     height: inherit;
+    overflow: hidden;
+
+    display: flex;
+    flex-flow: column;
 }
 
 #template_button{
@@ -15,9 +20,9 @@
 
 #load_button{
     width: 30%;
-    margin:5 auto;
+    margin: 5 auto;
 }
 
 #form_edit{
-    margin:5 5 5 5;
+    margin: 5 5 5 5;
 }

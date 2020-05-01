@@ -2,8 +2,10 @@ extends layout
 
 block styles
     link(rel = 'stylesheet', href = '/css/visualization.css')
+    link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
+    script(src="https://d3js.org/d3.v5.min.js")
     script(src='scripts/visualization/main.js')
     script(src='scripts/visualization/dataset.js')
     script(src='scripts/visualization/visualization.js')
@@ -51,7 +53,7 @@ block sidebars
                         div(class="content")
                             p Settings are not implemented yet
 
-block header_buttons
+block header_content
     //- Topbar Centered Text -//
     div(class="ui center item")
         header(class="ui centered header")

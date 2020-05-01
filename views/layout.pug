@@ -2,7 +2,6 @@ doctype html
 html
     head
         title= title
-        link(rel="icon" type="image/png" href="favicon.png")
         link(rel = 'stylesheet', href = '/css/style.css')
         link(rel="stylesheet" type="text/css" href="./semantic/dist/semantic.min.css")
         script(src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous")
@@ -39,7 +38,7 @@ html
                 //-  Navigation Sidebar Button -//
                 div(class="ui left item")
                     i(class="ui bars icon circular" onmouseover="showSidebar('nav')")
-                block header_buttons
+                block header_content
             block content
 
     block post_scripts

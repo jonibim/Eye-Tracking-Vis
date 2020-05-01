@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Send visualization page.
 router.get('/', function(req, res, next) {
-    res.render('visualization');
+    res.render('visualization', { title: 'Eye Tracking Visualization' });
 });
 
 // Send test dataset.

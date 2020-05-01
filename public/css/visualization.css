@@ -21,8 +21,6 @@
 
     display: flex;
     flex-flow: row;
-
-    background-color: #ecf0f5;
 }
 
 .column {

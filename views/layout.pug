@@ -1,50 +1,48 @@
 doctype html
 html
-  head
-    title= title
-    link(rel="icon" type="image/png" href="favicon.png")
-    link(rel = 'stylesheet', href = '/css/style.css')
-    //link(rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css")
-    script(src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous")
-    //script(src="//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js")
+    head
+        title= title
+        link(rel="icon" type="image/png" href="favicon.png")
+        link(rel = 'stylesheet', href = '/css/style.css')
+        link(rel="stylesheet" type="text/css" href="./semantic/dist/semantic.min.css")
+        script(src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous")
+        script(src="./semantic/dist/semantic.min.js")
 
-    //script(src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js")
-    link(rel="stylesheet" type="text/css" href="./semantic/dist/semantic.min.css")
-    script(src="./semantic/dist/semantic.min.js")
+        block styles
+        block pre_scripts
 
-    block styles
-    block scripts
+    body
+        //-  Navigation Sidebar -//
+        div(class="ui sidebar thin vertical menu nav" onmouseover="showSidebar('nav')" onmouseleave="hideSidebar('nav')")
+            //-  Home -//
+            a#index_nav(class="item nav" href="/")
+                i(class="ui home icon large")
+                p(class="content") Home
+            //-  Visualize -//
+            a#visualization_nav(class="item nav" href="/visualization")
+                i(class="ui eye icon large")
+                p(class="content") Visualize
+            //-  Upload Data -//
+            a#upload_nav(class="item nav"  href="/upload")
+                i(class="ui upload icon large")
+                p(class="content") Upload Data
+            //-  About -//
+            a#about_nav(class="item nav" href="/about")
+                i(class="ui info icon large")
+                p(class="content") About
 
-  body
-    //-  Navigation Sidebar -//
-    div(class="ui sidebar thin vertical menu nav" onmouseover="showSidebar('nav')" onmouseleave="hideSidebar('nav')")
-        //-  Home -//
-        a(class="active item" href="/")
-            i(class="ui home icon large")
-            p(class="content") Home
-        //-  Visualize -//
-        a(class="item" href="/visualization")
-            i(class="ui eye icon large")
-            p(class="content") Visualize
-        //-  Upload Data -//
-        a(class="item" href="#")
-            i(class="ui upload icon large")
-            p(class="content") Upload Data
-        //-  About -//
-        a(class="item" href="#")
-            i(class="ui info icon large")
-            p(class="content") About
+        block sidebars
 
-    block sidebars
+        div.pusher
+            //-  Top Menu -//
+            div(class="ui horizontal borderless large menu fitted")
+                //-  Navigation Sidebar Button -//
+                div(class="ui left item")
+                    i(class="ui bars icon circular" onmouseover="showSidebar('nav')")
+                block header_buttons
+            block content
 
-    div.pusher
-        //-  Top Menu -//
-        div(class="ui horizontal borderless large menu fitted")
-            //-  Navigation Sidebar Button -//
-            div(class="ui left item")
-                i(class="ui bars icon circular" onmouseover="showSidebar('nav')")
-            block header_buttons
-        block content
+    block post_scripts
     
     script.
         function showSidebar(bar) {
@@ -53,12 +51,12 @@ html
             .sidebar('show')
         };
 
-  script.
-      function hideSidebar(bar) {
-          $('.ui.sidebar.'+bar)
-          .sidebar('setting', 'transition', 'overlay')
-          .sidebar('hide');
-      };
-  
-  script.
-      $('.ui.accordion').accordion();
+    script.
+        function hideSidebar(bar) {
+            $('.ui.sidebar.'+bar)
+            .sidebar('setting', 'transition', 'overlay')
+            .sidebar('hide');
+        };
+
+    script.
+        $('.ui.accordion').accordion();

@@ -1,6 +1,6 @@
 extends layout
 
-block scripts
+block pre_scripts
     script(src="https://d3js.org/d3.v5.min.js")
 
 block content
@@ -24,3 +24,7 @@ block content
                         i(class="ui upload icon")
                 
                 input(type="submit" class="ui button" id="file" style="padding-bottom: 13px;padding-top: 9px" name="sampleFile" value='Upload')
+
+block post_scripts
+    script.
+        $('#index_nav').addClass('active');

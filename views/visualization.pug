@@ -3,7 +3,7 @@ extends layout
 block styles
     link(rel = 'stylesheet', href = '/css/visualization.css')
 
-block scripts
+block pre_scripts
     script(src='scripts/visualization/main.js')
     script(src='scripts/visualization/dataset.js')
     script(src='scripts/visualization/visualization.js')
@@ -65,3 +65,7 @@ block content
     div#container(class='container')
         div#frame(class='frame')
             div#innerframe(class='inner-frame')
+
+block post_scripts
+    script.
+        $('#visualization_nav').addClass('active');

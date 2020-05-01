@@ -26,3 +26,7 @@
 #form_edit{
     margin: 5px 5px 5px 5px;
 }
+
+#icon.patch{
+    display: flex;
+}

@@ -13,3 +13,15 @@
     display: flex;
     flex-flow: column;
 }
+
+.sidebar.visible.settings + .pusher {
+  width: calc(100% - 260px) !important;
+}
+
+body.pushable {
+   background-color: white !important;
+}
+
+.left-align {
+    text-align: left !important;
+}

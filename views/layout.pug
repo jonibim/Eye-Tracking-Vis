@@ -2,8 +2,8 @@ doctype html
 html
     head
         title= title
-        link(rel = 'stylesheet', href = '/css/style.css')
         link(rel="stylesheet" type="text/css" href="./semantic/dist/semantic.min.css")
+        link(rel = 'stylesheet', href = '/css/style.css')
         script(src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous")
         script(src="./semantic/dist/semantic.min.js")
 
@@ -43,26 +43,24 @@ html
             block content
 
     block post_scripts
-    
+
     script.
         function showSidebar(bar) {
-            $('.ui.sidebar.'+bar)
-            .sidebar('setting', 'transition', 'overlay')
-            .sidebar('show')
+            $('.ui.sidebar.'+bar).sidebar('show')
         };
 
     script.
         function hideSidebar(bar) {
-            $('.ui.sidebar.'+bar)
-            .sidebar('setting', 'transition', 'overlay')
-            .sidebar('hide');
+            $('.ui.sidebar.'+bar).sidebar('hide');
         };
 
     script.
         function pulseImage(cls) {
-        $('.'+cls).transition('pulse');
+            $('.'+cls).transition('pulse');
         };
-        
 
     script.
         $('.ui.accordion').accordion();
+
+    script.
+        $('.ui.sidebar').sidebar('setting', 'transition', 'overlay');

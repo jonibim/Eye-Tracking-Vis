@@ -3,27 +3,42 @@ extends layout
 block styles
     link(rel="icon" type="image/png" href="resources/favicon_upload.png")
 
+block header_content
+    //- Topbar Centered Text -//
+    div(class="ui item")
+        div(class="ui center aligned container")
+            div(class="ui large header") #{title}
+    //- Topbar TU/e Logo -//
+    div(class="ui item")
+        div(class="ui right aligned container")
+            a(href="https://www.tue.nl/en/")
+                img(class="ui small image right floated tue_link" src="resources/tue_logo.png" onmouseover="pulseImage('tue_link')") 
+
 block content
     //-  Page Content -//
     div.content
-        h1= title
-        p Welcome to #{title}
-        div#template_button(class="ui vertical animated button" tabindex="0")
-            div(class="hidden content") Load template
-            div(class="visible content") 
-                i(class="ui play icon")
-        
-        div#load_button
+        div(class="ui raised segments")
+            //-  Primary Segment -//
+            div(class="ui segment")
+                i(class="ui green inverted circular upload large icon")
+            div(class="ui segment")
+                p On this page you can upload your own custom dataset. This can then be used to visualize the date, as long as you used the format given below.
+                p ~To be added~
+                //PLACE FORMAT DISPLAY HERE
 
-        form(action="/dataset/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")
-            label(for="file")
-                div#load_button(class="ui vertical animated button" tabindex="0")
-                    div(class="hidden content") Load files
-                     input(type="file" id="file" name="dataset" style="display:none")
-                    div(class="visible content") 
-                        i(class="ui upload icon")
-                
-                input(type="submit" class="ui button" id="file" style="padding-bottom: 13px;padding-top: 9px" name="sampleFile" value='Upload')
+                //-  Interactive form -//
+                form(class="ui form" action="/dataset/upload" enctype="multipart/form-data" method="POST")
+                    div(class="inline field")
+                        label(for="files")
+                            div(class="ui basic blue button" tabindex="0")
+                                div(class="content") Select all files
+                                    input(type="file" id="files" name="datasets" style="display:none" multiple)
+                        input(type="submit" class="ui basic green button" id="files" name="sampleFiles" value='Submit')
+            //-  Secondary placeholder Segment -//
+            div(class="ui placeholder secondary segment")
+                div(class="ui icon header")
+                    i(class="ui file icon")
+                    p No files uploaded yet!
 
 block post_scripts
     script.

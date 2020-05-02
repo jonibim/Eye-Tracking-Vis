@@ -3,27 +3,40 @@ extends layout
 block styles
     link(rel="icon" type="image/png" href="resources/favicon_about.png")
 
+block header_content
+    //- Topbar Centered Text -//
+    div(class="ui item")
+        div(class="ui center aligned container")
+            div(class="ui large header") #{title}
+    //- Topbar TU/e Logo -//
+    div(class="ui item")
+        div(class="ui right aligned container")
+            a(href="https://www.tue.nl/en/")
+                img(class="ui small image right floated tue_link" src="resources/tue_logo.png" onmouseover="pulseImage('tue_link')") 
 block content
     //-  Page Content -//
     div.content
-        h1= title
-        p Welcome to #{title}
-        div#template_button(class="ui vertical animated button" tabindex="0")
-            div(class="hidden content") Load template
-            div(class="visible content") 
-                i(class="ui play icon")
-        
-        div#load_button
+        //-  About Segment -//
+        div(class="ui floating raised segments")
+            div(class="ui segment")
+                i(class="ui blue inverted circular info large icon")
+            div(class="ui secondary segment")
+                p This website was created for the Eindhoven University of Technology for the course 2IOA0 DBL HTI + WEBTECH. The page was created by a team of 5 computer science students, who each contributed their own part and merged all these parts together.
+                p ~UNFINISHED~
+        //-  Visualization Segment -//
+        div(class="ui floating raised segments")
+            div(class="ui segment")
+                i(class="ui red inverted circular eye large icon")
+            div(class="ui secondary segment")
+                p The site displays visualizations of eye tracking data. It allows user inputs and has an example dataset included.
+                p ~UNFINISHED~
+                div(class="buttons")
+                    //- Upload Button -//
+                    a(class="ui basic green button" href="/upload") Upload Data
+                    //- Example Data Button -//
+                    //vv TO BE PROVIDED WITH CUSTOM URL FOR EXAMPLE DATA SETTINGS vv
+                    a(class="ui basic blue button" href="/visualization") Use Example Data
 
-        form(action="/dataset/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")
-            label(for="file")
-                div#load_button(class="ui vertical animated button" tabindex="0")
-                    div(class="hidden content") Load files
-                     input(type="file" id="file" name="dataset" style="display:none")
-                    div(class="visible content") 
-                        i(class="ui upload icon")
-                
-                input(type="submit" class="ui button" id="file" style="padding-bottom: 13px;padding-top: 9px" name="sampleFile" value='Upload')
 
 block post_scripts
     script.

@@ -34,10 +34,11 @@ html
 
         div.pusher
             //-  Top Menu -//
-            div(class="ui horizontal borderless large menu fitted")
+            div(class="ui horizontal borderless large three item menu fitted")
                 //-  Navigation Sidebar Button -//
-                div(class="ui left item")
-                    i(class="ui bars icon circular" onmouseover="showSidebar('nav')")
+                div(class="ui item")
+                    div(class="ui left aligned container")
+                        i(class="ui bars icon circular" onmouseover="showSidebar('nav')")
                 block header_content
             block content
 
@@ -56,6 +57,12 @@ html
             .sidebar('setting', 'transition', 'overlay')
             .sidebar('hide');
         };
+
+    script.
+        function pulseImage(cls) {
+        $('.'+cls).transition('pulse');
+        };
+        
 
     script.
         $('.ui.accordion').accordion();

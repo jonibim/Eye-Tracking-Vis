@@ -55,12 +55,14 @@ block sidebars
 
 block header_content
     //- Topbar Centered Text -//
-    div(class="ui center item")
-        header(class="ui centered header")
-            span#topbar
+    div(class="ui item")
+        div(class="ui center aligned container")
+            header(class="ui large header")
+                span#topbar
     //-  Settings Sidebar Button -//
-    div(class="ui right item")
-        i(class="ui sliders icon circular" onmouseover="showSidebar('settings')")
+    div(class="ui item")
+        div(class="ui right aligned container")
+            i(class="ui sliders icon circular" onmouseover="showSidebar('settings')")
 
 
 block content

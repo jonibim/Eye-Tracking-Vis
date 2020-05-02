@@ -13,20 +13,3 @@
     display: flex;
     flex-flow: column;
 }
-
-#template_button{
-    width: 30%;
-}
-
-#load_button{
-    width: 30%;
-    margin: 5px auto;
-}
-
-#form_edit{
-    margin: 5px 5px 5px 5px;
-}
-
-#icon.patch{
-    display: flex;
-}

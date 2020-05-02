@@ -4,30 +4,40 @@ block styles
     link(rel="icon" type="image/png" href="resources/favicon_home.png")
 
 block header_content
-    a(class="ui right item" href="https://www.tue.nl/en/")
-        img(class="ui centered small image" src="resources/tue_logo.png") 
+    //- Topbar Centered Text -//
+    div(class="ui item")
+        div(class="ui center aligned container")
+            div(class="ui large header") #{title}
+    //- Topbar TU/e Logo -//
+    div(class="ui item")
+        div(class="ui right aligned container")
+            a(href="https://www.tue.nl/en/")
+                img(class="ui small image right floated tue_link" src="resources/tue_logo.png" onmouseover="pulseImage('tue_link')") 
 
 block content
     //-  Page Content -//
     div.content
-        h1= title
-        p Welcome to #{title}
-        div#template_button(class="ui vertical animated button" tabindex="0")
-            div(class="hidden content") Load template
-            div(class="visible content") 
-                i(class="ui play icon")
-        
-        div#load_button
-
-        form(action="/dataset/upload" enctype="multipart/form-data" method="POST" style="top-width: 0px;margin-top: 5px")
-            label(for="file")
-                div#load_button(class="ui vertical animated button" tabindex="0")
-                    div(class="hidden content") Load files
-                     input(type="file" id="file" name="dataset" style="display:none")
-                    div(class="visible content") 
-                        i(class="ui upload icon")
-                
-                input(type="submit" class="ui button" id="file" style="padding-bottom: 13px;padding-top: 9px" name="sampleFile" value='Upload')
+        //-  About Segment -//
+        div(class="ui floating raised segments")
+            div(class="ui segment")
+                div(class="ui blue right icon big label") About
+                    i(class="ui info icon")
+            div(class="ui secondary segment")
+                p TO BE DONE: fill with basic info and redirect to /about
+        //-  Visualization Segment -//
+        div(class="ui floating raised segments")
+            div(class="ui segment")
+                div(class="ui red right icon big label") Visualizations
+                    i(class="ui eye icon")
+            div(class="ui secondary segment")
+                p TO BE DONE: fill with visualization info text
+        //-  Upload Segment -//
+        div(class="ui floating raised segments")
+            div(class="ui segment")
+                div(class="ui green right icon big label") Upload
+                    i(class="ui upload icon")
+            div(class="ui secondary segment")
+                p TO BE DONE: fill with upload info text
 
 block post_scripts
     script.

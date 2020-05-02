@@ -23,7 +23,7 @@
           box-shadow: none;
   background: rgba(0, 0, 0, 0.1);
   padding: 0;
-  border-radius: 0.28571429rem;
+  border-radius: 0.30769em;
 }
 .ui.progress:first-child {
   margin: 0 0 2.5em;
@@ -46,7 +46,7 @@
   width: 0;
   min-width: 2em;
   background: #888888;
-  border-radius: 0.28571429rem;
+  border-radius: 0.30769em;
   -webkit-transition: width 0.1s ease, background-color 0.1s ease;
   transition: width 0.1s ease, background-color 0.1s ease;
   overflow: hidden;
@@ -67,7 +67,7 @@
   white-space: nowrap;
   position: absolute;
   width: auto;
-  font-size: 0.92857143em;
+  font-size: 0.92307692em;
   top: 50%;
   right: 0.5em;
   left: auto;
@@ -235,7 +235,7 @@
   ---------------*/
 
 .ui.ui.progress.success .bar {
-  background-color: #21BA45;
+  background-color: #60B044;
 }
 .ui.ui.progress.success .bar,
 .ui.ui.progress.success .bar::after {
@@ -295,7 +295,7 @@
   right: 0;
   bottom: 0;
   background: #FFFFFF;
-  border-radius: 0.28571429rem;
+  border-radius: 0.30769em;
   -webkit-animation: progress-active 2s ease infinite;
           animation: progress-active 2s ease infinite;
   -webkit-transform-origin: left;
@@ -357,13 +357,13 @@
   background: #888888;
 }
 .ui.inverted.progress .bar > .progress {
-  color: #1B1C1D;
+  color: #444C55;
 }
 .ui.inverted.progress > .label {
   color: #FFFFFF;
 }
 .ui.inverted.progress.success > .label {
-  color: #21BA45;
+  color: #60B044;
 }
 .ui.inverted.progress.warning > .label {
   color: #F2C037;
@@ -390,7 +390,7 @@
   height: 0.2rem;
   padding: 0;
   overflow: hidden;
-  border-radius: 0 0 0.28571429rem 0.28571429rem;
+  border-radius: 0 0 0.30769em 0.30769em;
 }
 .ui.progress.attached .bar {
   border-radius: 0;
@@ -400,7 +400,7 @@
 .ui.progress.top.attached,
 .ui.progress.top.attached .bar {
   top: 0;
-  border-radius: 0.28571429rem 0.28571429rem 0 0;
+  border-radius: 0.30769em 0.30769em 0 0;
 }
 .ui.progress.top.attached .bar {
   border-radius: 0;
@@ -428,7 +428,7 @@
 .ui.indeterminate.primary.progress .bar::before,
 .ui.primary.progress .bar,
 .ui.progress .primary.bar {
-  background-color: #2185D0;
+  background-color: #80A6CD;
 }
 .ui.inverted.indeterminate.primary.progress .bar::before,
 .ui.primary.inverted.progress .bar,
@@ -438,7 +438,7 @@
 .ui.indeterminate.secondary.progress .bar::before,
 .ui.secondary.progress .bar,
 .ui.progress .secondary.bar {
-  background-color: #1B1C1D;
+  background-color: #444C55;
 }
 .ui.inverted.indeterminate.secondary.progress .bar::before,
 .ui.secondary.inverted.progress .bar,
@@ -458,7 +458,7 @@
 .ui.indeterminate.orange.progress .bar::before,
 .ui.orange.progress .bar,
 .ui.progress .orange.bar {
-  background-color: #F2711C;
+  background-color: #D26911;
 }
 .ui.inverted.indeterminate.orange.progress .bar::before,
 .ui.orange.inverted.progress .bar,
@@ -488,7 +488,7 @@
 .ui.indeterminate.green.progress .bar::before,
 .ui.green.progress .bar,
 .ui.progress .green.bar {
-  background-color: #21BA45;
+  background-color: #60B044;
 }
 .ui.inverted.indeterminate.green.progress .bar::before,
 .ui.green.inverted.progress .bar,
@@ -508,7 +508,7 @@
 .ui.indeterminate.blue.progress .bar::before,
 .ui.blue.progress .bar,
 .ui.progress .blue.bar {
-  background-color: #2185D0;
+  background-color: #80A6CD;
 }
 .ui.inverted.indeterminate.blue.progress .bar::before,
 .ui.blue.inverted.progress .bar,
@@ -568,7 +568,7 @@
 .ui.indeterminate.black.progress .bar::before,
 .ui.black.progress .bar,
 .ui.progress .black.bar {
-  background-color: #1B1C1D;
+  background-color: #444C55;
 }
 .ui.inverted.indeterminate.black.progress .bar::before,
 .ui.black.inverted.progress .bar,
@@ -587,43 +587,43 @@
   height: 1.75em;
 }
 .ui.mini.progress {
-  font-size: 0.78571429rem;
+  font-size: 0.76923077rem;
 }
 .ui.mini.progress .bar {
   height: 0.3em;
 }
 .ui.tiny.progress {
-  font-size: 0.85714286rem;
+  font-size: 0.84615385rem;
 }
 .ui.tiny.progress .bar {
   height: 0.5em;
 }
 .ui.small.progress {
-  font-size: 0.92857143rem;
+  font-size: 0.92307692rem;
 }
 .ui.small.progress .bar {
   height: 1em;
 }
 .ui.large.progress {
-  font-size: 1.14285714rem;
+  font-size: 1.15384615rem;
 }
 .ui.large.progress .bar {
   height: 2.5em;
 }
 .ui.big.progress {
-  font-size: 1.28571429rem;
+  font-size: 1.30769231rem;
 }
 .ui.big.progress .bar {
   height: 3.5em;
 }
 .ui.huge.progress {
-  font-size: 1.42857143rem;
+  font-size: 1.46153846rem;
 }
 .ui.huge.progress .bar {
   height: 4em;
 }
 .ui.massive.progress {
-  font-size: 1.71428571rem;
+  font-size: 1.69230769rem;
 }
 .ui.massive.progress .bar {
   height: 5em;
@@ -646,7 +646,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  border-radius: 0.28571429rem;
+  border-radius: 0.30769em;
   -webkit-animation: progress-pulsating 2s ease infinite;
           animation: progress-pulsating 2s ease infinite;
   -webkit-transform-origin: center;
@@ -687,7 +687,7 @@
 }
 .ui.sliding.indeterminate.progress .bar .progress,
 .ui.swinging.indeterminate.progress .bar .progress {
-  color: #1B1C1D;
+  color: #444C55;
 }
 .ui.inverted.sliding.indeterminate.progress .bar,
 .ui.inverted.swinging.indeterminate.progress .bar,

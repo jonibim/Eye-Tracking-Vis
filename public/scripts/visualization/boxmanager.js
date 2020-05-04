@@ -9,7 +9,9 @@ class BoxManager {
         this.columnDivs = [];
     }
 
-    addBox(column, row) {
+    addBox(coords) {
+        let [column, row] = coords;
+        console.log(column, row)
         while(this.columns <= column){
             this.columns++;
             this.boxes.push([]);

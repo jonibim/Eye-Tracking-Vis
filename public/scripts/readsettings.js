@@ -3,7 +3,7 @@ let eye_cloud = true;
 let gaze_stripes = true;
 let transition_graph = true;
 let visual_attention_map = true;
-let grid = [(0,0), (0,1), (1,0), (1,1)];
+let grid = [[0,0], [0,1], [1,0], [1,1]];
 
 function applySettings() {
     vis_count = 0;
@@ -34,6 +34,6 @@ function applySettings() {
 
     for (i=0; i<vis_count; i++) {
         let box = boxManager.addBox(grid[i]);
-        new ExampleVisualization(box);
+        new ExampleVisualization(box, 12);
     };
 }

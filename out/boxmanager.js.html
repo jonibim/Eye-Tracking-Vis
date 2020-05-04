@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: boxmanager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: boxmanager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Will handle the boxes to put the visualizations in
+ * @property {Element} frame - main visualization frame
+ * @property {Box[][]} boxes - grid of all boxes, as [column][row]
+ * @property {int} rows - the total number of rows
+ * @property {int} columns - the total number of columns
+ * @property {Element[]} columnDivs - all column elements
+ */
+class BoxManager {
+
+    /**
+     * @param frame - main visualization frame
+     */
+    constructor(frame) {
+        this.frame = frame;
+        this.boxes = [];
+        this.rows = 0;
+        this.columns = 0;
+        this.columnDivs = [];
+    }
+
+    /**
+     * Creates a box at the specified column and row
+     * @param {int} column
+     * @param {int} row
+     * @returns {Box}
+     */
+    createBox(column, row) {
+        return this.addBox(new Box(this.createBoxDiv()), column, row);
+    }
+
+    /**
+     * Adds the given box at the specified column and row
+     * @param {Box} box
+     * @param {int} column
+     * @param {int} row
+     * @returns {Box}
+     */
+    addBox(box, column, row) {
+        if (this.columns &lt;= column) {
+            this.columns++;
+            this.boxes.push([]);
+            this.addColumnDiv();
+            // limit the column number as to not have empty columns in between
+            column = this.columns - 1;
+        }
+        if (this.boxes[column].length &lt;= row)
+            // limit the row number as to not have empty rows in between
+            row = this.boxes[column].length;
+
+        this.boxes[column].splice(row, 0, box);
+        this.moveBoxDiv(box,column,row);
+        box.moved(column, row);
+        for (let i = row + 1; i &lt; this.boxes[column].length; i++)
+            this.boxes[column][i].moved(column, i);
+        return box;
+    }
+
+    /**
+     * Removes the given box and moves other boxes into their correct positions
+     * @param {Box} box - the box to be removed
+     */
+    removeBox(box) {
+        let column = box.column;
+        let row = box.row;
+        // remove entire column if it's empty
+        if (!this.boxes[column].length) {
+            this.boxes.splice(column, 1);
+            for (let i = column; i &lt; this.boxes.length; i++) {
+                for (let j = 0; j &lt; this.boxes[i].length; j++)
+                    this.boxes[i][j].moved(i, j);
+            }
+        } else {
+            this.boxes[column].splice(row, 1);
+            for (let i = row; i &lt; this.boxes[column].length; i++)
+                this.boxes[column][i].moved(column, i);
+        }
+    }
+
+    /**
+     * @param {Box} box
+     * @returns {number}
+     */
+    getBoxWidth(box) {
+        return frame.offsetWidth / this.columns;
+    }
+
+    /**
+     * @param {Box} box
+     * @returns {number}
+     */
+    getBoxHeight(box) {
+        if (box)
+            return frame.offsetHeight / this.boxes[box.column].length;
+        return frame.offsetHeight / this.rows;
+    }
+
+    /**
+     * Creates the html elements for a new column
+     */
+    addColumnDiv() {
+        let div = document.createElement('div');
+        div.setAttribute('class', styles.column);
+        let innerDiv = document.createElement('div');
+        innerDiv.setAttribute('class', styles.innercolumn);
+        div.appendChild(innerDiv);
+
+        this.columnDivs.push(div);
+        this.frame.appendChild(div);
+    }
+
+    /**
+     * Creates the html element for a new box
+     * @returns {Element}
+     */
+    createBoxDiv() {
+        let div = document.createElement('div');
+        div.setAttribute('class', styles.box);
+        return div;
+    }
+
+    /**
+     * Moved the html element to the correct parent
+     */
+    moveBoxDiv(box, column, row){
+        let columnDiv = this.columnDivs[column];
+
+        let innerDiv = columnDiv.firstChild;
+        if (!innerDiv.children || innerDiv.children.length &lt;= row)
+            innerDiv.appendChild(box.div);
+        else
+            innerDiv.insertBefore(box.div, innerDiv.children[row + 1]);
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Box.html">Box</a></li><li><a href="BoxManager.html">BoxManager</a></li><li><a href="Dataset.html">Dataset</a></li><li><a href="ExampleVisualization.html">ExampleVisualization</a></li><li><a href="ImageData.html">ImageData</a></li><li><a href="Properties.html">Properties</a></li><li><a href="Registry.html">Registry</a></li><li><a href="ScanPath.html">ScanPath</a></li><li><a href="ScanPoint.html">ScanPoint</a></li><li><a href="Visualization.html">Visualization</a></li><li><a href="VisualizationType.html">VisualizationType</a></li></ul><h3>Global</h3><ul><li><a href="global.html#boxManager">boxManager</a></li><li><a href="global.html#dataset">dataset</a></li><li><a href="global.html#frame">frame</a></li><li><a href="global.html#properties">properties</a></li><li><a href="global.html#registry">registry</a></li><li><a href="global.html#topbar">topbar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue May 05 2020 01:21:05 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

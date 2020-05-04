@@ -125,7 +125,7 @@ class VisualizationType {
      * Removes the visualization instance
      */
     disable() {
-        this.instance.onRemove();
+        this.instance.onRemoved();
         boxManager.removeBox(this.instance.box);
         properties.onchange.delete(this.tag);
         this.instance = null;

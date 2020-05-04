@@ -47,9 +47,9 @@ class BoxManager {
 
     addColumnDiv(){
         let div = document.createElement('div');
-        div.setAttribute('class','column');
+        div.setAttribute('class',styles.column);
         let innerDiv = document.createElement('div');
-        innerDiv.setAttribute('class','inner-column');
+        innerDiv.setAttribute('class',styles.innercolumn);
         div.appendChild(innerDiv);
 
         this.columnDivs.push(div);
@@ -58,7 +58,7 @@ class BoxManager {
 
     createBoxDiv(column, row){
         let div = document.createElement('div');
-        div.setAttribute('class','box');
+        div.setAttribute('class',styles.box);
 
         let columnDiv = this.columnDivs[column];
 

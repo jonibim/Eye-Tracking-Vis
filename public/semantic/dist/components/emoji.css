@@ -33,7 +33,7 @@ em[data-emoji]:before {
 *******************************/
 
 em[data-emoji].disabled {
-  opacity: 0.3;
+  opacity: 0.45;
 }
 
 

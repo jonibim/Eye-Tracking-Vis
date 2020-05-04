@@ -155,7 +155,7 @@
   ---------------------*/
 
 .ui.disabled.calendar {
-  opacity: 0.3;
+  opacity: 0.45;
 }
 .ui.disabled.calendar > .input,
 .ui.disabled.calendar .ui.table tr .link {

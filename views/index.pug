@@ -20,25 +20,26 @@ block content
         //-  About Segment -//
         div(class="ui floating raised segments")
             div(class="ui segment")
-                div(class="ui blue right icon big label") About
+                a(class="ui blue right icon big label" href="/about") About
                     i(class="ui info icon")
             div(class="ui secondary segment")
                 p TO BE DONE: fill with basic info and redirect to /about
         //-  Visualization Segment -//
         div(class="ui floating raised segments")
             div(class="ui segment")
-                div(class="ui red right icon big label") Visualizations
+                a(class="ui teal right icon big label" href="/visualization") Visualizations
                     i(class="ui eye icon")
             div(class="ui secondary segment")
                 p TO BE DONE: fill with visualization info text
         //-  Upload Segment -//
         div(class="ui floating raised segments")
             div(class="ui segment")
-                div(class="ui green right icon big label") Upload
+                a(class="ui green right icon big label" href="/upload") Upload
                     i(class="ui upload icon")
             div(class="ui secondary segment")
                 p TO BE DONE: fill with upload info text
 
 block post_scripts
+    //- Set Active page to Home in 'navigation' sidebar -//
     script.
         $('#index_nav').addClass('active');

@@ -12,7 +12,7 @@ html
 
     body
         //-  Navigation Sidebar -//
-        div(class="ui sidebar thin vertical menu nav" onmouseover="showSidebar('nav')" onmouseleave="hideSidebar('nav')")
+        div(class="ui sidebar thin vertical menu nav")
             //-  Home -//
             a#index_nav(class="item nav" href="/")
                 i(class="ui home icon large")
@@ -37,30 +37,35 @@ html
             div(class="ui horizontal borderless large three item menu fitted")
                 //-  Navigation Sidebar Button -//
                 div(class="ui item")
-                    div(class="ui left aligned container")
-                        i(class="ui bars icon circular" onmouseover="showSidebar('nav')")
+                    div(class="ui left aligned container" style="margin-left:5px;")
+                        i(class="ui bars icon circular fitted" onclick="showSidebar('nav')")
                 block header_content
             block content
 
     block post_scripts
 
+    //- Show sidebar based on unique class(es) -//
     script.
         function showSidebar(bar) {
             $('.ui.sidebar.'+bar).sidebar('show')
         };
 
+    //- Hide sidebar based on unique class(es) -//
     script.
         function hideSidebar(bar) {
             $('.ui.sidebar.'+bar).sidebar('hide');
         };
 
+    //- Pulse image based on unique class(es) -//
     script.
         function pulseImage(cls) {
             $('.'+cls).transition('pulse');
         };
 
+    //- Enable accordion functionaliy -//
     script.
         $('.ui.accordion').accordion();
 
+    //- Set sidebar transition to 'overlay' -//
     script.
         $('.ui.sidebar').sidebar('setting', 'transition', 'overlay');

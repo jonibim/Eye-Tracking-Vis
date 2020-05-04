@@ -5,16 +5,20 @@ block styles
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
+    // d3.js
     script(src="https://d3js.org/d3.v5.min.js")
+    // framework
     script(src='scripts/visualization/main.js')
     script(src='scripts/visualization/dataset.js')
     script(src='scripts/visualization/visualization.js')
     script(src='scripts/visualization/boxmanager.js')
     script(src='scripts/visualization/box.js')
-    script(src='scripts/visualization/examplevisualization.js')
     script(src='scripts/visualization/properties.js')
-    script(src='scripts/visualization/attentionmap.js')
     script(src='scripts/visualization/styles.js')
+    script(src='scripts/visualization/registry.js')
+    // visualizations
+    script(src='scripts/visualization/examplevisualization.js')
+    script(src='scripts/visualization/attentionmap.js')
 
 block sidebars
     //-  Settings Sidebar -//

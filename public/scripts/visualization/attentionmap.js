@@ -19,11 +19,7 @@ class AttentionMap extends Visualization {
         this.canvas.setAttribute('z-index','20');
         this.box.inner.appendChild(this.canvas);
 
-        this.box.onresize.push(() => {
-
-            this.draw();
-        });
-        properties.onchange.push(() => {
+        properties.onchange.set('attentionmap', () => {
             this.updateImage();
             this.draw();
         })

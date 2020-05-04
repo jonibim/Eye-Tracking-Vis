@@ -1,29 +1,57 @@
+/**
+ * Main container for the visualization page
+ * @type {Element}
+ */
 let frame = null;
+/**
+ * @type {BoxManager}
+ */
 let boxManager = null;
+/**
+ * @type {Properties}
+ */
 let properties = null;
+/**
+ * @type {Dataset}
+ */
 let dataset = null;
+/**
+ * The element which displays the dataset name
+ * @type {Element}
+ */
 let topbar = null;
+/**
+ * @type {Registry}
+ */
+let registry = null;
 
 // initialize default visualizations
 window.onload = () => {
+
     console.log('main.js - Loading...');
 
     dataset = new Dataset();
     topbar = document.getElementById('topbar');
     dataset.onload.push(() => topbar.textContent = 'DATASET: ' + dataset.name)
     frame = document.getElementById('innerframe');
+    console.log('111');
     boxManager = new BoxManager(frame);
     properties = new Properties();
+    console.log('222');
+    registry = new Registry();
+    console.log('333');
 
-    // add example visualizations
-    let box = boxManager.addBox(0,0);
-    new ExampleVisualization(box);
-    box = boxManager.addBox(0,1);
-    new ExampleVisualization(box, 1);
-    box = boxManager.addBox(1,0);
-    new ExampleVisualization(box, 1);
+    // register visualizations
+    registry.register('example',box => new ExampleVisualization(box));
+    registry.register('attentionmap',box => new AttentionMap(box));
 
     console.log('main.js - Finished Loading')
+
+
+    console.log('main.js - Enabling visualizations...')
+    registry.enableAll();
+    console.log('main.js - Visualizations enabled')
+
 
     console.log('main.js - Requesting dataset...')
 

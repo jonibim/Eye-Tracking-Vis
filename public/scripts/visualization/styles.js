@@ -1,5 +1,5 @@
 let styles = {
-    box: "box ui segment",
+    box: "box ui raised segment",
     column: "column",
     innercolumn: "inner-column"
 };

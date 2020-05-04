@@ -14,7 +14,7 @@ class Box {
         this.div = div;
 
         this.title = document.createElement('div');
-        this.title.className = 'title';
+        this.title.className = 'ui big blue basic label';
         this.div.appendChild(this.title);
         this.inner = document.createElement('div');
         this.inner.className = 'inner-box';

@@ -64,14 +64,17 @@ class BoxManager {
         let column = box.column;
         let row = box.row;
         // remove entire column if it's empty
-        if (!this.boxes[column].length) {
+        if (this.boxes[column].length === 1) {
             this.boxes.splice(column, 1);
+            this.frame.removeChild(this.columnDivs[column]);
+            this.columnDivs.splice(column, 1);
             for (let i = column; i < this.boxes.length; i++) {
                 for (let j = 0; j < this.boxes[i].length; j++)
                     this.boxes[i][j].moved(i, j);
             }
         } else {
             this.boxes[column].splice(row, 1);
+            this.columnDivs[column].firstChild.removeChild(box.div);
             for (let i = row; i < this.boxes[column].length; i++)
                 this.boxes[column][i].moved(column, i);
         }

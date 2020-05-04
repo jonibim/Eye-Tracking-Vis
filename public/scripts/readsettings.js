@@ -24,7 +24,7 @@ function applySettings() {
             transition_graph = $(this).is(":checked");
             break;
         case "visual_attention_map":
-            visual_attention_map = $(this).is(":checked");
+            $(this).is(":checked") ? registry.enable('attentionmap') : registry.disable('attentionmap');
             break;
         };
     });
@@ -32,8 +32,8 @@ function applySettings() {
     console.log("Number of visualizations selected: " + vis_count); //Debugging Print
     //- Read Visualization Parameters -//
 
-    for (i=0; i<vis_count; i++) {
-        let box = boxManager.addBox(grid[i]);
-        new ExampleVisualization(box, 12);
-    };
+    // for (i=0; i<vis_count; i++) {
+    //     let box = boxManager.addBox(grid[i]);
+    //     new ExampleVisualization(box, 12);
+    // };
 }

@@ -44,7 +44,8 @@ class Registry {
         if (!type)
             console.error('registry.js - Could not find a visualization for tag \'' + tag + '\'!');
         if (type.enabled)
-            console.console('registry.js - Visualization \'' + tag + '\' was already enabled when trying to enable it.');
+            console.error('registry.js - Visualization \'' + tag + '\' was already enabled when trying to enable it.');
+        console.log('registry.js - Enabling \'' + tag + '\'');
         type.enable(column, row);
     }
 
@@ -55,8 +56,9 @@ class Registry {
         let type = this.getVisualizationType(tag);
         if (!type)
             console.error('registry.js - Could not find a visualization for tag \'' + tag + '\'!');
-        if (type.enabled)
-            console.console('registry.js - Visualization \'' + tag + '\' was already disabled when trying to disable it.');
+        if (!type.enabled)
+            console.error('registry.js - Visualization \'' + tag + '\' was already disabled when trying to disable it.');
+        console.log('registry.js - Disabling \'' + tag + '\'');
         type.disable();
     }
 
@@ -114,7 +116,6 @@ class VisualizationType {
      * @param {int} row
      */
     enable(column = 0, row = 0) {
-        console.log('enabling \'' + this.tag + '\'');
         let box = boxManager.createBox(column, row);
         this.instance = this.supplier(box);
         this.enabled = true;

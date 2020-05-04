@@ -3,7 +3,7 @@
  * @property {Element} div - the outer div element
  * @property {Element} title - the title element
  * @property {Element} inner - the inner div element, visualization stuff should be in here
- * @property {function(column: int, row: int)[]} onmove - listeners for when the box is moved
+ * @function onmove - listeners for when the box is moved. Parameters: column: int, row: int
  */
 class Box {
 

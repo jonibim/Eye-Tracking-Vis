@@ -1,7 +1,7 @@
 /**
  * Loads and stores a dataset
  * @property {boolean} isLoaded - whether a dataset is loaded
- * @property {function()[]} onload - listeners for when a dataset is loaded
+ * @property {function[]} onload - listeners for when a dataset is loaded
  * @property {ImageData[]} images - stores the data of all images in the dataset
  * @property name - name of the loaded dataset
  */

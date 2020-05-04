@@ -151,7 +151,12 @@ set DEBUG=myapp:* & npm start #Windows
 
 
 
+## Generating documentation
 
+The documentation is found at `out` folder at the root of the repository
 
+If you made changes to the comments, or added new documentations based on the `JSDoc` format, run the following command:
 
-
+```javascript
+yarn run jsdoc $REPOSITORY/public/scripts/visualization/
+```

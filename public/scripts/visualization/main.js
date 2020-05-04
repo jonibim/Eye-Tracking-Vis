@@ -15,14 +15,6 @@ window.onload = () => {
     boxManager = new BoxManager(frame);
     properties = new Properties();
 
-    // add example visualizations
-    let box = boxManager.addBox(0,0);
-    new ExampleVisualization(box);
-    box = boxManager.addBox(0,1);
-    new ExampleVisualization(box, 1);
-    box = boxManager.addBox(1,0);
-    new ExampleVisualization(box, 1);
-
     console.log('main.js - Finished Loading')
 
     console.log('main.js - Requesting dataset...')

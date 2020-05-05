@@ -43,7 +43,7 @@ class AOI {
 
     constructor() {
         this.hasSelection = false;
-        this.left = parseFloat(0);
+        this.left = 0;
         this.right = 0;
         this.top = 0;
         this.bottom = 0;
@@ -59,6 +59,11 @@ class AOI {
      * @param {float} bottom - bottom side of the selected area
      */
     setSelection(left, top, right, bottom){
+        if(!properties.image){ // an image must be selected first
+            console.error('properties.js - An image must be set first, before an area can be selected!');
+            return;
+        }
+
         this.hasSelection = true;
         this.left = left;
         this.right = right;

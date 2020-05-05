@@ -9,7 +9,7 @@
 class Properties {
 
     constructor() {
-        this.image = "";
+        this.image = undefined;
         this.time = 0;
         this.aoi = new AOI();
 
@@ -24,8 +24,8 @@ class Properties {
         console.log('properties.js - Setting image to ' + image);
 
         this.image = image;
-        for(let i = 0; i < this.onchange.length; i++)
-            this.onchange[i]();
+        for(let listener of this.onchange.values())
+            listener();
     }
 }
 

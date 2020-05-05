@@ -5,7 +5,7 @@ class ExampleVisualization extends Visualization {
 
     /**
      * @param {Box} box
-     * @param {int} image
+     * @param {int} [image]
      */
     constructor(box, image) {
         super(box, 'Example');

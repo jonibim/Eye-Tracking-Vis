@@ -4,7 +4,7 @@
  * @property {string} image - the image currently selected
  * @property {int} time - the time currently selected
  * @property {AOI} aoi - the selected area of interest
- * @property {Map<string,function>} onchange - property change listeners for all visualizations, registered by tag
+ * @property {Map<string,function()>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
 

@@ -34,12 +34,9 @@ window.onload = () => {
     topbar = document.getElementById('topbar');
     dataset.onload.push(() => topbar.textContent = 'DATASET: ' + dataset.name)
     frame = document.getElementById('innerframe');
-    console.log('111');
     boxManager = new BoxManager(frame);
     properties = new Properties();
-    console.log('222');
     registry = new Registry();
-    console.log('333');
 
     // register visualizations
     registry.register('example',box => new ExampleVisualization(box));

@@ -139,7 +139,7 @@ class ImageData {
                 return;
             }
         }
-        let scanPath = new ScanPath(person, color);
+        let scanPath = new ScanPath(this, person, color);
         scanPath.addPoint(timestamp, fixationIndex, fixationDuration, pointX, pointY);
         this.scanpaths.push(scanPath);
     }
@@ -164,6 +164,7 @@ class ImageData {
 
 /**
  * Stores the data for a single scan path
+ * @property {ImageData} image - the image this path belongs to
  * @property {string} person
  * @property {boolean} color
  * @property {ScanPoint[]} points - all points in this scan path
@@ -171,10 +172,12 @@ class ImageData {
 class ScanPath {
 
     /**
+     * @param {ImageData} image - the image this path belongs to
      * @param {string} person
      * @param {boolean} color
      */
-    constructor(person, color) {
+    constructor(image, person, color) {
+        this.image = image;
         this.person = person;
         this.color = color;
         this.points = [];
@@ -189,7 +192,7 @@ class ScanPath {
      * @param {float} y
      */
     addPoint(time, fixationIndex, fixationDuration, x, y) {
-        this.points.push(new ScanPoint(time, fixationIndex, fixationDuration, x, y));
+        this.points.push(new ScanPoint(this, time, fixationIndex, fixationDuration, x, y));
     }
 
     /**
@@ -217,6 +220,7 @@ class ScanPath {
 
 /**
  * Stores a single point
+ * @property {ScanPath} path - the scan path this points belongs to
  * @property {int} time
  * @property {int} fixationIndex
  * @property {int} fixationDuration
@@ -226,13 +230,15 @@ class ScanPath {
 class ScanPoint {
 
     /**
+     * @param {ScanPath} path - the scan path this points belongs to
      * @param {int} time
      * @param {int} fixationIndex
      * @param {int} fixationDuration
      * @param {float} x
      * @param {float} y
      */
-    constructor(time, fixationIndex, fixationDuration, x, y) {
+    constructor(path, time, fixationIndex, fixationDuration, x, y) {
+        this.path = path;
         this.time = time;
         this.fixationIndex = fixationIndex;
         this.fixationDuration = fixationDuration;

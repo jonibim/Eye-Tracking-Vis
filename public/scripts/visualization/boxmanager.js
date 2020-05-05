@@ -49,6 +49,8 @@ class BoxManager {
             row = this.boxes[column].length;
 
         this.boxes[column].splice(row, 0, box);
+        if(this.boxes[column].length > this.rows)
+            this.rows = this.boxes[column].length;
         this.moveBoxDiv(box,column,row);
         box.moved(column, row);
         for (let i = row + 1; i < this.boxes[column].length; i++)

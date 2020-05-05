@@ -19,15 +19,16 @@
     height: 100%;
     overflow: hidden;
 
-    display: flex;
-    flex-flow: row;
+    display: grid;
 }
 
 .column {
     border: none;
     margin: 0;
     overflow: hidden;
-    flex-grow: 1;
+
+    grid-row-start: 1;
+    grid-row-end: 2;
 }
 
 .column .inner-column {
@@ -39,8 +40,7 @@
     padding: 10px;
 
     overflow: auto;
-    display: flex;
-    flex-flow: column;
+    display: grid;
 }
 
 .box {
@@ -48,7 +48,6 @@
     border-radius: 5px;
     margin: 0;
     overflow: hidden;
-    flex-grow: 1;
 
     display: flex;
     flex-flow: column;

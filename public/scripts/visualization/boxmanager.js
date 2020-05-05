@@ -74,11 +74,20 @@ class BoxManager {
                 for (let j = 0; j < this.boxes[i].length; j++)
                     this.boxes[i][j].moved(i, j);
             }
+            this.columns--;
+            if(!this.boxes.length)
+                this.rows = 0;
         } else {
             this.boxes[column].splice(row, 1);
             this.columnDivs[column].firstChild.removeChild(box.div);
             for (let i = row; i < this.boxes[column].length; i++)
                 this.boxes[column][i].moved(column, i);
+            // update row count
+            this.rows = 0;
+            for(let i = 0; i < this.boxes.length; i++){
+                if(this.boxes[i].length > this.rows)
+                    this.rows = this.boxes[i].length;
+            }
         }
     }
 

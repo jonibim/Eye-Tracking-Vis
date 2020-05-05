@@ -118,7 +118,7 @@ class VisualizationType {
      * @param {int} column
      * @param {int} row
      */
-    enable(column = 0, row = 0) {
+    enable(column = boxManager.rows >= 2 ? 1 : 0, row = 0) {
         let box = boxManager.createBox(column, row);
         this.instance = this.supplier(box);
         this.enabled = true;

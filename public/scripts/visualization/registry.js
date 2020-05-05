@@ -19,7 +19,6 @@ class Registry {
             console.error('registry.js - A visualization with tag \'' + tag + '\' has already been registered!');
         // add the visualization
         this.map.set(tag, new VisualizationType(tag, supplier));
-        console.log(this.map);
     }
 
     /**

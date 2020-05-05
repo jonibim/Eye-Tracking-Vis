@@ -20,6 +20,7 @@ block pre_scripts
     // visualizations
     script(src='scripts/visualization/examplevisualization.js')
     script(src='scripts/visualization/attentionmap.js')
+    script(src='scripts/visualization/editor.js')
 
 block sidebars
     //-  Settings Sidebar -//
@@ -56,6 +57,12 @@ block sidebars
                                     div(class="ui toggle checked checkbox")
                                         input(type="checkbox" id="visual_attention_map" class="settings visualization_type" checked="")
                                         label(for="visual_attention_map") Visual Attention Map
+                                div(class="ui fitted divider")
+                                //- Editor -//
+                                div(class="field")
+                                    div(class="ui toggle checked checkbox")
+                                        input(type="checkbox" id="editor" class="settings visualization_type" checked="")
+                                        label(for="editor") Editor
         div(class="item")
             div(class="ui styled accordion")
                         div(class="title")

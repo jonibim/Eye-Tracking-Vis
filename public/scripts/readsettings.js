@@ -3,6 +3,7 @@ let eye_cloud = true;
 let gaze_stripes = true;
 let transition_graph = true;
 let visual_attention_map = true;
+let editor = true;
 let grid = [[0,0], [0,1], [1,0], [1,1]];
 
 function applySettings() {
@@ -25,6 +26,9 @@ function applySettings() {
             break;
         case "visual_attention_map":
             $(this).is(":checked") ? registry.enable('attentionmap') : registry.disable('attentionmap');
+            break;
+        case "editor":
+            $(this).is(":checked") ? registry.enable('editor') : registry.disable('editor');
             break;
         };
     });

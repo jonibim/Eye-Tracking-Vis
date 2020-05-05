@@ -45,8 +45,10 @@ class Registry {
             console.error('registry.js - Could not find a visualization for tag \'' + tag + '\'!');
         if (type.enabled)
             console.error('registry.js - Visualization \'' + tag + '\' was already enabled when trying to enable it.');
-        console.log('registry.js - Enabling \'' + tag + '\'');
-        type.enable(column, row);
+        else{
+            console.log('registry.js - Enabling \'' + tag + '\'');
+            type.enable(column, row);
+        }
     }
 
     /**
@@ -58,8 +60,10 @@ class Registry {
             console.error('registry.js - Could not find a visualization for tag \'' + tag + '\'!');
         if (!type.enabled)
             console.error('registry.js - Visualization \'' + tag + '\' was already disabled when trying to disable it.');
+        else{
         console.log('registry.js - Disabling \'' + tag + '\'');
         type.disable();
+        }
     }
 
     /**

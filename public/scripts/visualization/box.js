@@ -14,10 +14,10 @@ class Box {
         this.div = div;
 
         this.title = document.createElement('div');
-        this.title.className = 'ui big blue basic label';
+        this.title.className = styles.title;
         this.div.appendChild(this.title);
         this.inner = document.createElement('div');
-        this.inner.className = 'inner-box';
+        this.inner.className = styles.innerbox;
         this.div.appendChild(this.inner);
 
         this.onmove = [];

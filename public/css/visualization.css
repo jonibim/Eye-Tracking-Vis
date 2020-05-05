@@ -26,7 +26,7 @@
 .column {
     border: none;
     margin: 0;
-    overflow: auto;
+    overflow: hidden;
     flex-grow: 1;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .box {
-    border: solid #00c0ef;
+    /*border: solid #00c0ef;*/
     border-radius: 5px;
     margin: 0;
     overflow: hidden;

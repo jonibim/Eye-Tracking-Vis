@@ -39,29 +39,30 @@ block sidebars
                                 //- Eye Cloud -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="eye_cloud" class="settings visualization_type" checked="")
-                                        label(for="eye_cloud") Eye Cloud
+                                        input(type="checkbox" id="eyecloud" class="settings visualization_type" checked="")
+                                        label(for="eyecloud") Eye Cloud
                                 //- Gaze Strips -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="gaze_stripes" class="settings visualization_type" checked="")
-                                        label(for="gaze_stripes") Gaze Stripes
+                                        input(type="checkbox" id="gazestripes" class="settings visualization_type" checked="")
+                                        label(for="gazestripes") Gaze Stripes
                                 //- Transition Graph -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="transition_graph" class="settings visualization_type" checked="")
-                                        label(for="transition_graph") Transition Graph
+                                        input(type="checkbox" id="transitiongraph" class="settings visualization_type" checked="")
+                                        label(for="transitiongraph") Transition Graph
                                 //- Visual Attention Map -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="visual_attention_map" class="settings visualization_type" checked="" onchange="switchVis(this.checked,'attentionmap')")
-                                        label(for="visual_attention_map") Visual Attention Map
+                                        input(type="checkbox" id="attentionmap" class="settings visualization_type" checked="")
+                                        label(for="attentionmap") Visual Attention Map
                                 div(class="ui fitted divider")
                                 //- Editor -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="editor" class="settings visualization_type" checked="" onchange="switchVis(this.checked,'editor')")
+                                        input(type="checkbox" id="editor" class="settings visualization_type" checked="")
                                         label(for="editor") Editor
+        //- Image Selection -//
         div(class="item")
             div(class="ui styled accordion")
                         div(class="title")
@@ -69,10 +70,12 @@ block sidebars
                             label Image:
                         div(class="ui form content")
                             div(class="ui fluid search selection dropdown")
+                                //- Default image (should also be changed in main.js and visualization.js) -//
                                 -var default_image = "01_Antwerpen_S1.jpg"
                                 div(class="default text") #{default_image}
                                 i(class="ui dropdown icon")
                                 div(class="menu")
+                                    //- Add all filenames to the dropdown; text: filename, data-value:tags[filename]//
                                     for image in images
                                         div(class="item fitted image-selector" data-value=tags[image]) #{image}
                                     else
@@ -95,7 +98,7 @@ block sidebars
             div(class="field")
                 div(class="ui green basic button" onclick="applySettings()") Apply Settings
                 div(class="ui checkbox")
-                    input#auto_apply(type="checkbox" name="auto_apply_settings")
+                    input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
                     label Apply On Change
 
 
@@ -136,10 +139,33 @@ block post_scripts
             hideSidebar('settings');
         };
 
+    //- Auto Apply Behavior -//
+    script.
+        function settingChanged() {
+            if ($('input#auto_apply[type="checkbox"]').is(":checked")) {
+                applySettings();
+            };
+        };
+
+    //- Detect checkbox update -//
+    script.
+        $('input.settings')
+            .click(function() {
+                checkboxChanged(this.id);
+                settingChanged();
+            });    
+
     //- Set Dropdown Function -//
     script.
-        $('.dropdown')
-            .dropdown({onChange: function(value) {selectImage(value);}, fullTextSearch: 'exact', match: 'both'});
+        $('.dropdown.search.selection')
+            .dropdown({
+                fullTextSearch: 'exact', 
+                match: 'both',
+                onChange: function(value,text) {
+                    selectImage(text);
+                    settingChanged();
+                }
+            });
 
     //- Image Preview on Dropdown -//
     script.

@@ -6,15 +6,16 @@ let images = fs.readdirSync(imagePath);
 let tags = {};
 
 images.sort();
-for (image in images) {
+for (image of images) {
 	let tag = "";
-	if (images[image][2] == 'b') {
+	if (image[2] === 'b') {
 		tag += "grey;gray;";
 	} else {
 		tag += "color;colour;";
 	}
-	console.log(images[image], tag)
-	tags[images[image]] = tag
+	tag += image.replace(/\u00f6/g, "o").replace(/\u00fc/g, "u")
+	console.log(image, tag)
+	tags[image] = tag
 };
 
 // Send visualization page.

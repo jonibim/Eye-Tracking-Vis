@@ -1,10 +1,22 @@
-let selected_image = "01_Antwerpen_S1.jpg"
+let selected_image = "01_Antwerpen_S1.jpg";
+let visualizations = {};
 
-switchVis = (enabled, tag) => {
-    enabled ? registry.enable(tag) : registry.disable(tag);
+
+function applySettings() {
+    //- Apply visualization type changes -//
+    for ([key, value] of Object.entries(visualizations)) {value ? registry.enable(key) : registry.disable(key);}
+    //- Reset visualization type changes -//
+    visualizations = {};
+    
+    properties.setImage(selected_image);
 }
 
-//- Read Image Selector -//
+//- Read image selector -//
 function selectImage(value) {
-    properties.setImage(value);
+    selected_image = value;
+}
+
+//- Read checkbox changes -//
+function checkboxChanged(id) {
+    visualizations[id] = document.getElementById(id).checked;
 }

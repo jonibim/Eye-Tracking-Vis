@@ -39,7 +39,6 @@ window.onload = () => {
     registry = new Registry();
 
     // register visualizations
-    registry.register('example',box => new ExampleVisualization(box));
     registry.register('attentionmap',box => new AttentionMap(box));
     registry.register('editor',box => new Editor(box));
     console.log('main.js - Finished Loading')

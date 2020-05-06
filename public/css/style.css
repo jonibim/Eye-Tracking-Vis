@@ -42,6 +42,14 @@ body.pushable {
     padding-right: 5px !important; 
 }
 
+.small-padding {
+    padding:3px !important;
+}
+
+.vertical-centered {
+    vertical-align: middle !important;
+}
+
 a.label:hover{
     text-decoration: none;
 }

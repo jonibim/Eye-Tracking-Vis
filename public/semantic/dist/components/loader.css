@@ -292,7 +292,7 @@
 .ui.primary.loading.loading.loading.loading .input > i.icon:after,
 .ui.primary.loading.loading.loading.loading > i.icon:after,
 .ui.primary.loader.loader.loader:after {
-  color: #FF7300;
+  color: #0291DE;
 }
 .ui.inverted.primary.elastic.loader:before,
 .ui.inverted.primary.elastic.loading.loading.loading:not(.segment):before,

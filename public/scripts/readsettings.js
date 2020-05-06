@@ -5,6 +5,7 @@ let transition_graph = true;
 let visual_attention_map = true;
 let editor = true;
 let grid = [[0,0], [0,1], [1,0], [1,1]];
+let selected_image = "01_Antwerpen_S1.jpg"
 
 function applySettings() {
     vis_count = 0;
@@ -33,11 +34,26 @@ function applySettings() {
         };
     });
 
+    //- Handle Selected Image -//
+    properties.setImage(selected_image)
+
     console.log("Number of visualizations selected: " + vis_count); //Debugging Print
-    //- Read Visualization Parameters -//
+    
+
+
 
     // for (i=0; i<vis_count; i++) {
     //     let box = boxManager.addBox(grid[i]);
     //     new ExampleVisualization(box, 12);
     // };
+}
+
+//- Read Image Selector -//
+function selectImage(value) {
+    if (selected_image != value) {
+        selected_image = value;
+        console.log(value);
+    } else {
+        console.log("Image did not change....");
+    }
 }

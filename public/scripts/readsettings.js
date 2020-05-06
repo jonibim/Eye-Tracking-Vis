@@ -6,10 +6,5 @@ switchVis = (enabled, tag) => {
 
 //- Read Image Selector -//
 function selectImage(value) {
-    if (selected_image != value) {
-        selected_image = value;
-        console.log(value);
-    } else {
-        console.log("Image did not change....");
-    }
+    properties.setImage(value);
 }

@@ -21,6 +21,9 @@ class Properties {
      * @param {string} image
      */
     setImage(image){
+        if(this.image === image)
+            return;
+
         console.log('properties.js - Setting image to ' + image);
 
         this.image = image;

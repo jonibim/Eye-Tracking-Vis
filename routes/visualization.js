@@ -4,6 +4,12 @@ const fs = require("fs");
 const imagePath = __dirname + '/../public/testdataset/images';
 let images = fs.readdirSync(imagePath);
 let tags = {};
+var tagMap = {
+   \u00f6:"o",
+   \u00fc:"u",
+   \u00e4:"a",
+   	_:" "
+};
 
 images.sort();
 for (image of images) {
@@ -13,7 +19,9 @@ for (image of images) {
 	} else {
 		tag += "color;colour;";
 	}
-	tag += image.replace(/\u00f6/g, "o").replace(/\u00fc/g, "u")
+	tag += image.replace(/\u00f6|\u00fc|\u00fc|_/gi, function(char){
+	  		return tagMap[char];
+		})
 	console.log(image, tag)
 	tags[image] = tag
 };

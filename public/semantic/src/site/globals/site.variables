@@ -2,10 +2,11 @@
      User Global Variables
 *******************************/
 
-@primaryColor   : @orange;
+@primaryColor   : @lightblue;
 @red            : #FF2828;
 @orange			: #FF7300;
 @green          : #06A600;
 @cyan			: #00FFFF;
 @teal           : #008080;
 @blue           : #036BFC;
+@lightblue		: #0291DE;

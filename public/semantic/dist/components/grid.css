@@ -1332,7 +1332,7 @@
 .ui.grid > .primary.row,
 .ui.grid > .primary.column,
 .ui.grid > .row > .primary.column {
-  background-color: #FF7300;
+  background-color: #0291DE;
   color: #FFFFFF;
 }
 .ui.grid > .secondary.row,

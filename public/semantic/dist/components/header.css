@@ -347,13 +347,13 @@ h6.ui.header .sub.header {
 --------------------*/
 
 .ui.primary.header {
-  color: #FF7300;
+  color: #0291DE;
 }
 a.ui.primary.header:hover {
-  color: #e66800;
+  color: #0081c7;
 }
 .ui.primary.dividing.header {
-  border-bottom: 2px solid #FF7300;
+  border-bottom: 2px solid #0291DE;
 }
 .ui.inverted.primary.header.header.header {
   color: #54C8FF;

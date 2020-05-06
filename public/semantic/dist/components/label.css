@@ -628,36 +628,36 @@ a.ui.basic.label:hover {
 
 .ui.primary.labels .label,
 .ui.ui.ui.primary.label {
-  background-color: #FF7300;
-  border-color: #FF7300;
+  background-color: #0291DE;
+  border-color: #0291DE;
   color: rgba(255, 255, 255, 0.9);
 }
 
 /* Link */
 .ui.primary.labels a.label:hover,
 a.ui.ui.ui.primary.label:hover {
-  background-color: #e66800;
-  border-color: #e66800;
+  background-color: #0081c7;
+  border-color: #0081c7;
   color: #FFFFFF;
 }
 
 /* Ribbon */
 .ui.ui.ui.primary.ribbon.label {
-  border-color: #cc5c00;
+  border-color: #0270ab;
 }
 
 /* Basic */
 .ui.basic.labels .primary.label,
 .ui.ui.ui.basic.primary.label {
   background: none #FFFFFF;
-  border-color: #FF7300;
-  color: #FF7300;
+  border-color: #0291DE;
+  color: #0291DE;
 }
 .ui.basic.labels a.primary.label:hover,
 a.ui.ui.ui.basic.primary.label:hover {
   background: none #FFFFFF;
-  border-color: #e66800;
-  color: #e66800;
+  border-color: #0081c7;
+  color: #0081c7;
 }
 
 /* Inverted */

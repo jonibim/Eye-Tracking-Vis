@@ -46,7 +46,7 @@ block sidebars
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
                                         input(type="checkbox" id="gaze_stripes" class="settings visualization_type" checked="")
-                                        label(for="gaze_strips") Gaze Stripes
+                                        label(for="gaze_stripes") Gaze Stripes
                                 //- Transition Graph -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
@@ -55,13 +55,13 @@ block sidebars
                                 //- Visual Attention Map -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="visual_attention_map" class="settings visualization_type" checked="")
+                                        input(type="checkbox" id="visual_attention_map" class="settings visualization_type" checked="" onchange="switchVis(this.checked,'attentionmap')")
                                         label(for="visual_attention_map") Visual Attention Map
                                 div(class="ui fitted divider")
                                 //- Editor -//
                                 div(class="field")
                                     div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="editor" class="settings visualization_type" checked="")
+                                        input(type="checkbox" id="editor" class="settings visualization_type" checked="" onchange="switchVis(this.checked,'editor')")
                                         label(for="editor") Editor
         div(class="item")
             div(class="ui styled accordion")
@@ -136,14 +136,6 @@ block post_scripts
             //- Close Settings -//
             hideSidebar('settings');
         };
-
-    //- Auto Apply Behavior -//
-    script.
-        $('input.settings').click(function() {
-            if ($('input#auto_apply[type="checkbox"]').is(":checked")) {
-                $('input.settings').click(applySettings());
-            };
-        });    
 
     //- Prevent 'settings' sidebar from dimming the page -//
     script.

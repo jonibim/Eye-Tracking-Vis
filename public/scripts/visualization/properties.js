@@ -2,6 +2,7 @@
  * stores the current settings, such time and image of the data
  * all visualizations should use these settings to sync between them
  * @property {string} image - the image currently selected
+ * @property {int} rgba - the color currently selected
  * @property {int} time - the time currently selected
  * @property {AOI} aoi - the selected area of interest
  * @property {Map<string,function()>} onchange - property change listeners for all visualizations, registered by tag
@@ -87,6 +88,7 @@ class AOI {
         this.left = left;
         this.right = right;
         this.top = top;
+        this.bottom = bottom;
 
         this.points = [];
         const imageData = dataset.getImageData(properties.image);
@@ -96,6 +98,8 @@ class AOI {
                     this.points.push(point);
             }
         }
+        if(!this.points.length)
+            this.hasSelection = false;
     }
 
     /**

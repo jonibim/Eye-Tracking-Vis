@@ -92,7 +92,7 @@ class AttentionMap extends Visualization {
             context.drawImage(this.img, this.left, this.top, this.width, this.height);
         }
 
-        // draw circles where people where looking
+        // draw the color overlay onto the canvas
         context.drawImage(this.colorOverlay, this.left, this.top, this.width, this.height);
 
         // draw selection
@@ -109,9 +109,10 @@ class AttentionMap extends Visualization {
      * Gets the attention per pixel of the image
      */
     gatherColorRaster() {
-        this.raster = {};
-        this.highestIndex = 0;
+        let raster = {};
+        let highestIndex = 0;
 
+        // get current image data
         const imageData = dataset.getImageData(properties.image);
         const scanPaths = imageData.getScanPaths();
 
@@ -122,15 +123,18 @@ class AttentionMap extends Visualization {
                 for (let x = -radius; x <= radius; x++) {
                     for (let y = -radius; y <= radius; y++) {
                         if (x * x + y * y <= radius * radius) {
+                            // the key is the position
                             let key = Math.floor(point.x / this.img.naturalWidth * this.width + x) + ':' + Math.floor(point.y / this.img.naturalHeight * this.height + y);
+                            // index will be how important this pixel is
                             let index = Math.pow(radius - Math.sqrt(x * x + y * y), 1 / 500);
-                            if (this.raster[key])
-                                this.raster[key] += index;
+                            if (raster[key])
+                                raster[key] += index;
                             else
-                                this.raster[key] = index;
+                                raster[key] = index;
 
-                            if (this.raster[key] > this.highestIndex)
-                                this.highestIndex = this.raster[key];
+                            // keep track of the highest value
+                            if (raster[key] > highestIndex)
+                                highestIndex = raster[key];
                         }
                     }
                 }
@@ -139,16 +143,16 @@ class AttentionMap extends Visualization {
 
         // draw to color overlay
         const context = this.colorOverlay.getContext('2d');
-        let total = 0;
-        let count = 0;
-        for (let key in this.raster) {
+        for (let key in raster) {
             let x = parseInt(key.substring(0, key.indexOf(':')));
             let y = parseInt(key.substring(key.indexOf(':') + 1));
 
             let color = properties.rgba;
             let colorInverted = [255 - color[0], 255 - color[1], 255 - color[2], 1 - color[3]];
-            let index = Math.sin(this.raster[key] / this.highestIndex * Math.PI / 2);
+
+            let index = Math.sin(raster[key] / highestIndex * Math.PI / 2);
             let inverted = 1 - index;
+
             let red = index * color[0] + inverted * colorInverted[0];
             let green = index * color[1] + inverted * colorInverted[1];
             let blue = index * color[2] + inverted * colorInverted[2];
@@ -158,9 +162,6 @@ class AttentionMap extends Visualization {
             else
                 context.fillStyle = 'rgba(' + index + ',' + index + ',' + index + ',' + (index / 255 * 0.6 + 0.1) + ')';
             context.fillRect(x, y, 1, 1);
-
-            total += this.raster[key];
-            count++;
         }
     }
 

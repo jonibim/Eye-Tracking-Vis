@@ -1,17 +1,15 @@
 //****************** Set default values ******************//
-let red = 255;
-let green = 0, blue = green;
-let alpha = 0.8;
+let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 0.8}
 
 //****************** Define Settings Functions ******************//
 
 selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
 
 //- Initialize State of RGBA sliders -//
-readSlidersRGBA('r', red);
-readSlidersRGBA('g', green);
-readSlidersRGBA('b', blue);
-readSlidersRGBA('a', alpha);
+for ([x, y] of Object.entries(RGBA)) {
+    readSlidersRGBA(x, y);
+}
+
 
 //- Auto Apply Behavior -//
 function settingChanged() {
@@ -52,22 +50,25 @@ $('.image-selector').on('mouseenter', function(evt){
 });
 
 //- RGB Slider initialization -//
-$('.ui.slider').slider({
-    min: 0,
-    max: 255,
-    start: 127,
-    step: 1,
-    onChange: function(value) {
-        readSlidersRGBA(this.id, value)
-        settingChanged()
-    }
+$('.ui.slider').each(function() {
+    $('#'+this.id).slider({
+        min: 0,
+        max: 255,
+        start: RGBA[this.id],
+        step: 1,
+        onChange: function(value) {
+            readSlidersRGBA(this.id, value)
+            settingChanged()
+        }
+    });
 });
+
 
 //- Alpha Slider initialization -//
 $('.alpha.ui.slider').slider({
     min: 0.1,
     max: 1,
-    start: 0.8,
+    start: RGBA['a'],
     step: 0.01,
     onChange: function(value) {
         readSlidersRGBA(this.id, value)

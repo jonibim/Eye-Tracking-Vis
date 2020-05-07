@@ -57,7 +57,7 @@ class Properties {
  * @property {float} right - right side of the selected area
  * @property {float} bottom - bottom side of the selected area
  * @property {ScanPoint[]} points - all points in the selected area
- * @property {Map<string,function>} onchange - area of interest change listeners for all visualizations, registered by tag
+ * @property {Map<string,function()>} onchange - area of interest change listeners for all visualizations, registered by tag
  */
 class AOI {
 
@@ -100,6 +100,9 @@ class AOI {
         }
         if(!this.points.length)
             this.hasSelection = false;
+
+        for(let listener of this.onchange.values())
+            listener();
     }
 
     /**
@@ -108,6 +111,9 @@ class AOI {
     clearSelection(){
         this.hasSelection = false;
         this.points = [];
+
+        for(let listener of this.onchange.values())
+            listener();
     }
 
 }

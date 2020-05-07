@@ -16,7 +16,6 @@ block pre_scripts
     script(src='scripts/visualization/properties.js')
     script(src='scripts/visualization/styles.js')
     script(src='scripts/visualization/registry.js')
-    script(src='scripts/visualization/readsettings.js')
     // visualizations
     script(src='scripts/visualization/examplevisualization.js')
     script(src='scripts/visualization/attentionmap.js')
@@ -80,23 +79,28 @@ block sidebars
                                         div(class="item fitted image-selector" data-value=tags[image]) #{image}
                                     else
                                         div(class="item") No images were found
-        //- RGB -//
+        //- RGBA -//
         div(class="item")
             div(class="ui styled accordion")
                         div(class="inline title")
                             i(class="ui dropdown icon")
                             label Color: 
+                            //- Color Preview Icon -//
                             i(class="ui inverted circular eye dropper icon color-preview")
                         div(class="ui form content")
+                            //- Red Slider -//
                             div(class="ui inline fields")
                                 div(class="ui inverted label r-color-preview") R
                                 div(class="ui slider r small-padding" id="r")
+                            //- Green Slider -//
                             div(class="ui inline fields")
                                 div(class="ui inverted label g-color-preview") G
                                 div(class="ui slider g small-padding" id="g")
+                            //- Blue Slider -//
                             div(class="ui inline fields")
                                 div(class="ui inverted label b-color-preview") B
                                 div(class="ui slider b small-padding" id="b")
+                            //- Alpha Slider -//
                             div(class="ui inline fields")
                                 div(class="ui inverted label a-color-preview") A
                                 div(class="ui slider small-padding alpha" id="a")
@@ -108,6 +112,8 @@ block sidebars
                             i(class="ui dropdown icon")
                         div(class="content")
                             p Settings are not implemented yet
+
+
         //- Apply Settings & Auto Apply -//
         div(class="ui basic center aligned fitted segment")
             div(class="field")
@@ -136,6 +142,7 @@ block content
             div#innerframe(class='inner-frame')
 
 block post_scripts
+    //- Settings Sidebar behaviors -//
     script.
         function openSettings() {
             $('#settings_toggle')
@@ -145,7 +152,6 @@ block post_scripts
             showSidebar('settings');
         };
 
-    script.
         function closeSettings() {
             $('#settings_toggle')
                 //- Unhide Icon -//
@@ -154,51 +160,12 @@ block post_scripts
             hideSidebar('settings');
         };
 
-    //- Auto Apply Behavior -//
-    script.
-        function settingChanged() {
-            if ($('input#auto_apply[type="checkbox"]').is(":checked")) {
-                applySettings();
-            };
-        };
-
-    //- Detect checkbox update -//
-    script.
-        $('input.settings')
-            .click(function() {
-                checkboxChanged(this.id);
-                settingChanged();
-            });    
-
-    //- Set Dropdown Function -//
-    script.
-        $('.dropdown.search.selection')
-            .dropdown({
-                fullTextSearch: 'exact', 
-                match: 'both',
-                onChange: function(value,text) {
-                    selectImage(text);
-                    settingChanged();
-                }
-            });
-
-    //- Image Preview on Dropdown -//
-    script.
-        $('.image-selector').on('mouseenter', function(evt){
-            $('.preview').show();
-            $('.inner-frame').hide();
-            $('#preview-image').attr("src", "/testdataset/images/" + this.innerHTML);
-            $(this).on('mouseleave', function(){
-                $('.preview').hide();
-                $('.inner-frame').show();
-            });
-        });
-
-    script(src="scripts/visualization/initiatesettings.js")
-
-    //- Prevent 'settings' sidebar from dimming the page -//
-    script.
+        //- Prevent 'settings' sidebar from dimming the page -//
         $('.ui.sidebar.settings').sidebar({dimPage: false, closable: false})
+
+    //- Load settings scripts -//
+    script(src='scripts/visualization/readsettings.js')
+    script(src="scripts/visualization/initiatesettings.js")
 
     //- Set Active page to Visualization in 'navigation' sidebar -//
     script.

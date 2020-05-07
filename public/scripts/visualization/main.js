@@ -56,7 +56,7 @@ window.onload = () => {
     data.then(data => data.text()).then(data => {
         dataset.importData(data);
 
-        properties.setImage(dataset.getImages()[0]);
+        applySettings();
 
         console.log('main.js - Dataset loaded')
     });

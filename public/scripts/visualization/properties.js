@@ -10,6 +10,7 @@ class Properties {
 
     constructor() {
         this.image = undefined;
+        this.rgba = undefined;
         this.time = 0;
         this.aoi = new AOI();
 
@@ -27,6 +28,21 @@ class Properties {
         console.log('properties.js - Setting image to ' + image);
 
         this.image = image;
+        for(let listener of this.onchange.values())
+            listener();
+    }
+
+    /**
+     * Sets the current color
+     * @param {array} color
+     */
+    setColor(rgba){
+        if(this.rgba === rgba)
+            return;
+
+        console.log('properties.js - Setting color to (' + rgba +')');
+
+        this.rgba = rgba;
         for(let listener of this.onchange.values())
             listener();
     }

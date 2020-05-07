@@ -1,6 +1,54 @@
+//****************** Set default values ******************//
 let red = green = blue = 127;
 let alpha = 0.8;
 
+//****************** Define Settings Functions ******************//
+
+//- Initialize State of RGBA sliders -//
+readSlidersRGBA('r', red);
+readSlidersRGBA('g', green);
+readSlidersRGBA('b', blue);
+readSlidersRGBA('a', alpha);
+
+//- Auto Apply Behavior -//
+function settingChanged() {
+    if ($('input#auto_apply[type="checkbox"]').is(":checked")) {
+        applySettings()
+    };
+};
+
+//****************** Set Element Behaviors/States ******************//
+
+//- Detect checkbox update -//
+$('input.settings')
+    .click(function() {
+        checkboxChanged(this.id);
+        settingChanged();
+    });    
+
+//- Set Dropdown Function -//
+$('.dropdown.search.selection')
+    .dropdown({
+        fullTextSearch: 'exact', 
+        match: 'both',
+        onChange: function(value,text) {
+            selectImage(text);
+            settingChanged();
+        }
+    });
+
+//- Image Preview on Dropdown -//
+$('.image-selector').on('mouseenter', function(evt){
+    $('.preview').show();
+    $('.inner-frame').hide();
+    $('#preview-image').attr("src", "/testdataset/images/" + this.innerHTML);
+    $(this).on('mouseleave', function(){
+        $('.preview').hide();
+        $('.inner-frame').show();
+    });
+});
+
+//- RGB Slider initialization -//
 $('.ui.slider').slider({
     min: 0,
     max: 255,
@@ -8,9 +56,11 @@ $('.ui.slider').slider({
     step: 1,
     onChange: function(value) {
         readSlidersRGBA(this.id, value)
+        settingChanged()
     }
 });
 
+//- Alpha Slider initialization -//
 $('.alpha.ui.slider').slider({
     min: 0.1,
     max: 1,
@@ -18,42 +68,6 @@ $('.alpha.ui.slider').slider({
     step: 0.01,
     onChange: function(value) {
         readSlidersRGBA(this.id, value)
+        settingChanged()
     }
 });
-
-function readSlidersRGBA(id, value) {
-    switch (id) {
-        case 'r':
-            red = value;
-            $('.r-color-preview').css({"background-color":'rgba(' + red + ',' + 0 + ',' + 0 + ',' + 1 + ')'});
-            break;
-        case 'g':
-            green = value;
-            $('.g-color-preview').css({"background-color":'rgba(' + 0 + ',' + green + ',' + 0 + ',' + 1 + ')'});
-            break;
-        case 'b':
-            blue = value;
-            $('.b-color-preview').css({"background-color":'rgba(' + 0 + ',' + 0 + ',' + blue + ',' + 1 + ')'});
-            break;
-        case 'a':
-            alpha = value;
-            $('.a-color-preview').css({"background-color":'rgba(' + 0 + ',' + 0 + ',' + 0 + ',' + alpha + ')'});
-            break;
-    }
-    $('.color-preview').css({"background-color":'rgba(' + red + ',' + green + ',' + blue + ',' + alpha +')'})
-    if ((((red+green+blue)*(alpha) > 400)) || (((red+green+blue)*(1-alpha) > 400))) {
-        $('.color-preview').removeClass("inverted");
-    } else {
-        $('.color-preview').addClass("inverted");
-    }
-    console.log('rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')');
-}
-
-readSlidersRGBA('r', red);
-readSlidersRGBA('g', green);
-readSlidersRGBA('b', blue);
-readSlidersRGBA('a', alpha);
-
-function getRGBA() {
-    return red, green, blue, alpha
-}

@@ -1,5 +1,6 @@
 //****************** Set default values ******************//
-let red = green = blue = 127;
+let red = 255;
+let green = 0, blue = green;
 let alpha = 0.8;
 
 //****************** Define Settings Functions ******************//

@@ -4,6 +4,8 @@ let alpha = 0.8;
 
 //****************** Define Settings Functions ******************//
 
+selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
+
 //- Initialize State of RGBA sliders -//
 readSlidersRGBA('r', red);
 readSlidersRGBA('g', green);

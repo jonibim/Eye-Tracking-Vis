@@ -1,4 +1,4 @@
-let selected_image = "01_Antwerpen_S1.jpg";
+let selected_image = "";
 let visualizations = {};
 
 function applySettings() {

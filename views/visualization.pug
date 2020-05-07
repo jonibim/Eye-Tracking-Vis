@@ -62,19 +62,22 @@ block sidebars
                                         input(type="checkbox" id="editor" class="settings visualization_type" checked="")
                                         label(for="editor") Editor
         //- Image Selection -//
+        //- Default image setDefaultImageHere -//
+        -var default_image = "01b_Antwerpen_S2.jpg"
+        script.let image = "#{default_image}";
+
         div(class="item")
             div(class="ui styled accordion")
                         div(class="title")
                             i(class="ui dropdown icon")
                             label Image:
                         div(class="ui form content")
+                            //- Dropdown selection menu -//
                             div(class="ui fluid search selection dropdown")
-                                //- Default image (should also be changed in main.js and visualization.js) -//
-                                -var default_image = "01_Antwerpen_S1.jpg"
                                 div(class="default text") #{default_image}
                                 i(class="ui dropdown icon")
                                 div(class="menu")
-                                    //- Add all filenames to the dropdown; text: filename, data-value:tags[filename]//
+                                    //- Add all filenames to the dropdown; text: filename, data-value:tags[filename] -//
                                     for image in images
                                         div(class="item fitted image-selector" data-value=tags[image]) #{image}
                                     else

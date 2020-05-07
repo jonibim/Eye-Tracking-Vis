@@ -88,6 +88,7 @@ class AOI {
         this.left = left;
         this.right = right;
         this.top = top;
+        this.bottom = bottom;
 
         this.points = [];
         const imageData = dataset.getImageData(properties.image);
@@ -97,6 +98,8 @@ class AOI {
                     this.points.push(point);
             }
         }
+        if(!this.points.length)
+            this.hasSelection = false;
     }
 
     /**

@@ -16,8 +16,9 @@ class AttentionMap extends Visualization {
         this.selectionHeight = false;
 
         // create an image element just to load the image from the server
-        this.img = document.createElement('img');
+        this.img = new Image();
         this.img.onload = () => {
+            this.ratio = 0;
             this.draw();
         }
 
@@ -46,12 +47,10 @@ class AttentionMap extends Visualization {
         // redraw when selected image changes
         properties.onchange.set('attentionmap', () => {
             this.img.src = properties.image ? '/testdataset/images/' + properties.image : '';
-            this.draw();
         })
 
         if(properties.image)
-            this.img.src = '/testdataset/images/' + properties.image;
-        this.draw();
+            this.img.src = properties.image ? '/testdataset/images/' + properties.image : '';
     }
 
     /**
@@ -68,37 +67,39 @@ class AttentionMap extends Visualization {
             return;
 
         // make sure aspect ration is maintained
-        this.ratio = Math.min(this.canvas.width / this.img.naturalWidth, this.canvas.height / this.img.naturalHeight);
-        this.width = this.img.naturalWidth * this.ratio;
-        this.height = this.img.naturalHeight * this.ratio;
-        this.left = (this.canvas.width - this.width) / 2;
-        this.top = (this.canvas.height - this.height) / 2;
+        let ratio = Math.min(this.canvas.width / this.img.naturalWidth, this.canvas.height / this.img.naturalHeight);
+        if(ratio !== this.ratio) {
+            this.ratio = ratio;
+            this.width = this.img.naturalWidth * this.ratio;
+            this.height = this.img.naturalHeight * this.ratio;
+            this.left = (this.canvas.width - this.width) / 2;
+            this.top = (this.canvas.height - this.height) / 2;
+            this.gatherColorRaster();
+        }
 
         // draw the image
-        context.globalAlpha = 1;
-        context.drawImage(this.img, this.left, this.top, this.width, this.height);
+        if(this.img) {
+            context.globalAlpha = 1;
+            context.drawImage(this.img, this.left, this.top, this.width, this.height);
+        }
 
         // draw circles where people where looking
-        const imageData = dataset.getImageData(properties.image);
-        const scanPaths = imageData.getScanPaths();
-        for (let i = 0; i < scanPaths.length; i++) {
-            const points = scanPaths[i].getPoints();
-            for (let i2 = 0; i2 < points.length; i2++) {
-                const point = points[i2];
+        let total = 0;
+        let count = 0;
+        for(let key in this.raster){
+            let x = parseInt(key.substring(0,key.indexOf(':')));
+            let y = parseInt(key.substring(key.indexOf(':') + 1));
+            let index = (Math.sin(this.raster[key] / this.highestIndex * Math.PI / 2)) * 255;
+            // let index = raster[key] / highest * 255;
+            let inverted = 255 - index;
+            if(!properties.aoi.hasSelection || (x > properties.aoi.left / this.img.naturalWidth * this.width + this.left && x < properties.aoi.right / this.img.naturalWidth * this.width + this.left && y > properties.aoi.top / this.img.naturalHeight * this.height + this.top && y < properties.aoi.bottom / this.img.naturalHeight * this.height + this.top))
+                context.fillStyle = 'rgba(' + index + ',' + inverted + ',0,' + (index / 255) + ')';
+            else
+                context.fillStyle = 'rgba(' + index + ',' + index + ',' + index + ',' + (index / 255 * 0.6 + 0.1) + ')';
+            context.fillRect(x,y,1,1);
 
-                if(properties.aoi.hasSelection && properties.aoi.points.includes(point))
-                    context.fillStyle = 'blue';
-                else
-                    context.fillStyle = 'red';
-                context.globalAlpha = 0.5;
-
-                let x = this.left + point.x / this.img.naturalWidth * this.width;
-                let y = this.top + point.y / this.img.naturalHeight * this.height;
-
-                context.beginPath();
-                context.arc(x, y, point.fixationDuration / 25 * this.ratio, 0, 2 * Math.PI, false);
-                context.fill();
-            }
+            total += this.raster[key];
+            count++;
         }
 
         // draw selection
@@ -109,6 +110,39 @@ class AttentionMap extends Visualization {
         }
 
         this.drawScale();
+    }
+
+    /**
+     * Gets the attention per pixel of the image
+     */
+    gatherColorRaster(){
+        this.raster = {};
+        this.highestIndex = 0;
+
+        const imageData = dataset.getImageData(properties.image);
+        const scanPaths = imageData.getScanPaths();
+
+        for (let scanPath of scanPaths) {
+            const points = scanPath.getPoints();
+            for (let point of points) {
+                let radius = Math.ceil(point.fixationDuration / 15 * this.ratio);
+                for(let x = -radius; x <= radius; x++){
+                    for(let y = -radius; y <= radius; y++){
+                        if(x * x + y * y <= radius * radius){
+                            let key = (Math.floor(point.x / this.img.naturalWidth * this.width + x) + this.left) + ':' + (Math.floor(point.y / this.img.naturalHeight * this.height + y) + this.top);
+                            let index = Math.pow(radius - Math.sqrt(x * x + y * y),1/500);
+                            if(this.raster[key])
+                                this.raster[key] += index;
+                            else
+                                this.raster[key] = index;
+
+                            if(this.raster[key] > this.highestIndex)
+                                this.highestIndex = this.raster[key];
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

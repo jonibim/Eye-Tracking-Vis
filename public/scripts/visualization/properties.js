@@ -2,7 +2,7 @@
  * stores the current settings, such time and image of the data
  * all visualizations should use these settings to sync between them
  * @property {string} image - the image currently selected
- * @property {int[]} rgba - the color currently selected int the format [red,green,blue,alpha]
+ * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
  * @property {AOI} aoi - the selected area of interest
  * @property {Map<string,function()>} onchange - property change listeners for all visualizations, registered by tag
@@ -35,7 +35,7 @@ class Properties {
 
     /**
      * Sets the current color
-     * @param {int[]} rgba - [red,green,blue,alpha]
+     * @param {float[]} rgba - [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
      */
     setColor(rgba){
         if(this.rgba === rgba)

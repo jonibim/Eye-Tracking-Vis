@@ -22,7 +22,6 @@ for (image of images) {
 	tag += image.replace(/\u00f6|\u00fc|\u00fc|_/gi, function(char){
 	  		return tagMap[char];
 		})
-	console.log(image, tag)
 	tags[image] = tag
 };
 

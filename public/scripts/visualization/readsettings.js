@@ -23,7 +23,6 @@ function selectImage(value) {
 
 //- RGBA Sliders handler
 function readSlidersRGBA(id, value) {
-	console.log(id, value);
 	RGBA[id] = value;
     switch (id) {
         case 'r':

@@ -30,7 +30,7 @@ class AttentionMap extends Visualization {
         this.box.inner.appendChild(this.canvas);
 
         // image for the color overlay
-        this.colorOverlay = new OffscreenCanvas(0,0);
+        this.colorOverlay = new OffscreenCanvas(0, 0);
 
         // update area of interest
         this.canvas.onmousedown = e => this.startSelection(e);

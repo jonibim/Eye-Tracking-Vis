@@ -40,8 +40,8 @@
     margin: 0;
     padding: 10px;
 
-    overflow: auto;
     display: grid;
+    grid-auto-rows: 1fr;
 }
 
 .box {
@@ -49,6 +49,9 @@
     border-radius: 5px;
     margin: 0;
     overflow: hidden;
+
+    grid-column-start: 1;
+    grid-column-end: 2;
 
     display: flex;
     flex-flow: column;

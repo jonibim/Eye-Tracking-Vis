@@ -93,7 +93,10 @@ class AttentionMap extends Visualization {
         }
 
         // draw the color overlay onto the canvas
-        context.drawImage(this.colorOverlay, this.left, this.top, this.width, this.height);
+        if (this.colorOverlay.width && this.colorOverlay.height) {
+            context.globalAlpha = 1;
+            context.drawImage(this.colorOverlay, this.left, this.top, this.width, this.height);
+        }
 
         // draw selection
         if (this.selecting) {

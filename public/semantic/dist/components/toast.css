@@ -18,36 +18,36 @@
   z-index: 9999;
 }
 .ui.toast-container.top.right {
-  top: 0.92307692em;
-  right: 0.92307692em;
-  margin-left: 0.92307692em;
+  top: 0.85714286em;
+  right: 0.85714286em;
+  margin-left: 0.85714286em;
 }
 .ui.toast-container.top.left {
-  top: 0.92307692em;
-  left: 0.92307692em;
-  margin-right: 0.92307692em;
+  top: 0.85714286em;
+  left: 0.85714286em;
+  margin-right: 0.85714286em;
 }
 .ui.toast-container.top.center {
   left: 50%;
   -webkit-transform: translate(-50%, 0);
           transform: translate(-50%, 0);
-  top: 0.92307692em;
+  top: 0.85714286em;
 }
 .ui.toast-container.bottom.right {
-  bottom: 0.92307692em;
-  right: 0.92307692em;
-  margin-left: 0.92307692em;
+  bottom: 0.85714286em;
+  right: 0.85714286em;
+  margin-left: 0.85714286em;
 }
 .ui.toast-container.bottom.left {
-  bottom: 0.92307692em;
-  left: 0.92307692em;
-  margin-right: 0.92307692em;
+  bottom: 0.85714286em;
+  left: 0.85714286em;
+  margin-right: 0.85714286em;
 }
 .ui.toast-container.bottom.center {
   left: 50%;
   -webkit-transform: translate(-50%, 0);
           transform: translate(-50%, 0);
-  bottom: 0.92307692em;
+  bottom: 0.85714286em;
 }
 .ui.toast-container .visible.toast-box,
 .ui.toast-container .animating.toast-box,
@@ -56,7 +56,7 @@
 }
 .ui.toast-container .toast-box {
   margin-bottom: 0.5em;
-  border-radius: 0.30769em;
+  border-radius: 0.28571429rem;
   cursor: default;
 }
 .ui.toast-container .toast-box:hover {
@@ -99,10 +99,10 @@
   background: #cf9b0d;
 }
 .ui.toast-container .toast-box > .attached.progress.success .bar.bar.bar {
-  background: #42792f;
+  background: #035a00;
 }
 .ui.toast-container .toast-box > .attached.progress .error .bar.bar.bar {
-  background: #9c1a1a;
+  background: #da0000;
 }
 .ui.toast-container .toast-box > .attached.progress.neutral .bar.bar.bar {
   background: #d9d9d9;
@@ -293,8 +293,8 @@
   border-bottom-right-radius: 0;
 }
 .ui.vertical.attached:not(.left).actions {
-  border-top-right-radius: 0.30769em;
-  border-bottom-right-radius: 0.30769em;
+  border-top-right-radius: 0.28571429rem;
+  border-bottom-right-radius: 0.28571429rem;
 }
 .ui.vertical.attached:not(.left).actions .button:first-child,
 .ui.vertical.attached:not(.left).actions .button:last-child {
@@ -303,7 +303,7 @@
 }
 .ui.vertical.attached:not(.left).message {
   border-top-right-radius: 0;
-  border-bottom-left-radius: 0.30769em;
+  border-bottom-left-radius: 0.28571429rem;
 }
 .ui.vertical.attached.left.card > .image > img {
   border-top-left-radius: 0;
@@ -318,8 +318,8 @@
   border-bottom-left-radius: 0;
 }
 .ui.vertical.attached.left.actions {
-  border-top-left-radius: 0.30769em;
-  border-bottom-left-radius: 0.30769em;
+  border-top-left-radius: 0.28571429rem;
+  border-bottom-left-radius: 0.28571429rem;
 }
 .ui.vertical.attached.left.actions .button:first-child,
 .ui.vertical.attached.left.actions .button:last-child {
@@ -330,28 +330,28 @@
   margin-left: -1px;
 }
 .ui.vertical.attached.left.message.message.message {
-  border-top-right-radius: 0.30769em;
-  border-bottom-right-radius: 0.30769em;
+  border-top-right-radius: 0.28571429rem;
+  border-bottom-right-radius: 0.28571429rem;
 }
 .ui.attached:not(.vertical):not(.top).actions {
-  border-bottom-left-radius: 0.30769em;
-  border-bottom-right-radius: 0.30769em;
+  border-bottom-left-radius: 0.28571429rem;
+  border-bottom-right-radius: 0.28571429rem;
 }
 .ui.attached:not(.vertical):not(.top).actions .button:first-child {
-  border-bottom-left-radius: 0.30769em;
+  border-bottom-left-radius: 0.28571429rem;
 }
 .ui.attached:not(.vertical):not(.top).actions .button:last-child {
-  border-bottom-right-radius: 0.30769em;
+  border-bottom-right-radius: 0.28571429rem;
 }
 .ui.attached:not(.vertical).top.actions {
-  border-top-left-radius: 0.30769em;
-  border-top-right-radius: 0.30769em;
+  border-top-left-radius: 0.28571429rem;
+  border-top-right-radius: 0.28571429rem;
 }
 .ui.attached:not(.vertical).top.actions .button:first-child {
-  border-top-left-radius: 0.30769em;
+  border-top-left-radius: 0.28571429rem;
 }
 .ui.attached:not(.vertical).top.actions .button:last-child {
-  border-top-right-radius: 0.30769em;
+  border-top-right-radius: 0.28571429rem;
 }
 
 
@@ -361,8 +361,8 @@
 
 .ui.toast {
   display: none;
-  border-radius: 0.30769em;
-  padding: 0.84615385em 1.07692308em;
+  border-radius: 0.28571429rem;
+  padding: 0.78571429em 1em;
   margin: 0 -1px -0.01em;
   color: rgba(0, 0, 0, 0.87);
   background-color: #FFFFFF;
@@ -381,11 +381,11 @@
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.toast.success {
-  background-color: #60B044;
+  background-color: #06A600;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.toast.error {
-  background-color: #DB2828;
+  background-color: #FF2828;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.toast.neutral {
@@ -480,7 +480,7 @@
 -------------- */
 
 .ui.primary.toast {
-  background-color: #80A6CD;
+  background-color: #0291DE;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.primary.toast,
@@ -489,7 +489,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .ui.secondary.toast {
-  background-color: #444C55;
+  background-color: #1B1C1D;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.secondary.toast,
@@ -498,7 +498,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .ui.red.toast {
-  background-color: #DB2828;
+  background-color: #FF2828;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.red.toast,
@@ -507,7 +507,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .ui.orange.toast {
-  background-color: #D26911;
+  background-color: #FF7300;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.orange.toast,
@@ -534,7 +534,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .ui.green.toast {
-  background-color: #60B044;
+  background-color: #06A600;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.green.toast,
@@ -543,7 +543,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .ui.teal.toast {
-  background-color: #00B5AD;
+  background-color: #008080;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.teal.toast,
@@ -552,7 +552,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .ui.blue.toast {
-  background-color: #80A6CD;
+  background-color: #036BFC;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.blue.toast,
@@ -606,7 +606,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .ui.black.toast {
-  background-color: #444C55;
+  background-color: #1B1C1D;
   color: rgba(255, 255, 255, 0.9);
 }
 .ui.inverted.black.toast,
@@ -616,7 +616,7 @@
 }
 .ui.inverted.toast {
   color: rgba(255, 255, 255, 0.9);
-  background-color: #444C55;
+  background-color: #1B1C1D;
 }
 @media only screen and (max-width: 420px) {
   .ui.toast-container .toast-box.toast-box,

@@ -26,7 +26,7 @@ block content
         //-  Visualization Segment -//
         div(class="ui floating raised segments")
             div(class="ui segment")
-                i(class="ui red inverted circular eye large icon")
+                i(class="ui teal inverted circular eye large icon")
             div(class="ui secondary segment")
                 p The site displays visualizations of eye tracking data. It allows user inputs and has an example dataset included.
                 p ~UNFINISHED~
@@ -34,10 +34,11 @@ block content
                     //- Upload Button -//
                     a(class="ui basic green button" href="/upload") Upload Data
                     //- Example Data Button -//
-                    //vv TO BE PROVIDED WITH CUSTOM URL FOR EXAMPLE DATA SETTINGS vv
+                    //vv TO BE PROVIDED WITH CUSTOM URL FOR: EXAMPLE DATA SETTINGS vv
                     a(class="ui basic blue button" href="/visualization") Use Example Data
 
 
 block post_scripts
+    //- Set Active page to About in 'navigation' sidebar -//
     script.
         $('#about_nav').addClass('active');

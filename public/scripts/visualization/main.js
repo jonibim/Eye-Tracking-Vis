@@ -1,11 +1,33 @@
+/**
+ * Main container for the visualization page
+ * @type {Element}
+ */
 let frame = null;
+/**
+ * @type {BoxManager}
+ */
 let boxManager = null;
+/**
+ * @type {Properties}
+ */
 let properties = null;
+/**
+ * @type {Dataset}
+ */
 let dataset = null;
+/**
+ * The element which displays the dataset name
+ * @type {Element}
+ */
 let topbar = null;
+/**
+ * @type {Registry}
+ */
+let registry = null;
 
 // initialize default visualizations
 window.onload = () => {
+
     console.log('main.js - Loading...');
 
     dataset = new Dataset();
@@ -14,16 +36,18 @@ window.onload = () => {
     frame = document.getElementById('innerframe');
     boxManager = new BoxManager(frame);
     properties = new Properties();
+    registry = new Registry();
 
-    // add example visualizations
-    let box = boxManager.addBox(0,0);
-    new ExampleVisualization(box);
-    box = boxManager.addBox(0,1);
-    new ExampleVisualization(box, 1);
-    box = boxManager.addBox(1,0);
-    new ExampleVisualization(box, 1);
-
+    // register visualizations
+    registry.register('attentionmap',box => new AttentionMap(box));
+    registry.register('editor',box => new Editor(box));
     console.log('main.js - Finished Loading')
+
+
+    console.log('main.js - Enabling visualizations...')
+    registry.enableAll();
+    console.log('main.js - Visualizations enabled')
+
 
     console.log('main.js - Requesting dataset...')
 
@@ -32,7 +56,7 @@ window.onload = () => {
     data.then(data => data.text()).then(data => {
         dataset.importData(data);
 
-        properties.setImage(dataset.getImages()[0]);
+        applySettings();
 
         console.log('main.js - Dataset loaded')
     });

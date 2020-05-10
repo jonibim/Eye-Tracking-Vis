@@ -171,7 +171,7 @@
          Page Grid
   -------------------------*/
 
-@media only screen and (max-width: 1048.98px) {
+@media only screen and (max-width: 767.98px) {
   .ui.page.grid {
     width: auto;
     padding-left: 0;
@@ -180,7 +180,7 @@
     margin-right: 0;
   }
 }
-@media only screen and (min-width: 1049px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 768px) and (max-width: 991.98px) {
   .ui.page.grid {
     width: auto;
     margin-left: 0;
@@ -189,7 +189,7 @@
     padding-right: 2em;
   }
 }
-@media only screen and (min-width: 1049px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 992px) and (max-width: 1199.98px) {
   .ui.page.grid {
     width: auto;
     margin-left: 0;
@@ -198,7 +198,7 @@
     padding-right: 3%;
   }
 }
-@media only screen and (min-width: 1049px) and (max-width: 1919.98px) {
+@media only screen and (min-width: 1200px) and (max-width: 1919.98px) {
   .ui.page.grid {
     width: auto;
     margin-left: 0;
@@ -459,7 +459,7 @@
 
 
 /* Mobile Sizing Combinations */
-@media only screen and (min-width: 320px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 320px) and (max-width: 767.98px) {
   .ui.grid > .row > [class*="one wide mobile"].column,
   .ui.grid > .column.row > [class*="one wide mobile"].column,
   .ui.grid > [class*="one wide mobile"].column,
@@ -559,7 +559,7 @@
 }
 
 /* Tablet Sizing Combinations */
-@media only screen and (min-width: 1049px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 768px) and (max-width: 991.98px) {
   .ui.grid > .row > [class*="one wide tablet"].column,
   .ui.grid > .column.row > [class*="one wide tablet"].column,
   .ui.grid > [class*="one wide tablet"].column,
@@ -659,7 +659,7 @@
 }
 
 /* Computer/Desktop Sizing Combinations */
-@media only screen and (min-width: 1049px) {
+@media only screen and (min-width: 992px) {
   .ui.grid > .row > [class*="one wide computer"].column,
   .ui.grid > .column.row > [class*="one wide computer"].column,
   .ui.grid > [class*="one wide computer"].column,
@@ -759,7 +759,7 @@
 }
 
 /* Large Monitor Sizing Combinations */
-@media only screen and (min-width: 1049px) and (max-width: 1919.98px) {
+@media only screen and (min-width: 1200px) and (max-width: 1919.98px) {
   .ui.grid > .row > [class*="one wide large screen"].column,
   .ui.grid > .column.row > [class*="one wide large screen"].column,
   .ui.grid > [class*="one wide large screen"].column,
@@ -1044,8 +1044,8 @@
 
 .ui.divided.grid:not([class*="vertically divided"]) > .column:not(.row),
 .ui.divided.grid:not([class*="vertically divided"]) > .row > .column {
-  -webkit-box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
-          box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
+  -webkit-box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
+          box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
 }
 
 /* Swap from padding to margin on columns to have dividers align */
@@ -1075,8 +1075,8 @@
 
 /* Divided Row */
 .ui.grid > .divided.row > .column {
-  -webkit-box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
-          box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
+  -webkit-box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
+          box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
 }
 .ui.grid > .divided.row > .column:first-child {
   -webkit-box-shadow: none;
@@ -1095,8 +1095,8 @@
   width: calc(100% - 2rem);
   height: 1px;
   margin: 0 1rem;
-  -webkit-box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
-          box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
+  -webkit-box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
+          box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
 }
 
 /* Padded Horizontally Divided */
@@ -1146,20 +1146,20 @@
 .ui.celled.grid {
   width: 100%;
   margin: 1em 0;
-  -webkit-box-shadow: 0 0 0 1px #DDDDDD;
-          box-shadow: 0 0 0 1px #DDDDDD;
+  -webkit-box-shadow: 0 0 0 1px #D4D4D5;
+          box-shadow: 0 0 0 1px #D4D4D5;
 }
 .ui.celled.grid > .row {
   width: 100% !important;
   margin: 0;
   padding: 0;
-  -webkit-box-shadow: 0 -1px 0 0 #DDDDDD;
-          box-shadow: 0 -1px 0 0 #DDDDDD;
+  -webkit-box-shadow: 0 -1px 0 0 #D4D4D5;
+          box-shadow: 0 -1px 0 0 #D4D4D5;
 }
 .ui.celled.grid > .column:not(.row),
 .ui.celled.grid > .row > .column {
-  -webkit-box-shadow: -1px 0 0 0 #DDDDDD;
-          box-shadow: -1px 0 0 0 #DDDDDD;
+  -webkit-box-shadow: -1px 0 0 0 #D4D4D5;
+          box-shadow: -1px 0 0 0 #D4D4D5;
 }
 .ui.celled.grid > .column:first-child,
 .ui.celled.grid > .row > .column:first-child {
@@ -1332,25 +1332,25 @@
 .ui.grid > .primary.row,
 .ui.grid > .primary.column,
 .ui.grid > .row > .primary.column {
-  background-color: #80A6CD;
+  background-color: #0291DE;
   color: #FFFFFF;
 }
 .ui.grid > .secondary.row,
 .ui.grid > .secondary.column,
 .ui.grid > .row > .secondary.column {
-  background-color: #444C55;
+  background-color: #1B1C1D;
   color: #FFFFFF;
 }
 .ui.grid > .red.row,
 .ui.grid > .red.column,
 .ui.grid > .row > .red.column {
-  background-color: #DB2828;
+  background-color: #FF2828;
   color: #FFFFFF;
 }
 .ui.grid > .orange.row,
 .ui.grid > .orange.column,
 .ui.grid > .row > .orange.column {
-  background-color: #D26911;
+  background-color: #FF7300;
   color: #FFFFFF;
 }
 .ui.grid > .yellow.row,
@@ -1368,19 +1368,19 @@
 .ui.grid > .green.row,
 .ui.grid > .green.column,
 .ui.grid > .row > .green.column {
-  background-color: #60B044;
+  background-color: #06A600;
   color: #FFFFFF;
 }
 .ui.grid > .teal.row,
 .ui.grid > .teal.column,
 .ui.grid > .row > .teal.column {
-  background-color: #00B5AD;
+  background-color: #008080;
   color: #FFFFFF;
 }
 .ui.grid > .blue.row,
 .ui.grid > .blue.column,
 .ui.grid > .row > .blue.column {
-  background-color: #80A6CD;
+  background-color: #036BFC;
   color: #FFFFFF;
 }
 .ui.grid > .violet.row,
@@ -1416,7 +1416,7 @@
 .ui.grid > .black.row,
 .ui.grid > .black.column,
 .ui.grid > .row > .black.column {
-  background-color: #444C55;
+  background-color: #1B1C1D;
   color: #FFFFFF;
 }
 
@@ -1446,7 +1446,7 @@
 
 
 /* Mobile */
-@media only screen and (max-width: 1048.98px) {
+@media only screen and (max-width: 767.98px) {
   .ui[class*="mobile reversed"].grid,
   .ui[class*="mobile reversed"].grid > .row,
   .ui.grid > [class*="mobile reversed"].row {
@@ -1466,8 +1466,8 @@
 /* Divided Reversed */
   .ui[class*="mobile reversed"].divided.grid:not([class*="vertically divided"]) > .column:first-child,
   .ui[class*="mobile reversed"].divided.grid:not([class*="vertically divided"]) > .row > .column:first-child {
-    -webkit-box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
-            box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
+    -webkit-box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
+            box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
   }
   .ui[class*="mobile reversed"].divided.grid:not([class*="vertically divided"]) > .column:last-child,
   .ui[class*="mobile reversed"].divided.grid:not([class*="vertically divided"]) > .row > .column:last-child {
@@ -1477,8 +1477,8 @@
   
 /* Vertically Divided Reversed */
   .ui.grid[class*="vertically divided"][class*="mobile vertically reversed"] > .row:first-child:before {
-    -webkit-box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
-            box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
+    -webkit-box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
+            box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
   }
   .ui.grid[class*="vertically divided"][class*="mobile vertically reversed"] > .row:last-child:before {
     -webkit-box-shadow: none;
@@ -1487,8 +1487,8 @@
   
 /* Celled Reversed */
   .ui[class*="mobile reversed"].celled.grid > .row > .column:first-child {
-    -webkit-box-shadow: -1px 0 0 0 #DDDDDD;
-            box-shadow: -1px 0 0 0 #DDDDDD;
+    -webkit-box-shadow: -1px 0 0 0 #D4D4D5;
+            box-shadow: -1px 0 0 0 #D4D4D5;
   }
   .ui[class*="mobile reversed"].celled.grid > .row > .column:last-child {
     -webkit-box-shadow: none;
@@ -1497,7 +1497,7 @@
 }
 
 /* Tablet */
-@media only screen and (min-width: 1049px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 768px) and (max-width: 991.98px) {
   .ui[class*="tablet reversed"].grid,
   .ui[class*="tablet reversed"].grid > .row,
   .ui.grid > [class*="tablet reversed"].row {
@@ -1516,8 +1516,8 @@
 /* Divided Reversed */
   .ui[class*="tablet reversed"].divided.grid:not([class*="vertically divided"]) > .column:first-child,
   .ui[class*="tablet reversed"].divided.grid:not([class*="vertically divided"]) > .row > .column:first-child {
-    -webkit-box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
-            box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
+    -webkit-box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
+            box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
   }
   .ui[class*="tablet reversed"].divided.grid:not([class*="vertically divided"]) > .column:last-child,
   .ui[class*="tablet reversed"].divided.grid:not([class*="vertically divided"]) > .row > .column:last-child {
@@ -1527,8 +1527,8 @@
   
 /* Vertically Divided Reversed */
   .ui.grid[class*="vertically divided"][class*="tablet vertically reversed"] > .row:first-child:before {
-    -webkit-box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
-            box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
+    -webkit-box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
+            box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
   }
   .ui.grid[class*="vertically divided"][class*="tablet vertically reversed"] > .row:last-child:before {
     -webkit-box-shadow: none;
@@ -1537,8 +1537,8 @@
   
 /* Celled Reversed */
   .ui[class*="tablet reversed"].celled.grid > .row > .column:first-child {
-    -webkit-box-shadow: -1px 0 0 0 #DDDDDD;
-            box-shadow: -1px 0 0 0 #DDDDDD;
+    -webkit-box-shadow: -1px 0 0 0 #D4D4D5;
+            box-shadow: -1px 0 0 0 #D4D4D5;
   }
   .ui[class*="tablet reversed"].celled.grid > .row > .column:last-child {
     -webkit-box-shadow: none;
@@ -1547,7 +1547,7 @@
 }
 
 /* Computer */
-@media only screen and (min-width: 1049px) {
+@media only screen and (min-width: 992px) {
   .ui[class*="computer reversed"].grid,
   .ui[class*="computer reversed"].grid > .row,
   .ui.grid > [class*="computer reversed"].row {
@@ -1566,8 +1566,8 @@
 /* Divided Reversed */
   .ui[class*="computer reversed"].divided.grid:not([class*="vertically divided"]) > .column:first-child,
   .ui[class*="computer reversed"].divided.grid:not([class*="vertically divided"]) > .row > .column:first-child {
-    -webkit-box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
-            box-shadow: -1px 0 0 0 rgba(0, 0, 0, 0.13);
+    -webkit-box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
+            box-shadow: -1px 0 0 0 rgba(34, 36, 38, 0.15);
   }
   .ui[class*="computer reversed"].divided.grid:not([class*="vertically divided"]) > .column:last-child,
   .ui[class*="computer reversed"].divided.grid:not([class*="vertically divided"]) > .row > .column:last-child {
@@ -1577,8 +1577,8 @@
   
 /* Vertically Divided Reversed */
   .ui.grid[class*="vertically divided"][class*="computer vertically reversed"] > .row:first-child:before {
-    -webkit-box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
-            box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.13);
+    -webkit-box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
+            box-shadow: 0 -1px 0 0 rgba(34, 36, 38, 0.15);
   }
   .ui.grid[class*="vertically divided"][class*="computer vertically reversed"] > .row:last-child:before {
     -webkit-box-shadow: none;
@@ -1587,8 +1587,8 @@
   
 /* Celled Reversed */
   .ui[class*="computer reversed"].celled.grid > .row > .column:first-child {
-    -webkit-box-shadow: -1px 0 0 0 #DDDDDD;
-            box-shadow: -1px 0 0 0 #DDDDDD;
+    -webkit-box-shadow: -1px 0 0 0 #D4D4D5;
+            box-shadow: -1px 0 0 0 #D4D4D5;
   }
   .ui[class*="computer reversed"].celled.grid > .row > .column:last-child {
     -webkit-box-shadow: none;
@@ -1602,7 +1602,7 @@
 
 
 /* Tablet Only */
-@media only screen and (min-width: 1049px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 768px) and (max-width: 991.98px) {
   .ui.doubling.grid {
     width: auto;
   }
@@ -1698,7 +1698,7 @@
 }
 
 /* Mobile Only */
-@media only screen and (max-width: 1048.98px) {
+@media only screen and (max-width: 767.98px) {
   .ui.grid > .doubling.row,
   .ui.doubling.grid > .row {
     margin: 0 !important;
@@ -1793,7 +1793,7 @@
         Stackable
   --------------------*/
 
-@media only screen and (max-width: 1048.98px) {
+@media only screen and (max-width: 767.98px) {
   .ui.stackable.grid {
     width: auto;
     margin-left: 0 !important;
@@ -1848,7 +1848,7 @@
   .ui.stackable.divided:not(.vertically).grid > .column:not(.row),
   .ui.stackable.celled.grid > .row > .column,
   .ui.stackable.divided:not(.vertically).grid > .row > .column {
-    border-top: 1px solid rgba(0, 0, 0, 0.13);
+    border-top: 1px solid rgba(34, 36, 38, 0.15);
     -webkit-box-shadow: none !important;
             box-shadow: none !important;
     padding-top: 2rem !important;
@@ -1873,7 +1873,7 @@
 /* These include arbitrary class repetitions for forced specificity */
 
 /* Mobile Only Hide */
-@media only screen and (max-width: 1048.98px) {
+@media only screen and (max-width: 767.98px) {
   .ui[class*="tablet only"].grid.grid.grid:not(.mobile),
   .ui.grid.grid.grid > [class*="tablet only"].row:not(.mobile),
   .ui.grid.grid.grid > [class*="tablet only"].column:not(.mobile),
@@ -1901,7 +1901,7 @@
 }
 
 /* Tablet Only Hide */
-@media only screen and (min-width: 1049px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 768px) and (max-width: 991.98px) {
   .ui[class*="mobile only"].grid.grid.grid:not(.tablet),
   .ui.grid.grid.grid > [class*="mobile only"].row:not(.tablet),
   .ui.grid.grid.grid > [class*="mobile only"].column:not(.tablet),
@@ -1929,7 +1929,7 @@
 }
 
 /* Computer Only Hide */
-@media only screen and (min-width: 1049px) and (max-width: 1048.98px) {
+@media only screen and (min-width: 992px) and (max-width: 1199.98px) {
   .ui[class*="mobile only"].grid.grid.grid:not(.computer),
   .ui.grid.grid.grid > [class*="mobile only"].row:not(.computer),
   .ui.grid.grid.grid > [class*="mobile only"].column:not(.computer),
@@ -1957,7 +1957,7 @@
 }
 
 /* Large Screen Only Hide */
-@media only screen and (min-width: 1049px) and (max-width: 1919.98px) {
+@media only screen and (min-width: 1200px) and (max-width: 1919.98px) {
   .ui[class*="mobile only"].grid.grid.grid:not(.computer),
   .ui.grid.grid.grid > [class*="mobile only"].row:not(.computer),
   .ui.grid.grid.grid > [class*="mobile only"].column:not(.computer),

@@ -112,7 +112,7 @@
   cursor: pointer;
 }
 .ui.comments .comment a.author:hover {
-  color: #C45500;
+  color: #1e70bf;
 }
 
 /*--------------
@@ -206,8 +206,8 @@
 .ui.threaded.comments .comment > .comments {
   margin: -1.5em 0 -1em 1.25em;
   padding: 3em 0 2em 2.25em;
-  -webkit-box-shadow: -1px 0 0 rgba(0, 0, 0, 0.13);
-          box-shadow: -1px 0 0 rgba(0, 0, 0, 0.13);
+  -webkit-box-shadow: -1px 0 0 rgba(34, 36, 38, 0.15);
+          box-shadow: -1px 0 0 rgba(34, 36, 38, 0.15);
 }
 
 /*--------------------
@@ -237,25 +237,25 @@
   font-size: 1rem;
 }
 .ui.mini.comments {
-  font-size: 0.76923077rem;
+  font-size: 0.78571429rem;
 }
 .ui.tiny.comments {
-  font-size: 0.84615385rem;
+  font-size: 0.85714286rem;
 }
 .ui.small.comments {
-  font-size: 0.92307692rem;
+  font-size: 0.92857143rem;
 }
 .ui.large.comments {
-  font-size: 1.15384615rem;
+  font-size: 1.14285714rem;
 }
 .ui.big.comments {
-  font-size: 1.30769231rem;
+  font-size: 1.28571429rem;
 }
 .ui.huge.comments {
-  font-size: 1.46153846rem;
+  font-size: 1.42857143rem;
 }
 .ui.massive.comments {
-  font-size: 1.69230769rem;
+  font-size: 1.71428571rem;
 }
 
 /*-------------------
@@ -263,7 +263,7 @@
   --------------------*/
 
 .ui.inverted.comments .comment {
-  background-color: #444C55;
+  background-color: #1B1C1D;
 }
 .ui.inverted.comments .comment .author,
 .ui.inverted.comments .comment .text {

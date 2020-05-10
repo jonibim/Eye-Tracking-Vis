@@ -19,15 +19,17 @@
     height: 100%;
     overflow: hidden;
 
-    display: flex;
-    flex-flow: row;
+    display: grid;
+    grid-auto-columns: 1fr;
 }
 
 .column {
     border: none;
     margin: 0;
-    overflow: auto;
-    flex-grow: 1;
+    overflow: hidden;
+
+    grid-row-start: 1;
+    grid-row-end: 2;
 }
 
 .column .inner-column {
@@ -38,17 +40,18 @@
     margin: 0;
     padding: 10px;
 
-    overflow: auto;
-    display: flex;
-    flex-flow: column;
+    display: grid;
+    grid-auto-rows: 1fr;
 }
 
 .box {
-    border: solid #00c0ef;
+    /*border: solid #00c0ef;*/
     border-radius: 5px;
     margin: 0;
     overflow: hidden;
-    flex-grow: 1;
+
+    grid-column-start: 1;
+    grid-column-end: 2;
 
     display: flex;
     flex-flow: column;

@@ -18,10 +18,46 @@
   width: calc(100% - 260px) !important;
 }
 
+.sidebar.settings {
+  transition-duration: 0.2s !important;
+}
+
 body.pushable {
    background-color: white !important;
 }
 
 .left-align {
     text-align: left !important;
+}
+
+.right-align {
+    text-align: right !important;
+}
+
+.right-float {
+    float: right !important;
+}
+
+.small-right-padding {
+    padding-right: 5px !important; 
+}
+
+.small-padding {
+    padding:3px !important;
+}
+
+.vertical-centered {
+    vertical-align: middle !important;
+}
+
+a.label:hover{
+    text-decoration: none;
+}
+
+.selectable {
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }

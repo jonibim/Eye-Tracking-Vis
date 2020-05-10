@@ -39,7 +39,7 @@
       -ms-flex-direction: row;
           flex-direction: row;
   width: 100%;
-  padding: 0.23076923rem 0;
+  padding: 0.21428571rem 0;
   margin: 0;
   background: none;
   border-top: none;
@@ -80,7 +80,7 @@
   border-radius: 500rem;
 }
 .ui.feed > .event > .label + .content {
-  margin: 0.5em 0 0.38461538em 1.15384615em;
+  margin: 0.5em 0 0.35714286em 1.14285714em;
 }
 
 /*--------------
@@ -169,7 +169,7 @@
   display: inline-block;
   float: none;
   font-weight: normal;
-  font-size: 0.84615385em;
+  font-size: 0.85714286em;
   font-style: normal;
   margin: 0 0 0 0.5em;
   padding: 0;
@@ -209,7 +209,7 @@
 
 .ui.feed > .event > .content .meta {
   display: inline-block;
-  font-size: 0.84615385em;
+  font-size: 0.85714286em;
   margin: 0.5em 0 0;
   background: none;
   border: none;
@@ -276,25 +276,25 @@
   font-size: 1rem;
 }
 .ui.mini.feed {
-  font-size: 0.76923077rem;
+  font-size: 0.78571429rem;
 }
 .ui.tiny.feed {
-  font-size: 0.84615385rem;
+  font-size: 0.85714286rem;
 }
 .ui.small.feed {
-  font-size: 0.92307692rem;
+  font-size: 0.92857143rem;
 }
 .ui.large.feed {
-  font-size: 1.15384615rem;
+  font-size: 1.14285714rem;
 }
 .ui.big.feed {
-  font-size: 1.30769231rem;
+  font-size: 1.28571429rem;
 }
 .ui.huge.feed {
-  font-size: 1.46153846rem;
+  font-size: 1.42857143rem;
 }
 .ui.massive.feed {
-  font-size: 1.69230769rem;
+  font-size: 1.71428571rem;
 }
 
 /*------------------
@@ -302,7 +302,7 @@
   -------------------*/
 
 .ui.inverted.feed > .event {
-  background: #444C55;
+  background: #1B1C1D;
 }
 .ui.inverted.feed > .event > .content .date,
 .ui.inverted.feed > .event > .content .meta .like {

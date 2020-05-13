@@ -32,10 +32,10 @@ block sidebars
         //-  Visualization type(s) -//
         div(class="item")
             div(class="ui styled accordion")
-                        div(class="title")
+                        div(class="active title")
                             i(class="ui dropdown icon")
                             label Visualizations:
-                        div(class="ui form content")
+                        div(class="ui form content active")
                             div(class="grouped fields left-align")
                                 //- Eye Cloud -//
                                 div(class="field")
@@ -49,8 +49,8 @@ block sidebars
                                         label(for="gazestripes") Gaze Stripes
                                 //- Transition Graph -//
                                 div(class="field")
-                                    div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="transitiongraph" class="settings visualization_type" checked="")
+                                    div(class="ui toggle checked checkbox" data-tooltip="Not implemented yet" data-position="bottom left" data-inverted="" data-variation="tiny basic")
+                                        input(type="checkbox" id="transitiongraph" disabled="disabled" class="settings visualization_type" checked="")
                                         label(for="transitiongraph") Transition Graph
                                 //- Visual Attention Map -//
                                 div(class="field")
@@ -60,8 +60,8 @@ block sidebars
                                 div(class="ui fitted divider")
                                 //- Editor -//
                                 div(class="field")
-                                    div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="editor" class="settings visualization_type" checked="")
+                                    div(class="ui toggle checked checkbox" data-tooltip="Not implemented yet" data-position="bottom left" data-inverted="" data-variation="tiny basic")
+                                        input(type="checkbox" id="editor" disabled="disabled" class="settings visualization_type" checked="")
                                         label(for="editor") Editor
         //- Image Selection -//
         //- Default image setDefaultImageHere -//
@@ -70,10 +70,10 @@ block sidebars
 
         div(class="item")
             div(class="ui styled accordion")
-                        div(class="title")
+                        div(class="active title")
                             i(class="ui dropdown icon")
                             label Image:
-                        div(class="ui form content")
+                        div(class="ui form content active")
                             //- Dropdown selection menu -//
                             div(class="ui fluid search selection dropdown")
                                 div(class="default text") #{default_image}
@@ -87,12 +87,12 @@ block sidebars
         //- RGBA -//
         div(class="item")
             div(class="ui styled accordion")
-                        div(class="inline title")
+                        div(class="inline active title")
                             i(class="ui dropdown icon")
                             label Color: 
                             //- Color Preview Icon -//
                             i(class="ui inverted circular eye dropper icon color-preview")
-                        div(class="ui form content")
+                        div(class="ui form content active ")
                             //- Red Slider -//
                             div(class="ui inline fields")
                                 div(class="ui inverted label r-color-preview") R

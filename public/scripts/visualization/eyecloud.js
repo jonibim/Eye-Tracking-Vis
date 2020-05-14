@@ -6,20 +6,21 @@ class EyeCloud extends Visualization {
     constructor(box) {
         super(box, 'Eye Cloud');
 
-        const width = box.inner.clientWidth; // Width of the web page inside the browser
-        const height = box.inner.clientHeight; // Height of the web page inside the browser
+        const width = box.inner.clientWidth; // Width of the box
+        const height = box.inner.clientHeight; // Height of box
 
-        const map = 1;
+        const map = 1; // properties.image gives 'undefined', so for now static
 
         const range = 150;
         const minRadius = 10;
         const maxRadius = 100;
 
+
         // Create an svg- and g-tag inside the graph class
         let svg = d3.select(box.inner)
             .append('svg')
-            .attr('width', '100%') // Full screen
-            .attr('height', '100%') // Full screen
+            .attr('width', width) // Full screen
+            .attr('height', height) // Full screen
             .append('g')
             .attr('transform', 'translate(0,0)');
 
@@ -38,10 +39,17 @@ class EyeCloud extends Visualization {
                 mapObject[i] = Object.values(dataByCity)[i]['key'];
             }
 
-            console.log('Selected map: ' + mapObject[map]);
+            console.log('eyecloud.js - Selected map: ' + mapObject[map]);
+            //console.log(properties.image);
 
             // Generate the coordinate objects
             let coordinates = []; // Array of all the coordinates for the selected map
+
+            /*
+            console.log(properties.image); // is for some reason undefined?
+            console.log(data.filter(function (object) {return object.StimuliName == map}))
+             */
+
             dataByCity[map]['values'].forEach(function (element) {
                 let x_coordinate = parseInt(element.MappedFixationPointX);
                 let y_coordinate = parseInt(element.MappedFixationPointY);
@@ -50,7 +58,7 @@ class EyeCloud extends Visualization {
                 coordinates.push({co_x: x_coordinate, co_y: y_coordinate});
             });
 
-            console.log(coordinates);
+            //console.log(coordinates);
 
             // Generate an array of 'density scores' for each coordinate
             let densityScores = [];
@@ -72,7 +80,7 @@ class EyeCloud extends Visualization {
             // Sort the density scores in a descending order
             densityScores = densityScores.sort((a, b) => b.density - a.density); // Descending sort
 
-            console.log(densityScores)
+            //console.log(densityScores)
 
             // Find close coordinates to the coordinates with the highest density scores
             // and remove these coordinates from the coordinates list. Also, save the densities.
@@ -94,8 +102,8 @@ class EyeCloud extends Visualization {
                 densities.push(densityScores[i].density);
             }
 
-            console.log(newCoordinates);
-            console.log(densities);
+            //console.log(newCoordinates);
+            //console.log(densities);
 
             let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
             let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
@@ -113,8 +121,8 @@ class EyeCloud extends Visualization {
                     circleCount++;
                     return 'circle_' + circleCount;
                 })
-                .attr('cx', width / 2)
-                .attr('cy', height / 2)
+                //.attr('cx', box.inner.clientWidth / 2)
+                //.attr('cy', box.inner.clientHeight / 2)
                 .attr('r', function () {
                     radiusCount++;
                     return radiusScale(densities[radiusCount]);
@@ -129,8 +137,8 @@ class EyeCloud extends Visualization {
             // and how we want them to interact
             let collisionCount = -1; // Keeps track of the index of the densities array
             let simulation = d3.forceSimulation()
-                .force('x', d3.forceX(width / 2).strength(0.045))
-                .force('y', d3.forceY(height / 2).strength(0.095))
+                .force('x', d3.forceX(box.inner.clientWidth / 2).strength(0.045))
+                .force('y', d3.forceY(box.inner.clientHeight / 2).strength(0.15))
                 .force('collide', d3.forceCollide(function () {
                     collisionCount++;
                     return radiusScale(densities[collisionCount]) + 2;

@@ -6,8 +6,8 @@ class EyeCloud extends Visualization {
     constructor(box) {
         super(box, 'Eye Cloud');
 
-        const width = window.innerWidth; // Width of the web page inside the browser
-        const height = window.innerHeight; // Height of the web page inside the browser
+        const width = box.inner.clientWidth; // Width of the web page inside the browser
+        const height = box.inner.clientHeight; // Height of the web page inside the browser
 
         const map = 1;
 
@@ -16,7 +16,7 @@ class EyeCloud extends Visualization {
         const maxRadius = 100;
 
         // Create an svg- and g-tag inside the graph class
-        let svg = d3.select('.graph')
+        let svg = d3.select(box.inner)
             .append('svg')
             .attr('width', '100%') // Full screen
             .attr('height', '100%') // Full screen

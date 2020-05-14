@@ -18,7 +18,7 @@ block pre_scripts
     script(src='scripts/visualization/registry.js')
     // visualizations
     script(src='scripts/visualization/examplevisualization.js')
-    //script(src='scripts/visualization/eyecloud.js')
+    script(src='scripts/visualization/eyecloud.js')
     script(src='scripts/visualization/gazestripe.js')
     script(src='scripts/visualization/attentionmap.js')
     script(src='scripts/visualization/editor.js')
@@ -39,8 +39,8 @@ block sidebars
                             div(class="grouped fields left-align")
                                 //- Eye Cloud -//
                                 div(class="field")
-                                    div(class="ui toggle checked checkbox" data-tooltip="Not implemented yet" data-position="bottom left" data-inverted="" data-variation="tiny basic")
-                                        input(type="checkbox" id="eyecloud" disabled="disabled" class="settings visualization_type" checked="")
+                                    div(class="ui toggle checked checkbox")
+                                        input(type="checkbox" id="eyecloud" class="settings visualization_type" checked="")
                                         label(for="eyecloud") Eye Cloud
                                 //- Gaze Strips -//
                                 div(class="field")

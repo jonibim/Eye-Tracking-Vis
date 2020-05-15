@@ -18,6 +18,8 @@ function settingChanged() {
     };
 };
 
+applySettings();
+
 //****************** Set Element Behaviors/States ******************//
 
 //- Detect checkbox update -//

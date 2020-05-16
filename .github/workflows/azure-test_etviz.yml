@@ -4,7 +4,7 @@
 name: Build and deploy Node.js app to Azure Web App - etviz
 
 on:
-   watch
+   watch:
       types: [started]
 
 jobs:

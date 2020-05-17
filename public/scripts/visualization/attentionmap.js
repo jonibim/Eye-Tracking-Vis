@@ -83,7 +83,7 @@ class AttentionMap extends Visualization {
             this.top = (this.canvas.height - this.height) / 2;
             this.colorOverlay.width = this.width;
             this.colorOverlay.height = this.height;
-            this.gatherColorRaster();
+            setTimeout(() => this.gatherColorRaster(),0);
         }
 
         // draw the image
@@ -166,6 +166,8 @@ class AttentionMap extends Visualization {
                 context.fillStyle = 'rgba(' + index + ',' + index + ',' + index + ',' + (index / 255 * 0.6 + 0.1) + ')';
             context.fillRect(x, y, 1, 1);
         }
+
+        this.draw();
     }
 
     /**

@@ -1,13 +1,28 @@
 //****************** Set default values ******************//
 let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 1}
 
-//****************** Define Settings Functions ******************//
-
-selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
-
 //- Initialize State of RGBA sliders -//
 for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
+}
+
+selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
+
+//****************** Define Settings Functions ******************//
+
+
+function settingHelp(setting) {
+    $('.toast').toast('close')
+    $('body')
+        .toast({
+            showIcon: 'info',
+            title: setting + ' setting',
+            displayTime: 0,
+            message: 'Usage: TBD',
+            class: 'info',
+            position: 'top center',
+            closeIcon: true
+    });
 }
 
 

@@ -64,7 +64,13 @@ html
 
     //- Enable accordion functionaliy -//
     script.
-        $('.ui.accordion').accordion();
+        $('.ui.accordion')
+          .accordion({
+            selector: {
+              trigger: '.title :not(.exclude)'
+            }
+          })
+        ;
 
     //- Set sidebar transition to 'overlay' -//
     script.

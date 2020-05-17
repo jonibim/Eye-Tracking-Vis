@@ -13,7 +13,12 @@ function applySettings() {
 
 //- Read checkbox changes -//
 function checkboxChanged(id) {
-    visualizations[id] = document.getElementById(id).checked;
+    let state = document.getElementById(id).checked
+    visualizations[id] = state;
+    if (id == 'attentionmap') {
+        $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+    }
+    //resizeBoxes()
 }
 
 //- Read image selector -//

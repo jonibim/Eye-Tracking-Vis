@@ -1,5 +1,5 @@
 //****************** Set default values ******************//
-let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 0.8}
+let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 1}
 
 //****************** Define Settings Functions ******************//
 
@@ -17,8 +17,6 @@ function settingChanged() {
         applySettings()
     };
 };
-
-applySettings();
 
 //****************** Set Element Behaviors/States ******************//
 

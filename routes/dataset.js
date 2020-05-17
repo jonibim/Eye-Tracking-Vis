@@ -13,13 +13,18 @@ router.post('/upload', function (req, res, next) {
         return res.status(400).send({'status': 400, 'message': 'The dataset file format must be csv.'});
 
     // Generate json-file from the uploaded csv-file
-    parseDataset.parseData(req.files.dataset, res);
+    parseDataset.parseData(req.files, res);
 });
 
 // handle request
 router.post('/request', function (req, res, next) {
+    let id = req.query.id;
+
     if(!req.query || !req.query.id)
         return res.status(400).send({'status': 400, 'message': 'Missing variable \'id\'.'});
+
+    if(id === 'default')
+
 
     // Read data from the corresponding file in the uploads folder
     parseDataset.readData(req.query.id, res);

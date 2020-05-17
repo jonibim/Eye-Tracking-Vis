@@ -3,6 +3,9 @@ extends layout
 block styles
     link(rel="icon" type="image/png" href="resources/favicon_upload.png")
 
+block pre_scripts
+    script(src='scripts/upload/upload.js')
+
 block header_content
     //- Topbar Centered Text -//
     div(class="ui item")
@@ -28,11 +31,18 @@ block content
 
                 //-  Interactive form -//
                 form(class="ui form" action="/dataset/upload" enctype="multipart/form-data" method="POST")
-                    div(class="inline field")
-                        label(for="files")
-                            div(class="ui basic blue button" tabindex="0") Select files
-                                input(type="file" id="files" name="datasets" style="display:none" multiple)
-                        input(type="submit" class="ui basic green button" id="files" name="sampleFiles" value='Submit')
+                    div(class="field")
+                        div(class="ui blue input")
+                            input(type="text" placeholder="Dataset Name" maxlength="30")
+                    div(class="field")
+                        label(for="dataset")
+                            div(class="ui basic blue button") Select dataset
+                    div(class="field")
+                        label(for="images")
+                            div(class="ui basic blue button") Select images
+                    input(id="dataset" type="file" name="dataset" accept=".csv" style="display:none")
+                    input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" style="display:none")
+                    input(type="submit" class="ui green submit button" value="Submit")
             //-  Placeholder Segment -//
             div(class="ui placeholder secondary segment")
                 div(class="ui icon header")

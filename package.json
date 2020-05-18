@@ -19,6 +19,7 @@
     "jsdom": "^16.2.2",
     "morgan": "~1.9.1",
     "multipart": "^0.1.5",
+    "patternfills": "^0.4.1",
     "pug": "^2.0.4",
     "uuid": "^7.0.3"
   },

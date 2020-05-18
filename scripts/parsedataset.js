@@ -45,6 +45,8 @@ async function parseData(files, response) {
         console.log('parsedataset.js - No images found for the uploaded dataset');
         return;
     }
+    if(files.images.name)
+        files.images = [files.images];
     loop: for(let image of images){
         for(let entry of files.images)
             if(entry.name === image)

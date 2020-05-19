@@ -32,11 +32,11 @@ block sidebars
         //-  Visualization type(s) -//
         div(class="item")
             div(class="ui styled accordion")
-                div(class="active title" data-tooltip="Toggle desired visualizations on or off" data-position="top left" data-inverted="" data-variation="tiny basic")
+                div(class="active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Visualizations')" data-tooltip="Toggle desired visualizations on or off" data-position="top left" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted question icon exclude")
                     i(class="ui dropdown icon")
                     label Visualizations:
-                    div(class="floating ui teal basic circular label exclude" onclick="settingHelp('Visualizations')")
-                        i(class="ui fitted question icon exclude")
                 div(class="ui form content active")
                     div(class="grouped fields left-align")
                         //- Eye Cloud -//
@@ -72,11 +72,11 @@ block sidebars
 
         div(class="item")
             div(class="ui styled accordion")
-                div(class="active title" data-tooltip="Select the image to display" data-position="top left" data-inverted="" data-variation="tiny basic")
+                div(class="active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Image')" data-tooltip="Select the image to display" data-position="top left" data-inverted="" data-variation="tiny basic")
+                            i(class="ui fitted question icon exclude")
                     i(class="ui dropdown icon")
                     label Image:
-                    div(class="floating ui teal basic circular label exclude" onclick="settingHelp('Image')")
-                            i(class="ui fitted question icon exclude")
                 div(class="ui form content active")
                     //- Dropdown selection menu -//
                     div(class="ui fluid search selection dropdown")
@@ -91,13 +91,13 @@ block sidebars
         //- RGBA -//
         div(class="item")
             div(class="ui styled accordion colorsettings")
-                div(class="inline active title" data-tooltip="Modify the color for the Attention Map" data-position="top left" data-inverted="" data-variation="tiny basic")
+                div(class="inline active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Color')" data-tooltip="Modify the color for the Attention Map" data-position="top left" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted question icon exclude")
                     i(class="ui dropdown icon")
                     label Color:
                     //- Color Preview Icon -//
                     i(class="ui inverted circular eye dropper icon color-preview")
-                    div(class="floating ui teal basic circular label exclude" onclick="settingHelp('Color')")
-                        i(class="ui fitted question icon exclude")
                 div(class="ui form content active ")
                     //- Red Slider -//
                     div(class="ui inline fields")
@@ -117,14 +117,19 @@ block sidebars
                             div(class="ui slider small-padding alpha" id="a") 
                             
 
-        //- Extra setting?-//
-            div(class="item")
-                div(class="ui styled accordion")
-                            div(class="title")
-                                i(class="ui dropdown icon")
-                            div(class="content")
-                                p Settings are not implemented yet
-
+        //- Editor Mode -//
+        div(class="item")
+            div(class="ui styled accordion")
+                div(class="inline active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Editor Mode')" data-tooltip="Select AOI Editor Mode (Edit - Drag)" data-position="top left" data-inverted="" data-variation="tiny basic")
+                            i(class="ui fitted question icon exclude")
+                    i(class="ui dropdown icon")
+                    label Editor Mode:
+                div(class="ui form content active ")
+                    div(class="ui basic button editorEdit" onclick="editorMode('edit')")
+                        i(class="ui fitted edit icon")
+                    div(class="ui basic button editorDrag" onclick="editorMode('drag')")
+                        i(class="ui fitted arrows alternate icon")
 
         //- Apply Settings & Auto Apply -//
         div(class="ui basic center aligned fitted segment")
@@ -132,7 +137,10 @@ block sidebars
                 div(class="ui green basic button" onclick="applySettings()") Apply Settings
                 div(class="ui checkbox")
                     input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
-                    label Apply On Change
+                    label(for="auto_apply") Apply On Change
+            
+            div#show_help(class="ui green basic circular button bottom floated" onclick="showHelp()" data-tooltip="Toggle help icons" data-position="top left" data-inverted="" data-variation="tiny basic")
+                i(class="ui fitted question icon")
 
 
 

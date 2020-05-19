@@ -1,5 +1,6 @@
 let selected_image = "";
 let visualizations = {};
+let edit = false;
 
 function applySettings() {
     //- Apply visualization type changes -//
@@ -51,3 +52,20 @@ function readSlidersRGBA(id, value) {
     }
 }
 
+function editorMode(mode) {
+    edit = mode == "edit" ? true : false;
+    if (edit) {
+        $('.editorEdit').addClass('positive')
+        $('.editorDrag').removeClass('positive')
+        //EDIT MODE ENABLED (use this for any function calls)
+    } else {
+        $('.editorDrag').addClass('positive')
+        $('.editorEdit').removeClass('positive')
+        //EDIT MODE DISABLED (use this for any function calls)
+    }
+}
+
+function showHelp() {
+    $('#show_help').toggleClass('green basic')
+    $('.settinghelp').toggleClass('hidden')
+}

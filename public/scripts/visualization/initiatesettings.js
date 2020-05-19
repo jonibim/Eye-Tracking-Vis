@@ -8,6 +8,8 @@ for ([x, y] of Object.entries(RGBA)) {
 
 selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
 
+editorMode('edit');
+
 //****************** Define Settings Functions ******************//
 
 

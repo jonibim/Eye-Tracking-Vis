@@ -18,6 +18,8 @@ function checkboxChanged(id) {
     visualizations[id] = state;
     if (id == 'attentionmap') {
         $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+    } else if (id == 'editor') {
+        $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
     }
     //resizeBoxes()
 }

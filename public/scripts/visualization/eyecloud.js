@@ -18,6 +18,7 @@ class EyeCloud extends Visualization {
 
         // Create an svg- and g-tag inside the graph class
         let svg = d3.select(box.inner)
+            .classed('smalldot',true)
             .append('svg')
             .attr('width', width) // Full screen
             .attr('height', height) // Full screen

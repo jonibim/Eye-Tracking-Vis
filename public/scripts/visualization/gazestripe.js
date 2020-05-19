@@ -6,7 +6,8 @@ class GazeStripe extends Visualization {
         let frameWidth = box.inner.clientWidth;
         let frameHeight = box.inner.clientHeight;
 
-        let svg = d3.select(box.inner)
+		let svg = d3.select(box.inner)
+			.classed('smalldot',true)
             .append('svg')
             .attr('width', frameWidth) // Full screen
             .attr('height', frameHeight) // Full screen

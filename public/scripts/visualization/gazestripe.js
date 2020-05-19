@@ -22,7 +22,7 @@ class GazeStripe extends Visualization {
         let usersy = {};
         let shortestPath = Math.pow(10, 1000);
         let longestTime = {};
-        let offset = 50;
+        let offset = zoomValue;
         let counter = 0;
 
         let data;

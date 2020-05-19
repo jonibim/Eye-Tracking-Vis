@@ -1,6 +1,7 @@
 let selected_image = "";
 let visualizations = {};
-let edit = false;
+//let edit = false;
+let zoomValue = 50;
 
 function applySettings() {
     //- Apply visualization type changes -//
@@ -10,6 +11,7 @@ function applySettings() {
     
     properties.setImage(selected_image);
     properties.setColor(Object.values(RGBA));
+    properties.setZoom(zoomValue);
 }
 
 //- Read checkbox changes -//
@@ -18,8 +20,10 @@ function checkboxChanged(id) {
     visualizations[id] = state;
     if (id == 'attentionmap') {
         $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
-    } else if (id == 'editor') {
+    } /* else if (id == 'editor') {
         $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
+    } */ else if (id == 'gazestripe') {
+        $(".accordion.zoomsettings").accordion(state ? "open" : "close", 0);
     }
     //resizeBoxes()
 }
@@ -54,6 +58,13 @@ function readSlidersRGBA(id, value) {
     }
 }
 
+//- Zoom Lever Slider -//
+function readSlidersZoom(value) {
+    zoomValue = value;
+}
+
+
+/*
 function editorMode(mode) {
     edit = mode == "edit" ? true : false;
     if (edit) {
@@ -66,6 +77,7 @@ function editorMode(mode) {
         //EDIT MODE DISABLED (use this for any function calls)
     }
 }
+*/
 
 function showHelp() {
     $('#show_help').toggleClass('green basic')

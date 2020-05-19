@@ -21,6 +21,9 @@ class EyeCloud extends Visualization {
             .append('svg')
             .attr('width', width) // Full screen
             .attr('height', height) // Full screen
+            .call(d3.zoom().on("zoom", function () {
+                svg.attr("transform", d3.event.transform)
+             }))
             .append('g')
             .attr('transform', 'translate(0,0)');
 

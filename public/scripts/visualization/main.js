@@ -42,7 +42,7 @@ window.onload = () => {
     registry.register('gazestripe',box => new GazeStripe(box));
     registry.register('eyecloud',box => new EyeCloud(box));
     registry.register('attentionmap',box => new AttentionMap(box));
-    //registry.register('editor',box => new Editor(box));
+    registry.register('editor',box => new Editor(box));
     console.log('main.js - Finished Loading')
 
 

@@ -1,13 +1,15 @@
 extends layout
 
 block styles
-    link(rel ='stylesheet', href = '/css/visualization.css')
-    link(rel ='stylesheet', href="/css/patterns.css")
+    link(rel='stylesheet' href="/css/visualization.css")
+    link(rel='stylesheet' href="/css/patterns.css")
+    link(rel='stylesheet' href="/css/d3-context-menu.css")
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
     // d3.js
     script(src="https://d3js.org/d3.v5.min.js")
+    script(src="scripts/additional-modules/d3-context-menu.js")
     // framework
     script(src='scripts/visualization/main.js')
     script(src='scripts/visualization/dataset.js')
@@ -75,7 +77,7 @@ block sidebars
             div(class="ui styled accordion")
                 div(class="active title")
                     div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Image')" data-tooltip="Select the image to display" data-position="top left" data-inverted="" data-variation="tiny basic")
-                            i(class="ui fitted question icon exclude")
+                        i(class="ui fitted question icon exclude")
                     i(class="ui dropdown icon")
                     label Image:
                 div(class="ui form content active")
@@ -116,14 +118,14 @@ block sidebars
                         div(class="ui inline fields")
                             div(class="ui inverted label a-color-preview") A
                             div(class="ui slider small-padding alpha" id="a") 
-                            
+
 
         //- Editor Mode -//
             div(class="item")
                 div(class="ui styled accordion editorsettings")
                     div(class="inline active title")
                         div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Editor Mode')" data-tooltip="Select AOI Editor Mode (Edit - Drag)" data-position="top left" data-inverted="" data-variation="tiny basic")
-                                i(class="ui fitted question icon exclude")
+                            i(class="ui fitted question icon exclude")
                         i(class="ui dropdown icon")
                         label Editor Mode:
                     div(class="ui form content active ")
@@ -137,7 +139,7 @@ block sidebars
             div(class="ui styled accordion zoomsettings")
                 div(class="inline active title")
                     div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Editor Mode')" data-tooltip="Select AOI Editor Mode (Edit - Drag)" data-position="top left" data-inverted="" data-variation="tiny basic")
-                            i(class="ui fitted question icon exclude")
+                        i(class="ui fitted question icon exclude")
                     i(class="ui dropdown icon")
                     label Editor Mode:
                 div(class="ui form content active ")
@@ -151,7 +153,7 @@ block sidebars
                 div(class="ui checkbox")
                     input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
                     label(for="auto_apply") Apply On Change
-            
+
             div#show_help(class="ui green basic circular button bottom floated" onclick="showHelp()" data-tooltip="Toggle help icons" data-position="top left" data-inverted="" data-variation="tiny basic")
                 i(class="ui fitted question icon")
 
@@ -171,7 +173,7 @@ block content
     div#container(class='container')
         div#frame(class='frame')
             div(class="preview ui big centered image" style="display:none;")
-                    img#preview-image(src="/testdataset/images/" + default_image)
+                img#preview-image(src="/testdataset/images/" + default_image)
             div#innerframe(class='inner-frame')
 
 block post_scripts

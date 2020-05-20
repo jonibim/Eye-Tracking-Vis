@@ -8,6 +8,7 @@ class Editor extends Visualization {
      * @param {The box containing the visualization} box 
      */
     constructor(box) {
+
         super(box, 'AOI Editor');
 
         this.margin = { top: 30, right: 20, bottom: 30, left: 50 }
@@ -88,6 +89,31 @@ class Editor extends Visualization {
         if (properties.image)
             this.img.src = '/testdataset/images/' + properties.image;
         this.draw();
+
+        this.menu = [
+			{
+				title: 'Add AOI',
+				action: function(elm, d, i) {
+                    console.log('Being implemented')
+					console.log('Item #1 clicked!');
+					console.log('The data for this circle is: ' + d);
+				}
+			},
+			{
+				title: 'Enable Brush',
+				action: () => this.startBrush()
+            },
+            {
+				title: 'Disable Brush',
+                action: () => this.clearBrush()
+                //Wish: Disable the disable brush option when there isn't any brush available
+            },
+            {
+				title: 'Info point (Check console)',
+				action: (elemt,d,i) => 	console.log('The data for this circle is: ' + d)
+            }
+            
+		]
     }
 
     /**
@@ -226,18 +252,30 @@ class Editor extends Visualization {
     // However, it is not needed anymore
     // Thus lying as a relic in this code 
 
-    // clearBrush(){
-    //     this.brush.clear(this.svg)
-    //     this.svg.on(".brush",null)
-    //     this.svg.selectAll('rect').remove()
-    //     this.svg.attr('pointer-events', null)
-    // }
+    clearBrush(){
+        
+        if(!this.brush){
+            console.log("No Brush Exists")
+            return;
+        }
+        this.brush.clear(this.svgG)
+        this.svgG.on(".brush",null)
+        this.svgG.selectAll('rect').remove()
+        this.svgG.attr('pointer-events', null)
+        this.brush = null;
+    }
 
     /**
      * Maintaining the brush tool
      */
     startBrush() {
         //this.svg.on('.zoom', null);
+
+        if(this.brush){
+            console.log("Exists")
+            return;
+        }
+
         this.brush = d3.brush()
         this.svgG
             // Add the brush feature using the d3.brush function
@@ -257,6 +295,9 @@ class Editor extends Visualization {
                         //console.log(this.svgG.append('g').selectAll("dot"))
                     }
                 }))
+
+        this.svgG.select('.selection').on('contextmenu', d3.contextMenu(this.menu));
+        this.svgG.selectAll('circle').on('contextmenu', d3.contextMenu(this.menu));
         //console.log(this.brush)
     }
 

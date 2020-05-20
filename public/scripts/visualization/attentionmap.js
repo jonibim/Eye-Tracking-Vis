@@ -51,7 +51,7 @@ class AttentionMap extends Visualization {
         properties.onchange.set('attentionmap', () => {
             this.img.src = properties.image ? '/testdataset/images/' + properties.image : '';
         })
-        properties.aoi.onchange.set('attentionmap', () => {
+        properties.getCurrentAOI().onchange.set('attentionmap', () => {
             this.ratio = 0;
             this.draw();
         })
@@ -160,7 +160,8 @@ class AttentionMap extends Visualization {
             let green = index * color[1] + inverted * colorInverted[1];
             let blue = index * color[2] + inverted * colorInverted[2];
 
-            if (!properties.aoi.hasSelection || (x > properties.aoi.left / this.img.naturalWidth * this.width && x < properties.aoi.right / this.img.naturalWidth * this.width && y > properties.aoi.top / this.img.naturalHeight * this.height && y < properties.aoi.bottom / this.img.naturalHeight * this.height))
+            let aoi = properties.getCurrentAOI();
+            if (!aoi.hasSelection || (x > aoi.left / this.img.naturalWidth * this.width && x < aoi.right / this.img.naturalWidth * this.width && y > aoi.top / this.img.naturalHeight * this.height && y < aoi.bottom / this.img.naturalHeight * this.height))
                 context.fillStyle = 'rgba(' + red + ',' + green + ',' + blue + ',' + index + ')';
             else
                 context.fillStyle = 'rgba(' + index + ',' + index + ',' + index + ',' + (index / 255 * 0.6 + 0.1) + ')';
@@ -225,7 +226,7 @@ class AttentionMap extends Visualization {
         right = right / this.width * this.img.naturalWidth;
         bottom = bottom / this.height * this.img.naturalHeight;
 
-        properties.aoi.setSelection(left, top, right, bottom);
+        properties.getCurrentAOI().setSelection(left, top, right, bottom);
 
         this.draw();
     }

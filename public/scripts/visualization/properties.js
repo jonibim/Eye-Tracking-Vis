@@ -4,7 +4,7 @@
  * @property {string} image - the image currently selected
  * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
- * @property {AOI} aoi - the selected area of interest
+ * @property {Map<string,AOI>} aoi - the selected area of interest per image
  * @property {Map<string,function()>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
@@ -13,7 +13,7 @@ class Properties {
         this.image = undefined;
         this.rgba = undefined;
         this.time = 0;
-        this.aoi = new AOI();
+        this.aoi = new Map();
 
         this.onchange = new Map();
     }
@@ -29,6 +29,10 @@ class Properties {
         console.log('properties.js - Setting image to ' + image);
 
         this.image = image;
+
+        if(this.image)
+            this.aoi[image] = new AOI(this.image);
+
         for(let listener of this.onchange.values())
             listener();
     }
@@ -62,10 +66,15 @@ class Properties {
         for(let listener of this.onchange.values())
             listener();
     }
+
+    getCurrentAOI(){
+        return this.image ? new AOI('') : this.aoi[this.image];
+    }
 }
 
 /**
  * Stores the selected AOI
+ * @property {string} image - the image the aoi is for
  * @property {boolean} hasSelection - whether something is currently selected
  * @property {float} left - left side of the selected area
  * @property {float} top - top side of the selected area
@@ -76,7 +85,11 @@ class Properties {
  */
 class AOI {
 
-    constructor() {
+    /**
+     * @param {string} image - the image the aoi is for
+     */
+    constructor(image) {
+        this.image = image;
         this.hasSelection = false;
         this.left = 0;
         this.right = 0;

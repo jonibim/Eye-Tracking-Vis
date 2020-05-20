@@ -1,13 +1,34 @@
 //****************** Set default values ******************//
-let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 0.8}
+let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 1}
 
-//****************** Define Settings Functions ******************//
-
-selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
+let settingHelpMap = {
+    'Visualizations' : 'Enable the visualization types ',
+    'Image' : '',
+    'Color' : '',
+}
 
 //- Initialize State of RGBA sliders -//
 for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
+}
+
+selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
+
+//****************** Define Settings Functions ******************//
+
+
+function settingHelp(setting) {
+    $('.toast').toast('close')
+    $('body')
+        .toast({
+            showIcon: 'info',
+            title: setting + ' setting',
+            displayTime: 0,
+            message: settingHelpMap[setting],
+            class: 'info',
+            position: 'top center',
+            closeIcon: true
+    });
 }
 
 
@@ -50,7 +71,7 @@ $('.image-selector').on('mouseenter', function(evt){
 });
 
 //- RGB Slider initialization -//
-$('.ui.slider').each(function() {
+$('.ui.slider.rgb').each(function() {
     $('#'+this.id).slider({
         min: 0,
         max: 255,
@@ -63,7 +84,6 @@ $('.ui.slider').each(function() {
     });
 });
 
-
 //- Alpha Slider initialization -//
 $('.alpha.ui.slider').slider({
     min: 0.1,
@@ -75,3 +95,15 @@ $('.alpha.ui.slider').slider({
         settingChanged()
     }
 });
+
+//- Zoom Level Slider -//
+$('.ui.slider.zoom').slider({
+        min: 25,
+        max: 200,
+        start: 50,
+        step: 1,
+        onChange: function(value) {
+            readSlidersZoom(value)
+            settingChanged()
+        }
+    });

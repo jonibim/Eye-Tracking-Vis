@@ -3,6 +3,9 @@ extends layout
 block styles
     link(rel="icon" type="image/png" href="resources/favicon_upload.png")
 
+block pre_scripts
+    script(src='scripts/upload/upload.js')
+
 block header_content
     //- Topbar Centered Text -//
     div(class="ui item")
@@ -27,17 +30,34 @@ block content
                 //PLACE FORMAT DISPLAY HERE
 
                 //-  Interactive form -//
-                form(class="ui form" action="/dataset/upload" enctype="multipart/form-data" method="POST")
-                    div(class="inline field")
-                        label(for="files")
-                            div(class="ui basic blue button" tabindex="0") Select files
-                                input(type="file" id="files" name="datasets" style="display:none" multiple)
-                        input(type="submit" class="ui basic green button" id="files" name="sampleFiles" value='Submit')
+                form(id="datasetForm" enctype="multipart/form-data" method="POST" class="ui form")
+                    div(class="field")
+                        div(class="ui blue input")
+                            input(type="text" required placeholder="Dataset Name" maxlength="30")
+                    div(class="field")
+                        label(for="dataset")
+                            div(class="ui basic blue button") Select dataset
+                                input(id="dataset" type="file" name="dataset" accept=".csv" required style="width: inherit; height: inherit; left: initial; top: initial; opacity: 0; position: absolute; z-index: -1;")
+                    div(class="field" aria-required=true)
+                        label(for="images")
+                            div(class="ui basic blue button") Select images
+                                input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required style="width: inherit; height: inherit; left: initial; top: initial; opacity: 0; position: absolute; z-index: -1;")
+                    input(type="submit" class="ui green submit button" value="Upload")
             //-  Placeholder Segment -//
-            div(class="ui placeholder secondary segment")
+            div(id="tempSection" class="ui placeholder secondary segment")
                 div(class="ui icon header")
                     i(class="ui file icon")
                     p No files uploaded yet!
+            div(id="successSection" class="ui placeholder secondary segment" style="display: none")
+                div(class="ui icon header")
+                    i(class="ui green check icon")
+                    p Dataset uploaded successfully!
+                    button(id='visualizationButton' type="button" class="ui blue button") Open Visualization
+            div(id="failureSection" class="ui placeholder secondary segment" style="display: none")
+                div(class="ui icon header")
+                    i(class="ui red exclamation icon")
+                    p Failed to upload dataset!
+                    p(id='failureMessage')
             //SHOW UPLOADED FILES
 
 block post_scripts

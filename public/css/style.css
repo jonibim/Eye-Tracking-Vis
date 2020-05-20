@@ -61,3 +61,11 @@ a.label:hover{
     -ms-user-select: text;
     user-select: text;
 }
+
+.selected {
+    opacity: 1 !important;
+    stroke: black;
+    stroke-width: 1px;
+    fill: black !important;
+  }
+  

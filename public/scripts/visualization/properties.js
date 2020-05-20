@@ -47,6 +47,21 @@ class Properties {
         for(let listener of this.onchange.values())
             listener();
     }
+
+    /**
+     * Sets the currently defined zoom level (for gaze stripe)
+     * @param {number} zoom level
+     */
+    setZoom(zoomValue){
+        if(this.zoomValue === zoomValue)
+            return;
+
+        console.log('properties.js - Setting zoom level to ' + zoomValue);
+
+        this.zoomValue = zoomValue;
+        for(let listener of this.onchange.values())
+            listener();
+    }
 }
 
 /**

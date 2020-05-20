@@ -1,5 +1,7 @@
 let selected_image = "";
 let visualizations = {};
+//let edit = false;
+let zoomValue = 50;
 
 function applySettings() {
     //- Apply visualization type changes -//
@@ -9,11 +11,21 @@ function applySettings() {
     
     properties.setImage(selected_image);
     properties.setColor(Object.values(RGBA));
+    properties.setZoom(zoomValue);
 }
 
 //- Read checkbox changes -//
 function checkboxChanged(id) {
-    visualizations[id] = document.getElementById(id).checked;
+    let state = document.getElementById(id).checked
+    visualizations[id] = state;
+    if (id == 'attentionmap') {
+        $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+    } /* else if (id == 'editor') {
+        $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
+    } */ else if (id == 'gazestripe') {
+        $(".accordion.zoomsettings").accordion(state ? "open" : "close", 0);
+    }
+    //resizeBoxes()
 }
 
 //- Read image selector -//
@@ -46,3 +58,28 @@ function readSlidersRGBA(id, value) {
     }
 }
 
+//- Zoom Lever Slider -//
+function readSlidersZoom(value) {
+    zoomValue = value;
+}
+
+
+/*
+function editorMode(mode) {
+    edit = mode == "edit" ? true : false;
+    if (edit) {
+        $('.editorEdit').addClass('positive')
+        $('.editorDrag').removeClass('positive')
+        //EDIT MODE ENABLED (use this for any function calls)
+    } else {
+        $('.editorDrag').addClass('positive')
+        $('.editorEdit').removeClass('positive')
+        //EDIT MODE DISABLED (use this for any function calls)
+    }
+}
+*/
+
+function showHelp() {
+    $('#show_help').toggleClass('green basic')
+    $('.settinghelp').toggleClass('hidden')
+}

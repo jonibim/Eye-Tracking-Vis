@@ -1,12 +1,15 @@
 extends layout
 
 block styles
-    link(rel = 'stylesheet', href = '/css/visualization.css')
+    link(rel='stylesheet' href="/css/visualization.css")
+    link(rel='stylesheet' href="/css/patterns.css")
+    link(rel='stylesheet' href="/css/d3-context-menu.css")
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
     // d3.js
     script(src="https://d3js.org/d3.v5.min.js")
+    script(src="scripts/additional-modules/d3-context-menu.js")
     // framework
     script(src='scripts/visualization/main.js')
     script(src='scripts/visualization/dataset.js')
@@ -18,7 +21,7 @@ block pre_scripts
     script(src='scripts/visualization/registry.js')
     // visualizations
     script(src='scripts/visualization/examplevisualization.js')
-    //script(src='scripts/visualization/eyecloud.js')
+    script(src='scripts/visualization/eyecloud.js')
     script(src='scripts/visualization/gazestripe.js')
     script(src='scripts/visualization/attentionmap.js')
     script(src='scripts/visualization/editor.js')
@@ -32,37 +35,39 @@ block sidebars
         //-  Visualization type(s) -//
         div(class="item")
             div(class="ui styled accordion")
-                        div(class="title")
-                            i(class="ui dropdown icon")
-                            label Visualizations:
-                        div(class="ui form content")
-                            div(class="grouped fields left-align")
-                                //- Eye Cloud -//
-                                div(class="field")
-                                    div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="eyecloud" class="settings visualization_type" checked="")
-                                        label(for="eyecloud") Eye Cloud
-                                //- Gaze Strips -//
-                                div(class="field")
-                                    div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="gazestripes" class="settings visualization_type" checked="")
-                                        label(for="gazestripes") Gaze Stripes
-                                //- Transition Graph -//
-                                div(class="field")
-                                    div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="transitiongraph" class="settings visualization_type" checked="")
-                                        label(for="transitiongraph") Transition Graph
-                                //- Visual Attention Map -//
-                                div(class="field")
-                                    div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="attentionmap" class="settings visualization_type" checked="")
-                                        label(for="attentionmap") Visual Attention Map
-                                div(class="ui fitted divider")
-                                //- Editor -//
-                                div(class="field")
-                                    div(class="ui toggle checked checkbox")
-                                        input(type="checkbox" id="editor" class="settings visualization_type" checked="")
-                                        label(for="editor") Editor
+                div(class="active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Visualizations')" data-tooltip="Toggle desired visualizations on or off" data-position="top left" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted question icon exclude")
+                    i(class="ui dropdown icon")
+                    label Visualizations:
+                div(class="ui form content active")
+                    div(class="grouped fields left-align")
+                        //- Eye Cloud -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="eyecloud" class="settings visualization_type" checked="")
+                                label(for="eyecloud") Eye Cloud
+                        //- Gaze Strips -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="gazestripe" class="settings visualization_type" checked="")
+                                label(for="gazestripe") Gaze Stripes
+                        //- Transition Graph -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox" data-tooltip="Not implemented yet" data-position="bottom left" data-inverted="" data-variation="tiny basic")
+                                input(type="checkbox" id="transitiongraph" disabled="disabled" class="settings visualization_type" checked="")
+                                label(for="transitiongraph") Transition Graph
+                        //- Visual Attention Map -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="attentionmap" class="settings visualization_type" checked="")
+                                label(for="attentionmap") Visual Attention Map
+                        div(class="ui fitted divider")
+                        //- Editor -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox" data-tooltip="Being implemented... :)" data-position="bottom left" data-inverted="" data-variation="tiny basic")
+                                input(type="checkbox" id="editor" class="settings visualization_type" checked="")
+                                label(for="editor") Editor
         //- Image Selection -//
         //- Default image setDefaultImageHere -//
         -var default_image = "01b_Antwerpen_S2.jpg"
@@ -70,53 +75,75 @@ block sidebars
 
         div(class="item")
             div(class="ui styled accordion")
-                        div(class="title")
-                            i(class="ui dropdown icon")
-                            label Image:
-                        div(class="ui form content")
-                            //- Dropdown selection menu -//
-                            div(class="ui fluid search selection dropdown")
-                                div(class="default text") #{default_image}
-                                i(class="ui dropdown icon")
-                                div(class="menu")
-                                    //- Add all filenames to the dropdown; text: filename, data-value:tags[filename] -//
-                                    for image in images
-                                        div(class="item fitted image-selector" data-value=tags[image]) #{image}
-                                    else
-                                        div(class="item") No images were found
+                div(class="active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Image')" data-tooltip="Select the image to display" data-position="top left" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted question icon exclude")
+                    i(class="ui dropdown icon")
+                    label Image:
+                div(class="ui form content active")
+                    //- Dropdown selection menu -//
+                    div(class="ui fluid search selection dropdown")
+                        div(class="default text") #{default_image}
+                        i(class="ui dropdown icon")
+                        div(class="menu")
+                            //- Add all filenames to the dropdown; text: filename, data-value:tags[filename] -//
+                            for image in images
+                                div(class="item fitted image-selector" data-value=tags[image]) #{image}
+                            else
+                                div(class="item") No images were found
         //- RGBA -//
         div(class="item")
-            div(class="ui styled accordion")
-                        div(class="inline title")
-                            i(class="ui dropdown icon")
-                            label Color: 
-                            //- Color Preview Icon -//
-                            i(class="ui inverted circular eye dropper icon color-preview")
-                        div(class="ui form content")
-                            //- Red Slider -//
-                            div(class="ui inline fields")
-                                div(class="ui inverted label r-color-preview") R
-                                div(class="ui slider r small-padding" id="r")
-                            //- Green Slider -//
-                            div(class="ui inline fields")
-                                div(class="ui inverted label g-color-preview") G
-                                div(class="ui slider g small-padding" id="g")
-                            //- Blue Slider -//
-                            div(class="ui inline fields")
-                                div(class="ui inverted label b-color-preview") B
-                                div(class="ui slider b small-padding" id="b")
-                            //- Alpha Slider -//
-                            div(class="ui inline fields")
-                                div(class="ui inverted label a-color-preview") A
-                                div(class="ui slider small-padding alpha" id="a")
+            div(class="ui styled accordion colorsettings")
+                div(class="inline active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Color')" data-tooltip="Modify the color for the Attention Map" data-position="top left" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted question icon exclude")
+                    i(class="ui dropdown icon")
+                    label Color:
+                    //- Color Preview Icon -//
+                    i(class="ui inverted circular eye dropper icon color-preview")
+                div(class="ui form content active ")
+                    //- Red Slider -//
+                    div(class="ui inline fields")
+                        div(class="ui inverted label r-color-preview") R
+                        div(class="ui slider rgb small-padding" id="r")
+                    //- Green Slider -//
+                    div(class="ui inline fields")
+                        div(class="ui inverted label g-color-preview") G
+                        div(class="ui slider rgb small-padding" id="g")
+                    //- Blue Slider -//
+                    div(class="ui inline fields")
+                        div(class="ui inverted label b-color-preview") B
+                        div(class="ui slider rgb small-padding" id="b")
+                    //- Alpha Slider (Disabled for now) Remove from scripts if not used!-//
+                        div(class="ui inline fields")
+                            div(class="ui inverted label a-color-preview") A
+                            div(class="ui slider small-padding alpha" id="a") 
 
 
+        //- Editor Mode -//
+            div(class="item")
+                div(class="ui styled accordion editorsettings")
+                    div(class="inline active title")
+                        div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Editor Mode')" data-tooltip="Select AOI Editor Mode (Edit - Drag)" data-position="top left" data-inverted="" data-variation="tiny basic")
+                            i(class="ui fitted question icon exclude")
+                        i(class="ui dropdown icon")
+                        label Editor Mode:
+                    div(class="ui form content active ")
+                        div(class="ui basic button editorEdit" onclick="editorMode('edit')")
+                            i(class="ui fitted edit icon")
+                        div(class="ui basic button editorDrag" onclick="editorMode('drag')")
+                            i(class="ui fitted arrows alternate icon")
+
+        //- Zoom Level -//
         div(class="item")
-            div(class="ui styled accordion")
-                        div(class="title")
-                            i(class="ui dropdown icon")
-                        div(class="content")
-                            p Settings are not implemented yet
+            div(class="ui styled accordion zoomsettings")
+                div(class="inline active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Editor Mode')" data-tooltip="Select AOI Editor Mode (Edit - Drag)" data-position="top left" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted question icon exclude")
+                    i(class="ui dropdown icon")
+                    label Editor Mode:
+                div(class="ui form content active ")
+                    div(class="ui slider zoom small-padding")
 
 
         //- Apply Settings & Auto Apply -//
@@ -125,7 +152,10 @@ block sidebars
                 div(class="ui green basic button" onclick="applySettings()") Apply Settings
                 div(class="ui checkbox")
                     input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
-                    label Apply On Change
+                    label(for="auto_apply") Apply On Change
+
+            div#show_help(class="ui green basic circular button bottom floated" onclick="showHelp()" data-tooltip="Toggle help icons" data-position="top left" data-inverted="" data-variation="tiny basic")
+                i(class="ui fitted question icon")
 
 
 
@@ -143,7 +173,7 @@ block content
     div#container(class='container')
         div#frame(class='frame')
             div(class="preview ui big centered image" style="display:none;")
-                    img#preview-image(src="/testdataset/images/" + default_image)
+                img#preview-image(src="/testdataset/images/" + default_image)
             div#innerframe(class='inner-frame')
 
 block post_scripts
@@ -155,6 +185,7 @@ block post_scripts
                 .hide();
             //- Open Settings -//
             showSidebar('settings');
+            //resizeBoxes()
         };
 
         function closeSettings() {
@@ -163,6 +194,7 @@ block post_scripts
                 .show();
             //- Close Settings -//
             hideSidebar('settings');
+            //resizeBoxes()
         };
 
         //- Prevent 'settings' sidebar from dimming the page -//

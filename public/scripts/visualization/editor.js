@@ -14,6 +14,8 @@ class Editor extends Visualization {
         this.margin = { top: 30, right: 20, bottom: 30, left: 50 }
         this.width = this.box.inner.clientWidth
         this.height = this.box.inner.clientHeight
+        //this.aoiCount = 0;
+        //this.aoiMap = new Map()
 
         this.img = new Image();
         this.img.onload = () => {
@@ -49,6 +51,8 @@ class Editor extends Visualization {
             }))
             .append("g")
 
+        this.svgGdots = this.svgG.append('g')
+
         /**
          * We filter the zoom function as it usually binds 
          * mouse left click as Pan tool
@@ -83,6 +87,8 @@ class Editor extends Visualization {
         */
 
         properties.onchange.set('editor', () => {
+            if (this.img.src)
+                if (this.img.src.match('([^\/]+$)')[0] === properties.image) return;
             this.img.src = properties.image ? '/testdataset/images/' + properties.image : '';
         })
 
@@ -90,30 +96,101 @@ class Editor extends Visualization {
             this.img.src = '/testdataset/images/' + properties.image;
         this.draw();
 
-        this.menu = [
-			{
-				title: 'Add AOI',
-				action: function(elm, d, i) {
-                    console.log('Being implemented')
-					console.log('Item #1 clicked!');
-					console.log('The data for this circle is: ' + d);
-				}
-			},
-			{
-				title: 'Enable Brush',
-				action: () => this.startBrush()
-            },
-            {
-				title: 'Disable Brush',
-                action: () => this.clearBrush()
-                //Wish: Disable the disable brush option when there isn't any brush available
-            },
-            {
-				title: 'Info point (Check console)',
-				action: (elemt,d,i) => 	console.log('The data for this circle is: ' + d)
+        this.clearAllAoiMenu = {
+            title: 'Clear all AOIs',
+            action: () => {
+                this.svgGdots.selectAll('.aoi').remove()
+                this.svgG.selectAll('circle').classed('underAoi', false)
             }
-            
-		]
+    
+        }
+
+        this.devOptions = [
+            {
+                divider: true
+            },
+            {
+                title: 'DevOptions',
+            },
+            {
+                title: 'Get Current AOIs from properties',
+                action: () => console.log(properties.getCurrentAOI())
+            },
+            {
+                title: 'Get AOIs count',
+                action: () => console.log(properties.getCurrentAOIsize())
+            },
+            {
+                title: 'Get Properties Image',
+                action: () => console.log(properties.image)
+            },
+
+        ]
+
+        this.menu = [
+            {
+                title: 'Enable Brush',
+                action: () => this.startBrush()
+            },
+            this.clearAllAoiMenu,
+            {
+                divider: true
+            },
+            {
+                title: 'Fixation info',
+                //action: (elemt, d, i) => console.log('The data for this circle is: ' + d)
+            },
+            {
+                title: (d) => {
+                    return 'X-Coordinate ' + d.x;
+                }
+            },
+            {
+                title: (d) => {
+                    return 'Y-Coordinate ' + d.y;
+                }
+            },
+            ...this.devOptions
+
+        ]
+
+
+        this.menu2 = () => {
+
+            let addAoiMenu = {
+                title: 'Add AOI',
+                action: () => this.addAoi()
+            }
+
+            let result = []
+
+            if (this.brush) {
+                if (this.extent) {
+                    this.bottom = this.extent[1][1] - this.extent[0][1]
+                    this.right = this.extent[1][0] - this.extent[0][0]
+                    if (this.bottom > 50 && this.right > 50) {
+                        result.push(addAoiMenu)
+                        result.push({
+                            divider: true
+                        })
+                    }
+                }
+                result.push({
+                    title: 'Disable Brush',
+                    action: () => this.clearBrush()
+                })
+
+            } else {
+                result.push({
+                    title: 'Enable Brush',
+                    action: () => this.startBrush()
+                })
+            }
+            result.push(this.clearAllAoiMenu)
+            result.push(...this.devOptions)
+
+            return result
+        };
     }
 
     /**
@@ -134,7 +211,9 @@ class Editor extends Visualization {
         /**
          * Clear the previous drawing
          */
+        //this.clearBrush()
         this.svgG.selectAll("*").remove();
+        this.clearBrush()
 
         if (!properties.image) {
             console.log("leaving editor drawing===>")
@@ -192,11 +271,11 @@ class Editor extends Visualization {
                 .style("opacity", 0.4)
                 .on("mouseover", function () {
                     d3.select(this)
-                        .style("stroke", "orange");
+                        .transition().duration(250).style("stroke", "orange");
                 })
                 .on("mouseout", function () {
                     d3.select(this)
-                        .style("stroke", "rgb(6,120,155)");
+                        .transition().duration(250).style("stroke", "rgb(6,120,155)");
                 });
 
             this.svgGdots = this.svgG.append('g')
@@ -209,6 +288,16 @@ class Editor extends Visualization {
                 .attr("cy", function (d) { return (d.y); })
                 .style("opacity", 0.8)
                 .style('fill', '#FF0000')
+                .on('contextmenu', d3.contextMenu(this.menu))
+                .on('mouseover', function () {
+                    d3.select(this)
+                        .transition().duration(250).style('fill', '#0f2fff');
+                })
+                .on('mouseout', function () {
+                    d3.select(this)
+                        .transition().duration(1000).style('fill', '#FF0000');
+                })
+
 
         });
 
@@ -247,20 +336,17 @@ class Editor extends Visualization {
 
     }
 
-    // Before,
-    // The brush was reset with this code
-    // However, it is not needed anymore
-    // Thus lying as a relic in this code 
+    clearBrush() {
 
-    clearBrush(){
-        
-        if(!this.brush){
+        if (!this.brush) {
             console.log("No Brush Exists")
             return;
         }
+        this.svgG.selectAll('circle').classed('underAoi', false).classed('selected', false)
         this.brush.clear(this.svgG)
-        this.svgG.on(".brush",null)
-        this.svgG.selectAll('rect').remove()
+        this.svgG.on(".brush", null)
+        this.svgG.selectAll(".handle,.overlay,.selection").remove()
+        ///this.svgG.selectAll('rect').remove()
         this.svgG.attr('pointer-events', null)
         this.brush = null;
     }
@@ -271,7 +357,7 @@ class Editor extends Visualization {
     startBrush() {
         //this.svg.on('.zoom', null);
 
-        if(this.brush){
+        if (this.brush) {
             console.log("Exists")
             return;
         }
@@ -296,10 +382,50 @@ class Editor extends Visualization {
                     }
                 }))
 
-        this.svgG.select('.selection').on('contextmenu', d3.contextMenu(this.menu));
+        //this.svgG.select('.selection').on('contextmenu', d3.contextMenu(this.menu));
+        //this.svgG.selectAll('circle').on('contextmenu', d3.contextMenu(this.menu));
+        this.svgG.on('contextmenu', d3.contextMenu(this.menu2));
         this.svgG.selectAll('circle').on('contextmenu', d3.contextMenu(this.menu));
         //console.log(this.brush)
     }
+
+    addAoi() {
+
+        this.aoiCount = properties.aoi.size + 1
+        this.name = 'aoi' + this.aoiCount
+        this.aoiObject = properties.getCurrentAOI()
+
+        this.top = this.extent[0][1]
+        this.left = this.extent[0][0]
+        this.bottom = this.extent[1][1] - this.extent[0][1]
+        this.right = this.extent[1][0] - this.extent[0][0]
+        this.svgGdots.append('rect')
+            .classed('aoi', true)
+            .classed(this.name, true)
+            .attr('width', this.right)
+            .attr('height', this.bottom)
+            .attr('x', this.left)
+            .attr('y', this.top)
+            .attr('opacity', 0.5)
+            .attr('fill', 'gray')
+            .attr('z-index', 1)
+
+        this.svgG.selectAll("circle").classed("underAoi", (d) => {
+            return this.isBrushed(this.extent, (d.x), (d.y))
+        })
+            
+
+        //this.aoiObject.setSelection(this.left, this.top, this.right, this.bottom)
+        //this.aoiMap.set(this.name, this.aoiObject)
+
+        this.aoiObject.setSelection(this.left, this.top, this.right, this.bottom)
+        properties.aoi.set(this.aoiCount, this.aoiObject)
+        //properties.getCurrentAOI().setSelection(this.left, this.top, this.right, this.bottom);
+        //this.aoiCount = this.aoiCount + 1
+
+    }
+
+
 
 
 

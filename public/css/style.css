@@ -68,4 +68,11 @@ a.label:hover{
     stroke-width: 1px;
     fill: black !important;
   }
+
+.underAoi {
+    opacity: 0.6 !important;
+    stroke: black; 
+    stroke-width: 1px;
+    fill: blue !important;
+}
   

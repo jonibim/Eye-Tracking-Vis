@@ -93,7 +93,11 @@ class Properties {
     }
 
     getCurrentAOI(){
-        return this.image ? this.aoi[this.image] : new AOI('');
+        return !this.image ? new AOI('') : this.aoi[this.image];
+    }
+
+    getCurrentAOIsize(){
+        return this.aoi.size;
     }
 }
 

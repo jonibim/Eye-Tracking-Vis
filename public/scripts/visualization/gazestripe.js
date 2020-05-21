@@ -5,17 +5,15 @@ class GazeStripe extends Visualization {
 
         let frameWidth = box.inner.clientWidth;
         let frameHeight = box.inner.clientHeight;
+        let height;
+
+        this.img = new Image();
 
 		let svg = d3.select(box.inner)
 			.classed('smalldot',true)
             .append('svg')
             .attr('width', frameWidth) // Full screen
             .attr('height', frameHeight) // Full screen
-            .call(
-            	d3.zoom()
-            	.on("zoom", function () {
-                svg.attr("transform", d3.event.transform)
-             }))
 			.append('g')
             .attr('transform', "translate(0 ,0)");
 
@@ -23,16 +21,26 @@ class GazeStripe extends Visualization {
         let usersy = {};
         let shortestPath = Math.pow(10, 1000);
         let longestTime = {};
-        let offset = zoomValue;
-        let counter = 0;
-
+        let offset = 50;
         let data;
-        let imgName = '01_Antwerpen_S1.jpg';
+        let drawing;
 
+        properties.onchange.set('gazestripe', () => {
+            this.img = properties.image;
+            if (typeof this.img !== 'undefined') {
+	            	if (drawing !== 1) {
+	            	svg.selectAll("g").remove();
+	            	drawing = 1;
+	            	loadData(this.img);
+	            	console.log("tyupoef this.img is not undef");   
+            	}        	
+            }
+        })
 
-        loadData()
-            
-	    function loadData() {
+	    function loadData(img) {
+
+	    	console.log("lading data");
+
 	        d3.tsv('/testdataset/all_fixation_data_cleaned_up.csv').then(function(data) {
 	            let dataByCity = d3.nest().key(function(data) {
 	                return data.StimuliName;
@@ -42,19 +50,21 @@ class GazeStripe extends Visualization {
 	            }).entries(dataByCity);        
 	            data = dataByTimestamp[0]['values'];
 
-	            processData(data);
-	            draw();
+	            processData(data, img);
+	            draw(img);
 	        })
 	    }
 
-	    function processData(data) {
+	    function processData(data, img) {
+
+	    	console.log("processing data");
 
 	        let map_obj = {};
 	        for (var i = 0; i < data.length; i++) {
 	            map_obj[i] = Object.values(data)[i]['key'];   
 	        }           
 	                
-	        let map = Object.values(map_obj).indexOf(imgName);
+	        let map = Object.values(map_obj).indexOf((img));
 	        data[map]['values'].forEach(function(participant) {
 	            let user = participant['user']
 	            if (typeof usersx[user] == 'undefined') {
@@ -74,16 +84,21 @@ class GazeStripe extends Visualization {
 	        }
 	    }
 
-	    function draw() {
+	    function draw(img) {
+
+			if (!properties.image) {
+	    		return;
+	    	}
 
 	        let width = (Math.floor(frameWidth / (shortestPath + 3)) / 2).toString();
 	        let imgHeight = width;
 	        let textHeight = ((Math.floor(frameWidth / shortestPath)) / 6).toString();
 	        let fontsize1 = textHeight * 0.8;
 	        let fontsize2 = fontsize1 * 0.7;
+	        let height = Object.keys(usersx).length * (Number(imgHeight) + Number(textHeight));
+	    	let counter = 0;
 
 	        for (const key of Object.keys(usersx)) {
-
 	        	let divisor = usersx[key].length / shortestPath;
 	 			let timestamp = [0];
 	        	let imgLine = svg.append('g')
@@ -104,7 +119,7 @@ class GazeStripe extends Visualization {
 						.attr('viewBox', '' + (x-offset) + ' ' + (y-offset) + ' ' + (2*offset) + ' ' + (2*offset))
 	        			.attr('preserveAspectRatio', 'xMinYMin slice')
 	        			.append('image')
-	                    .attr('xlink:href', '/testdataset/images/' + (imgName))
+	                    .attr('xlink:href', '/testdataset/images/' + (img))
 	                if (i >= 1) {
 	                    let longestTimeIndex = Math.round(divisor * i);
 	                    timestamp.push((longestTime[key][longestTimeIndex] - longestTime[key][longestTimeIndex-1] + timestamp[timestamp.length - 1]));
@@ -122,6 +137,12 @@ class GazeStripe extends Visualization {
 	        	}
 	        	counter += 1;
 	        }
-	    }
+	    	d3.select('svg').call(
+	    		d3.zoom()
+	    		.on("zoom", function () {
+	    	    svg.attr("transform", d3.event.transform)
+	    	}))
+			drawing = 0;
+		}
 	}
 }

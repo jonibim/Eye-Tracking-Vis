@@ -83,7 +83,7 @@ class AttentionMap extends Visualization {
             this.top = (this.canvas.height - this.height) / 2;
             this.colorOverlay.width = this.width;
             this.colorOverlay.height = this.height;
-            setTimeout(() => this.gatherColorRaster(),0);
+            setTimeout(() => this.gatherColorRaster(), 0);
         }
 
         // draw the image
@@ -228,6 +228,7 @@ class AttentionMap extends Visualization {
 
         properties.getCurrentAOI().setSelection(left, top, right, bottom);
 
+        this.ratio = 0;
         this.draw();
     }
 

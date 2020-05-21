@@ -30,7 +30,7 @@ class Properties {
 
         this.image = image;
 
-        if(this.image)
+        if(this.image && !this.aoi[image])
             this.aoi[image] = new AOI(this.image);
 
         for(let listener of this.onchange.values())
@@ -68,7 +68,7 @@ class Properties {
     }
 
     getCurrentAOI(){
-        return this.image ? new AOI('') : this.aoi[this.image];
+        return this.image ? this.aoi[this.image] : new AOI('');
     }
 }
 

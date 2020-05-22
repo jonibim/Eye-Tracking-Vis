@@ -4,7 +4,7 @@ const fs = require("fs");
 const imagePath = __dirname + '/../public/testdataset/images';
 let images = fs.readdirSync(imagePath);
 let tags = {};
-var tagMap = {
+let tagMap = {
    \u00f6:"o",
    \u00fc:"u",
    \u00e4:"a",

@@ -82,7 +82,7 @@ block sidebars
                     label Image:
                 div(class="ui form content active")
                     //- Dropdown selection menu -//
-                    div(class="ui fluid search selection dropdown")
+                    div(class="ui fluid search selection dropdown image")
                         div(class="default text") #{default_image}
                         i(class="ui dropdown icon")
                         div(class="menu")
@@ -91,6 +91,25 @@ block sidebars
                                 div(class="item fitted image-selector" data-value=tags[image]) #{image}
                             else
                                 div(class="item") No images were found
+
+        //- User Selection -//
+        div(class="item")
+            div(class="ui styled accordion")
+                div(class="active title")
+                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Users')" data-tooltip="Select the user(s) to display" data-position="top left" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted question icon exclude")
+                    i(class="ui dropdown icon")
+                    label Users:
+                div(class="ui form content active")
+                    //- Dropdown selection menu -//
+                    div(class="ui fluid search selection multiple dropdown user")
+                        div(class="default text") Select users
+                        i(class="ui dropdown icon")
+                        div(class="menu")
+                            //- Values are added in initiatesettings.js -//
+                            div(class="item") No users were found
+                    div(class="ui clear circular red basic button")
+                        i(class="ui remove fitted icon")
         //- RGBA -//
         div(class="item")
             div(class="ui styled accordion colorsettings")
@@ -141,7 +160,7 @@ block sidebars
                     div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Editor Mode')" data-tooltip="Select AOI Editor Mode (Edit - Drag)" data-position="top left" data-inverted="" data-variation="tiny basic")
                         i(class="ui fitted question icon exclude")
                     i(class="ui dropdown icon")
-                    label Editor Mode:
+                    label Zoom Level:
                 div(class="ui form content active ")
                     div(class="ui slider zoom small-padding")
 

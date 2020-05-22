@@ -14,6 +14,8 @@ class Properties {
         this.rgba = undefined;
         this.time = 0;
         this.aoi = new Map();
+        this.users = undefined;
+        this.zoomValue = undefined;
 
         this.onchange = new Map();
     }
@@ -71,6 +73,21 @@ class Properties {
         console.log('properties.js - Setting zoom level to ' + zoomValue);
 
         this.zoomValue = zoomValue;
+        for(let listener of this.onchange.values())
+            listener();
+    }
+
+    /**
+     * Sets the currently selected users
+     * @param {string[]} users
+     */
+    setUsers(users){
+        if(this.users === users)
+            return;
+
+        console.log('properties.js - Setting users to ' + users);
+
+        this.users = users;
         for(let listener of this.onchange.values())
             listener();
     }

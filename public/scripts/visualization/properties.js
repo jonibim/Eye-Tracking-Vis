@@ -53,6 +53,14 @@ class Properties {
     }
 
     /**
+     * Gets the current color as a hex value
+     * @return {string} hex value for the color
+     */
+    getColorHex(){
+        return "#" + ((1 << 24) + (this.rgba[0] << 16) + (this.rgba[1] << 8) + this.rgba[2]).toString(16).slice(1);
+    }
+
+    /**
      * Sets the currently defined zoom level (for gaze stripe)
      * @param {number} zoom level
      */

@@ -32,6 +32,7 @@ class AttentionMap extends Visualization {
 
         this.resizeTimer = setInterval(() => {
             if (this.width !== this.box.inner.clientWidth || this.height !== this.box.inner.clientHeight) {
+                this.maintainTransform(this.box.inner.clientWidth, this.box.inner.clientHeight);
                 this.width = this.box.inner.clientWidth;
                 this.height = this.box.inner.clientHeight;
                 this.svg
@@ -96,8 +97,18 @@ class AttentionMap extends Visualization {
      */
     center(){
         let scale = Math.min(this.width / this.image.naturalWidth, this.height / this.image.naturalHeight);
-        this.graphics.call(this.zoom.translateTo, this.image.naturalWidth / 2, this.image.naturalHeight / 2);
-        this.graphics.call(this.zoom.scaleTo, scale);
+        this.svg.call(this.zoom.translateTo, this.image.naturalWidth / 2, this.image.naturalHeight / 2);
+        this.svg.call(this.zoom.scaleTo, scale);
+    }
+
+    /**
+     * Makes sure translation and scale stays the same when resized
+     * @param {number} newWidth - new box width
+     * @param {number} newHeight - new box height
+     */
+    maintainTransform(newWidth, newHeight){
+        let scale = d3.zoomTransform(this.svg.node()).k;
+        this.svg.call(this.zoom.translateBy, (newWidth - this.width) / 2 / scale, (newHeight - this.height) / 2 / scale);
     }
 
     onRemoved() {

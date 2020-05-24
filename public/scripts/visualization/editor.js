@@ -94,6 +94,7 @@ class Editor extends Visualization {
 
         if (properties.image)
             this.img.src = '/testdataset/images/' + properties.image;
+            
         this.draw();
 
         this.clearAllAoiMenu = {

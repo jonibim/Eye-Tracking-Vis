@@ -37,7 +37,7 @@ class EyeCloud extends Visualization {
             .append('defs')
             .attr('id', 'pattern_defs');
 
-        properties.onchange.set('gazestripe', () => {
+        properties.onchange.set('eyecloud', () => {
             if (this.img !== properties.image) { // If the image has been changed
                 this.img = properties.image;
                 if (drawing == false) {

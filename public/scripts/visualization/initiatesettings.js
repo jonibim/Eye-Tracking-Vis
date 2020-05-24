@@ -3,8 +3,10 @@ let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 1}
 
 let settingHelpMap = {
     'Visualizations' : 'Enable or disable each visualization type or the AOI editor. Each enabled slider represents a single box with a visualization, when one is toggled, the box will be removed or added respectively. Settings specifically for one visualization type will be shown or hidden as well.',
-    'Image' : '',
-    'Color' : '',
+    'Image' : 'Select the image to display',
+    'Color' : 'Modify the color of the fixations on the Attention Map',
+    'Zoom' : 'Regulates the zoom level of the thumbnails in the Gaze Stripes',
+    'Editor' : 'Instructs the navigation commands for the AOI editor'
 }
 
 //- Initialize State of RGBA sliders -//

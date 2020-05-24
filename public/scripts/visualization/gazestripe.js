@@ -6,33 +6,65 @@ class GazeStripe extends Visualization {
         let frameWidth = box.inner.clientWidth;
         let frameHeight = box.inner.clientHeight;
 
+        this.img = new Image();
+        this.zoomValue = 50;
+
 		let svg = d3.select(box.inner)
 			.classed('smalldot',true)
             .append('svg')
             .attr('width', frameWidth) // Full screen
             .attr('height', frameHeight) // Full screen
-            .call(
-            	d3.zoom()
-            	.on("zoom", function () {
-                svg.attr("transform", d3.event.transform)
-             }))
 			.append('g')
             .attr('transform', "translate(0 ,0)");
 
-        let usersx = {};
-        let usersy = {};
-        let shortestPath = Math.pow(10, 1000);
-        let longestTime = {};
-        let offset = zoomValue;
-        let counter = 0;
-
+        let usersx;
+        let usersy;
+        let shortestPath;
+        let longestTime; 
+       	let height;    
         let data;
-        let imgName = '01_Antwerpen_S1.jpg';
+        let drawing;
 
+        this.resizeTimer = setInterval(() => {
+            if (frameWidth !== this.box.inner.clientWidth || frameHeight !== this.box.inner.clientHeight) {
+            	scale();
+            	draw(this.img, this.zoomValue);
+            }
+        }, 100);
 
-        loadData()
-            
-	    function loadData() {
+        properties.onchange.set('gazestripe', () => {
+        	scale();	
+            if (this.img !== properties.image || this.zoomValue !== zoomValue) {
+	            this.img = properties.image;
+	            if (typeof properties.zoomValue !== 'undefined') {
+	            	this.zoomValue = properties.zoomValue;
+	            }
+            	if (drawing !== 1) {
+	            	drawing = 1;
+            		loadData(this.img, this.zoomValue);   
+        		}        	
+            }
+ 	       })
+
+        function scale() {
+        	
+        	frameWidth = box.inner.clientWidth;
+        	frameHeight = box.inner.clientHeight;
+
+        	svg
+        	.attr('width', frameWidth) // Full screen
+            .attr('height', frameHeight) // Full screen.attr('transform', "translate(0 ,0)");
+        	.attr('transform', "translate(0 ,0)");
+        }
+
+	    function loadData(img, zoomValue) {
+
+	    	box.inner.clientWidth
+	    	usersx = {};
+	    	usersy = {};
+	    	shortestPath = Math.pow(10, 1000);
+	    	longestTime = {};
+
 	        d3.tsv('/testdataset/all_fixation_data_cleaned_up.csv').then(function(data) {
 	            let dataByCity = d3.nest().key(function(data) {
 	                return data.StimuliName;
@@ -42,19 +74,19 @@ class GazeStripe extends Visualization {
 	            }).entries(dataByCity);        
 	            data = dataByTimestamp[0]['values'];
 
-	            processData(data);
-	            draw();
+	            processData(data, img);
+	            draw(img, zoomValue);
 	        })
 	    }
 
-	    function processData(data) {
+	    function processData(data, img) {
 
-	        let map_obj = {};
+	        let mapObj = {};
 	        for (var i = 0; i < data.length; i++) {
-	            map_obj[i] = Object.values(data)[i]['key'];   
+	            mapObj[i] = Object.values(data)[i]['key'];   
 	        }           
 	                
-	        let map = Object.values(map_obj).indexOf(imgName);
+	        let map = Object.values(mapObj).indexOf((img));
 	        data[map]['values'].forEach(function(participant) {
 	            let user = participant['user']
 	            if (typeof usersx[user] == 'undefined') {
@@ -74,20 +106,27 @@ class GazeStripe extends Visualization {
 	        }
 	    }
 
-	    function draw() {
+	    function draw(img, zoomValue) {
 
-	        let width = (Math.floor(frameWidth / (shortestPath + 3)) / 2).toString();
+			if (!properties.image) {
+	    		return;
+	    	}
+
+	    	svg.selectAll("#gazestripeg").remove();
+
+	        let width = (Math.floor(frameWidth / (shortestPath + 3))).toString();
 	        let imgHeight = width;
-	        let textHeight = ((Math.floor(frameWidth / shortestPath)) / 6).toString();
-	        let fontsize1 = textHeight * 0.8;
+	        let textHeight = ((Math.floor(frameWidth / shortestPath)) / 3).toString();
+	        let fontsize1 = textHeight * 0.6;
 	        let fontsize2 = fontsize1 * 0.7;
+	        let height = Object.keys(usersx).length * (Number(imgHeight) + Number(textHeight));
+	    	let counter = 0;
 
 	        for (const key of Object.keys(usersx)) {
-
 	        	let divisor = usersx[key].length / shortestPath;
 	 			let timestamp = [0];
-	        	let imgLine = svg.append('g')
-	        	let timeLine = svg.append('g')
+	        	let imgLine = svg.append('g').attr('id', 'gazestripeg');
+	        	let timeLine = svg.append('g').attr('id', 'gazestripeg');
 
 				imgLine.append('svg').attr('y', counter*(Number(imgHeight) + Number(textHeight)) + Number(textHeight)).attr('width', width).attr('height', imgHeight).attr('preserveAspectRatio', 'xMaxYMax meet').attr('viewBox', ('-' + fontsize1 + ' -' + (Number(fontsize2) * 2).toString() + ' ' + width + ' ' + width).toString()).append("text").text(key).attr('font-size', fontsize1);
 	            timeLine.append('svg').attr('y', counter*(Number(imgHeight) + Number(textHeight)) + Number(imgHeight)).attr('width', width).attr('height', textHeight).attr('viewBox', '0 -' + fontsize2 + ' ' + width + ' ' + textHeight).append("text").text('Time (ms)').attr('font-size', fontsize2);
@@ -101,13 +140,13 @@ class GazeStripe extends Visualization {
 	        			.attr('y', counter*(Number(textHeight) + Number(imgHeight)))
 	        			.attr('width', width)
 	        			.attr('height', imgHeight)
-						.attr('viewBox', '' + (x-offset) + ' ' + (y-offset) + ' ' + (2*offset) + ' ' + (2*offset))
+						.attr('viewBox', '' + (x-zoomValue) + ' ' + (y-zoomValue) + ' ' + (2*zoomValue) + ' ' + (2*zoomValue))
 	        			.attr('preserveAspectRatio', 'xMinYMin slice')
 	        			.append('image')
-	                    .attr('xlink:href', '/testdataset/images/' + (imgName))
+	                    .attr('xlink:href', '/testdataset/images/' + (img))
 	                if (i >= 1) {
-	                    let longestTimeIndex = Math.round(divisor * i);
-	                    timestamp.push((longestTime[key][longestTimeIndex] - longestTime[key][longestTimeIndex-1] + timestamp[timestamp.length - 1]));
+	                    let longestTimeIndex = Math.round(divisor * i);              
+	                    timestamp.push(((longestTime[key][longestTimeIndex] - longestTime[key][longestTimeIndex-1]) + timestamp[timestamp.length - 1]));
 	                }
 	                timeLine
 	                	.append('svg')
@@ -122,6 +161,12 @@ class GazeStripe extends Visualization {
 	        	}
 	        	counter += 1;
 	        }
-	    }
+	    	d3.select('svg').call(
+	    		d3.zoom()
+	    		.on("zoom", function () {
+	    	    svg.attr("transform", d3.event.transform)
+	    	}))
+			drawing = 0;
+		}
 	}
 }

@@ -1,5 +1,7 @@
 let selected_image = "";
 let visualizations = {};
+let userValues = [];
+let selected_users = [];
 //let edit = false;
 let zoomValue = 50;
 
@@ -12,6 +14,7 @@ function applySettings() {
     properties.setImage(selected_image);
     properties.setColor(Object.values(RGBA));
     properties.setZoom(zoomValue);
+    properties.setUsers(selected_users);
 }
 
 //- Read checkbox changes -//
@@ -20,17 +23,47 @@ function checkboxChanged(id) {
     visualizations[id] = state;
     if (id == 'attentionmap') {
         $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
-    } /* else if (id == 'editor') {
+    }  else if (id == 'editor') {
         $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
-    } */ else if (id == 'gazestripe') {
+    }  else if (id == 'gazestripe') {
         $(".accordion.zoomsettings").accordion(state ? "open" : "close", 0);
     }
     //resizeBoxes()
 }
 
 //- Read image selector -//
-function selectImage(value) {
-    selected_image = value;
+function selectImage(image) {
+    selected_image = image;
+    updateUsers(image);
+}
+
+//- Update User Dropdown -//
+function updateUsers(image) {
+    let selected_users = users = ['P1', 'P4', 'P5', 'P2', 'P3'];
+    //TODO: Get users for selected image from dataset
+
+    users.sort();
+    for (user in users) {
+        let value = {};
+        value['name'] = users[user];
+        value['value'] = users[user];
+        value['selected'] = selected_users.includes(users[user]);
+        userValues.push(value);
+    }
+    $('.dropdown.search.selection.user')
+        .dropdown('change values', userValues);
+}
+
+function usersAdd(addedUser) {
+    console.log(addedUser)
+    selected_users.push(addedUser);
+    console.log('USERS SELECTED:'+ selected_users);
+}
+
+function usersRemove(removedUser) {
+    console.log(removedUser)
+    selected_users.pop(removedUser);
+    console.log('USERS SELECTED:'+ selected_users);
 }
 
 //- RGBA Sliders handler

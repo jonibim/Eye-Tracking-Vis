@@ -4,7 +4,7 @@
  * @property {string} image - the image currently selected
  * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
- * @property {AOI} aoi - the selected area of interest
+ * @property {Map<string,AOI>} aoi - the selected area of interest per image
  * @property {Map<string,function()>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
@@ -13,7 +13,9 @@ class Properties {
         this.image = undefined;
         this.rgba = undefined;
         this.time = 0;
-        this.aoi = new AOI();
+        this.aoi = new Map();
+        this.users = undefined;
+        this.zoomValue = undefined;
 
         this.onchange = new Map();
     }
@@ -29,6 +31,10 @@ class Properties {
         console.log('properties.js - Setting image to ' + image);
 
         this.image = image;
+
+        if(this.image && !this.aoi[image])
+            this.aoi[image] = new AOI(this.image);
+
         for(let listener of this.onchange.values())
             listener();
     }
@@ -49,6 +55,14 @@ class Properties {
     }
 
     /**
+     * Gets the current color as a hex value
+     * @return {string} hex value for the color
+     */
+    getColorHex(){
+        return "#" + ((1 << 24) + (this.rgba[0] << 16) + (this.rgba[1] << 8) + this.rgba[2]).toString(16).slice(1);
+    }
+
+    /**
      * Sets the currently defined zoom level (for gaze stripe)
      * @param {number} zoom level
      */
@@ -62,10 +76,34 @@ class Properties {
         for(let listener of this.onchange.values())
             listener();
     }
+
+    /**
+     * Sets the currently selected users
+     * @param {string[]} users
+     */
+    setUsers(users){
+        if(this.users === users)
+            return;
+
+        console.log('properties.js - Setting users to ' + users);
+
+        this.users = users;
+        for(let listener of this.onchange.values())
+            listener();
+    }
+
+    getCurrentAOI(){
+        return !this.image ? new AOI('') : this.aoi[this.image];
+    }
+
+    getCurrentAOIsize(){
+        return this.aoi.size;
+    }
 }
 
 /**
  * Stores the selected AOI
+ * @property {string} image - the image the aoi is for
  * @property {boolean} hasSelection - whether something is currently selected
  * @property {float} left - left side of the selected area
  * @property {float} top - top side of the selected area
@@ -76,7 +114,11 @@ class Properties {
  */
 class AOI {
 
-    constructor() {
+    /**
+     * @param {string} image - the image the aoi is for
+     */
+    constructor(image) {
+        this.image = image;
         this.hasSelection = false;
         this.left = 0;
         this.right = 0;

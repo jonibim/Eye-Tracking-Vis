@@ -16,6 +16,7 @@ class Properties {
         this.aoi = new Map();
         this.users = undefined;
         this.zoomValue = undefined;
+        this.users = [];
 
         this.onchange = new Map();
     }

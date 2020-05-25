@@ -5,7 +5,7 @@
  * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
  * @property {Map<string,AOI>} aoi - the selected area of interest per image
- * @property {Map<string,function({type: string})>} onchange - property change listeners for all visualizations, registered by tag
+ * @property {Map<string,function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]})>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
 
@@ -24,8 +24,8 @@ class Properties {
      * Sets the currently selected image
      * @param {string} image
      */
-    setImage(image){
-        if(this.image === image)
+    setImage(image) {
+        if (this.image === image)
             return;
 
         console.log('properties.js - Setting image to ' + image);
@@ -33,10 +33,10 @@ class Properties {
         let oldImage = this.image;
         this.image = image;
 
-        if(this.image && !this.aoi[image])
+        if (this.image && !this.aoi[image])
             this.aoi[image] = new AOI(this.image);
 
-        for(let listener of this.onchange.values())
+        for (let listener of this.onchange.values())
             listener({type: 'image', oldImage: oldImage, newImage: image});
     }
 
@@ -44,14 +44,14 @@ class Properties {
      * Sets the current color
      * @param {float[]} rgba - [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
      */
-    setColor(rgba){
-        if(this.rgba === rgba)
+    setColor(rgba) {
+        if (this.rgba === rgba)
             return;
 
-        console.log('properties.js - Setting color to (' + rgba +')');
+        console.log('properties.js - Setting color to (' + rgba + ')');
 
         this.rgba = rgba;
-        for(let listener of this.onchange.values())
+        for (let listener of this.onchange.values())
             listener({type: 'color', color: rgba, red: rgba[0], green: rgba[1], blue: rgba[2], alpha: rgba[3]});
     }
 
@@ -59,7 +59,7 @@ class Properties {
      * Gets the current color as a hex value
      * @return {string} hex value for the color
      */
-    getColorHex(){
+    getColorHex() {
         return "#" + ((1 << 24) + (this.rgba[0] << 16) + (this.rgba[1] << 8) + this.rgba[2]).toString(16).slice(1);
     }
 
@@ -67,15 +67,15 @@ class Properties {
      * Sets the currently defined zoom level (for gaze stripe)
      * @param {number} zoomValue level
      */
-    setZoom(zoomValue){
-        if(this.zoomValue === zoomValue)
+    setZoom(zoomValue) {
+        if (this.zoomValue === zoomValue)
             return;
 
         console.log('properties.js - Setting zoom level to ' + zoomValue);
 
         let oldZoom = this.zoomValue;
         this.zoomValue = zoomValue;
-        for(let listener of this.onchange.values())
+        for (let listener of this.onchange.values())
             listener({type: 'zoom', oldZoom: oldZoom, newZoom: zoomValue});
     }
 
@@ -83,22 +83,22 @@ class Properties {
      * Sets the currently selected users
      * @param {string[]} users
      */
-    setUsers(users){
-        if(this.users === users)
+    setUsers(users) {
+        if (this.users === users)
             return;
 
         console.log('properties.js - Setting users to ' + users);
 
         this.users = users;
-        for(let listener of this.onchange.values())
+        for (let listener of this.onchange.values())
             listener({type: 'users', users: users});
     }
 
-    getCurrentAOI(){
+    getCurrentAOI() {
         return !this.image ? new AOI('') : this.aoi[this.image];
     }
 
-    getCurrentAOIsize(){
+    getCurrentAOIsize() {
         return this.aoi.size;
     }
 }
@@ -137,8 +137,8 @@ class AOI {
      * @param {float} right - right side of the selected area
      * @param {float} bottom - bottom side of the selected area
      */
-    setSelection(left, top, right, bottom){
-        if(!properties.image){ // an image must be selected first
+    setSelection(left, top, right, bottom) {
+        if (!properties.image) { // an image must be selected first
             console.error('properties.js - An image must be set first, before an area can be selected!');
             return;
         }
@@ -151,27 +151,27 @@ class AOI {
 
         this.points = [];
         const imageData = dataset.getImageData(properties.image);
-        for(let scanPath of imageData.scanpaths){
-            for(let point of scanPath.points){
-                if(point.x >= left && point.x <= right && point.y >= top && point.y <= bottom)
+        for (let scanPath of imageData.scanpaths) {
+            for (let point of scanPath.points) {
+                if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom)
                     this.points.push(point);
             }
         }
-        if(!this.points.length)
+        if (!this.points.length)
             this.hasSelection = false;
 
-        for(let listener of this.onchange.values())
+        for (let listener of this.onchange.values())
             listener();
     }
 
     /**
      * Clears the selection
      */
-    clearSelection(){
+    clearSelection() {
         this.hasSelection = false;
         this.points = [];
 
-        for(let listener of this.onchange.values())
+        for (let listener of this.onchange.values())
             listener();
     }
 

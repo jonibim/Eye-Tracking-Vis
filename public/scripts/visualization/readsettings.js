@@ -1,6 +1,5 @@
 let selected_image = "";
 let visualizations = {};
-let userValues = [];
 let selected_users = [];
 //let edit = false;
 let zoomValue = 50;
@@ -48,6 +47,7 @@ function updateUsers(image) {
     }
 
     users.sort();
+    let userValues = [];
     for (let user in users) {
         let value = {};
         value['name'] = user;
@@ -60,15 +60,11 @@ function updateUsers(image) {
 }
 
 function usersAdd(addedUser) {
-    console.log(addedUser)
     selected_users.push(addedUser);
-    console.log('USERS SELECTED:'+ selected_users);
 }
 
 function usersRemove(removedUser) {
-    console.log(removedUser)
     selected_users.pop(removedUser);
-    console.log('USERS SELECTED:'+ selected_users);
 }
 
 //- RGBA Sliders handler

@@ -14,8 +14,6 @@ for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
 }
 
-selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
-
 //****************** Define Settings Functions ******************//
 
 

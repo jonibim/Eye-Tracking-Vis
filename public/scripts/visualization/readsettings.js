@@ -10,7 +10,7 @@ function applySettings() {
     for ([key, value] of Object.entries(visualizations)) {value ? registry.enable(key) : registry.disable(key);}
     //- Reset visualization type changes -//
     visualizations = {};
-    
+
     properties.setImage(selected_image);
     properties.setColor(Object.values(RGBA));
     properties.setZoom(zoomValue);
@@ -21,11 +21,11 @@ function applySettings() {
 function checkboxChanged(id) {
     let state = document.getElementById(id).checked
     visualizations[id] = state;
-    if (id == 'attentionmap') {
+    if (id === 'attentionmap') {
         $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
-    }  else if (id == 'editor') {
+    }  else if (id === 'editor') {
         $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
-    }  else if (id == 'gazestripe') {
+    }  else if (id === 'gazestripe') {
         $(".accordion.zoomsettings").accordion(state ? "open" : "close", 0);
     }
     //resizeBoxes()
@@ -40,16 +40,18 @@ function selectImage(image) {
 //- Update User Dropdown -//
 function updateUsers(image) {
     let users = [];
-    imageData = dataset.getImageData(image);
-    for (path of imageData.scanpaths) {
-        users.push(scanpaths.person);
-    }    
+    if(image) {
+        let imageData = dataset.getImageData(image);
+        for (let path of imageData.scanpaths) {
+            users.push(path.person);
+        }
+    }
 
     users.sort();
-    for (user in users) {
+    for (let user in users) {
         let value = {};
-        value['name'] = users[user];
-        value['value'] = users[user];
+        value['name'] = user;
+        value['value'] = user;
         value['selected'] = true;
         userValues.push(value);
     }

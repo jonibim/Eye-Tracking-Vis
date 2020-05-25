@@ -26,7 +26,7 @@ let topbar = null;
 let registry = null;
 
 // initialize default visualizations
-window.onload = () => {
+window.onload = async () => {
 
     console.log('main.js - Loading...');
 
@@ -39,11 +39,12 @@ window.onload = () => {
     registry = new Registry();
 
     // register visualizations
-    registry.register('gazestripe',box => new GazeStripe(box));
-    registry.register('eyecloud',box => new EyeCloud(box));
-    registry.register('attentionmap',box => new AttentionMap(box));
-    registry.register('transitiongraph',box => new TransitionGraph(box));
-    registry.register('editor',box => new Editor(box));
+    registry.register('gazestripe', box => new GazeStripe(box));
+    registry.register('eyecloud', box => new EyeCloud(box));
+    registry.register('attentionmap', box => new AttentionMap(box));
+    registry.register('transitiongraph', box => new TransitionGraph(box));
+    registry.register('editor', box => new Editor(box));
+
     console.log('main.js - Finished Loading')
 
 
@@ -51,20 +52,19 @@ window.onload = () => {
     registry.enableAll();
     console.log('main.js - Visualizations enabled')
 
-    properties.onchange.set('settings', event => {
-        if(event.type === 'image')
-            updateUsers(event.newImage);
-    })
 
     console.log('main.js - Requesting dataset...')
 
+    // load the test dataset
     const url = '/visualization';
     const data = fetch(url, {method: 'POST'});
-    data.then(data => data.text()).then(data => {
-        dataset.importData(data);
+    await data.then(data => data.text()).then(data => dataset.importData(data));
 
-        applySettings();
+    console.log('main.js - Dataset loaded')
 
-        console.log('main.js - Dataset loaded')
-    });
+
+    console.log('main.js - Initializing Settings...')
+    selectImage(dataset.images[0].image);
+    applySettings();
+    console.log('main.js - Settings Initialized')
 }

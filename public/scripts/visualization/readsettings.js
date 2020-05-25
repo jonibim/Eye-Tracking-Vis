@@ -1,5 +1,6 @@
 let selected_image = "";
 let visualizations = {};
+let users = [];
 let selected_users = [];
 //let edit = false;
 let zoomValue = 50;
@@ -11,9 +12,9 @@ function applySettings() {
     visualizations = {};
 
     properties.setImage(selected_image);
+    properties.setUsers(selected_users);
     properties.setColor(Object.values(RGBA));
     properties.setZoom(zoomValue);
-    properties.setUsers(selected_users);
 }
 
 //- Read checkbox changes -//
@@ -38,7 +39,7 @@ function selectImage(image) {
 
 //- Update User Dropdown -//
 function updateUsers(image) {
-    let users = [];
+    users = [];
     if(image) {
         let imageData = dataset.getImageData(image);
         for (let path of imageData.scanpaths) {
@@ -46,25 +47,47 @@ function updateUsers(image) {
         }
     }
 
-    users.sort();
-    let userValues = [];
-    for (let user in users) {
-        let value = {};
-        value['name'] = user;
-        value['value'] = user;
-        value['selected'] = true;
-        userValues.push(value);
-    }
-    $('.dropdown.search.selection.user')
-        .dropdown('change values', userValues);
+    enableAllUsers();
+}
+
+function enableAllUsers() {
+    users.sort((a, b) => {return Number(a.slice(1)) - Number(b.slice(1));});
+    if (users.length != selected_users.length) {
+        let userValues = [];
+        for (let user in users) {
+            let value = {};
+            value['name'] = users[user];
+            value['value'] = users[user];
+            value['selected'] = true;
+            userValues.push(value);
+        }
+        $('.dropdown.search.selection.user')
+            .dropdown('change values', userValues);
+        setUserSelectionButtons();
+    }   
 }
 
 function usersAdd(addedUser) {
     selected_users.push(addedUser);
+    setUserSelectionButtons();
 }
 
 function usersRemove(removedUser) {
     selected_users.pop(removedUser);
+    setUserSelectionButtons();
+}
+
+function setUserSelectionButtons() {
+    if (selected_users.length == 0) {
+        $('.clear.button').addClass('disabled');
+        $('.add.button').removeClass('disabled');
+    } else if (selected_users.length == users.length) {
+        $('.add.button').addClass('disabled');
+        $('.clear.button').removeClass('disabled');
+    } else {
+        $('.clear.button').removeClass('disabled');
+        $('.add.button').removeClass('disabled');
+    }
 }
 
 //- RGBA Sliders handler

@@ -93,6 +93,11 @@ $('.clear.button')
             .dropdown('clear');
     });
 
+//- Select All User Dropdown Button -//
+$('.add.button')
+    .on('click', function() {
+        enableAllUsers()
+    });
 
 //- RGB Slider initialization -//
 $('.ui.slider.rgb')

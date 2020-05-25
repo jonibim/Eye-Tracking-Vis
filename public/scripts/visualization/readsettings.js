@@ -39,15 +39,18 @@ function selectImage(image) {
 
 //- Update User Dropdown -//
 function updateUsers(image) {
-    let selected_users = users = ['P1', 'P4', 'P5', 'P2', 'P3'];
-    //TODO: Get users for selected image from dataset
+    let users = [];
+    imageData = dataset.getImageData(image);
+    for (path of imageData.scanpaths) {
+        users.push(scanpaths.person);
+    }    
 
     users.sort();
     for (user in users) {
         let value = {};
         value['name'] = users[user];
         value['value'] = users[user];
-        value['selected'] = selected_users.includes(users[user]);
+        value['selected'] = true;
         userValues.push(value);
     }
     $('.dropdown.search.selection.user')

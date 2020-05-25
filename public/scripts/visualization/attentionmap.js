@@ -47,7 +47,10 @@ class AttentionMap extends Visualization {
             this.center();
         }
 
-        properties.onchange.set('attentionmap', () => this.image.src = properties.image ? '/testdataset/images/' + properties.image : '')
+        properties.onchange.set('attentionmap', event => {
+            if(event.type === 'image')
+                this.image.src = properties.image ? '/testdataset/images/' + properties.image : ''
+        })
 
         if(properties.image)
             this.image.src = '/testdataset/images/' + properties.image;

@@ -5,7 +5,7 @@
  * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
  * @property {Map<string,AOI>} aoi - the selected area of interest per image
- * @property {Map<string,function()>} onchange - property change listeners for all visualizations, registered by tag
+ * @property {Map<string,function({type: string})>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
 
@@ -30,13 +30,14 @@ class Properties {
 
         console.log('properties.js - Setting image to ' + image);
 
+        let oldImage = this.image;
         this.image = image;
 
         if(this.image && !this.aoi[image])
             this.aoi[image] = new AOI(this.image);
 
         for(let listener of this.onchange.values())
-            listener();
+            listener({type: 'image', oldImage: oldImage, newImage: image});
     }
 
     /**
@@ -51,7 +52,7 @@ class Properties {
 
         this.rgba = rgba;
         for(let listener of this.onchange.values())
-            listener();
+            listener({type: 'color', color: rgba, red: rgba[0], green: rgba[1], blue: rgba[2], alpha: rgba[3]});
     }
 
     /**
@@ -64,7 +65,7 @@ class Properties {
 
     /**
      * Sets the currently defined zoom level (for gaze stripe)
-     * @param {number} zoom level
+     * @param {number} zoomValue level
      */
     setZoom(zoomValue){
         if(this.zoomValue === zoomValue)
@@ -72,9 +73,10 @@ class Properties {
 
         console.log('properties.js - Setting zoom level to ' + zoomValue);
 
+        let oldZoom = this.zoomValue;
         this.zoomValue = zoomValue;
         for(let listener of this.onchange.values())
-            listener();
+            listener({type: 'zoom', oldZoom: oldZoom, newZoom: zoomValue});
     }
 
     /**
@@ -89,7 +91,7 @@ class Properties {
 
         this.users = users;
         for(let listener of this.onchange.values())
-            listener();
+            listener({type: 'users', users: users});
     }
 
     getCurrentAOI(){

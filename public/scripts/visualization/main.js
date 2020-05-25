@@ -51,6 +51,10 @@ window.onload = () => {
     registry.enableAll();
     console.log('main.js - Visualizations enabled')
 
+    properties.onchange.set('settings', event => {
+        if(event.type === 'image')
+            updateUsers(event.newImage);
+    })
 
     console.log('main.js - Requesting dataset...')
 

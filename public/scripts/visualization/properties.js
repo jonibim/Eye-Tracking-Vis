@@ -14,7 +14,6 @@ class Properties {
         this.rgba = undefined;
         this.time = 0;
         this.aoi = new Map();
-        this.users = undefined;
         this.zoomValue = undefined;
         this.users = [];
 
@@ -46,7 +45,7 @@ class Properties {
      * @param {float[]} rgba - [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
      */
     setColor(rgba) {
-        if (this.rgba === rgba)
+        if (this.rgba && this.rgba[0] === rgba[0] && this.rgba[1] === rgba[1] && this.rgba[2] === rgba[2] && this.rgba[3] === rgba[3])
             return;
 
         console.log('properties.js - Setting color to (' + rgba + ')');

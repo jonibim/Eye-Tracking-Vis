@@ -50,7 +50,7 @@ class Properties {
 
         console.log('properties.js - Setting color to (' + rgba + ')');
 
-        this.rgba = rgba;
+        this.rgba = [...rgba];
         for (let listener of this.onchange.values())
             listener({type: 'color', color: rgba, red: rgba[0], green: rgba[1], blue: rgba[2], alpha: rgba[3]});
     }
@@ -84,7 +84,7 @@ class Properties {
      * @param {string[]} users
      */
     setUsers(users) {
-        if (this.users && this.users.length === users.length){
+        if (this.users.length === users.length){
             let difference;
             for(let element of users) {
                 if (!this.users.includes(element)) {
@@ -98,7 +98,7 @@ class Properties {
 
         console.log('properties.js - Setting users to ' + users);
 
-        this.users = users;
+        this.users = [...users];
         for (let listener of this.onchange.values())
             listener({type: 'users', users: users});
     }

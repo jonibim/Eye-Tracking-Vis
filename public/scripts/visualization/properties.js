@@ -84,8 +84,17 @@ class Properties {
      * @param {string[]} users
      */
     setUsers(users) {
-        if (this.users === users)
-            return;
+        if (this.users && this.users.length === users.length){
+            let difference;
+            for(let element of users) {
+                if (!this.users.includes(element)) {
+                    difference = true;
+                    break;
+                }
+            }
+            if(!difference)
+                return;
+        }
 
         console.log('properties.js - Setting users to ' + users);
 

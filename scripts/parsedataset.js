@@ -2,6 +2,17 @@ const {v4: uuid} = require('uuid');
 
 const csv2json = require('csvtojson')
 const fileSystem = require('fs')
+const iconv = require('iconv')
+
+const umlautMap = {
+    '\u00dc': 'UE',
+    '\u00c4': 'AE',
+    '\u00d6': 'OE',
+    '\u00fc': 'ue',
+    '\u00e4': 'ae',
+    '\u00f6': 'oe',
+    '\u00df': 'ss',
+  }
 
 const datasetsFolder = __dirname + '/../public/datasets/';
 const defaultFolder = datasetsFolder + 'default/';
@@ -14,7 +25,11 @@ const imagesFolderName = 'images/';
 async function parseData(files, response) {
     console.log('parsedataset.js - Parsing uploaded dataset...');
 
-    let data = files.dataset.data.toString();
+    // var iconv = new Iconv('UTF-8', 'ISO-8859-1');
+    // iconv.convert(files.dataset.data.toString())
+
+    let data = files.dataset.data.toString('binary');
+    data = replaceUmlaute(toUTF8(data))
     data = data.replace(/\t/g, ',');
 
     // try to parse the csv data into JSON
@@ -46,11 +61,14 @@ async function parseData(files, response) {
         return;
     }
     if(files.images.name)
-        files.images = [files.images];
+        files.images = [files.images]
     loop: for(let image of images){
-        for(let entry of files.images)
-            if(entry.name === image)
+        for(let entry of files.images){
+            console.log((replaceUmlaute(toUTF8(entry.name))+' '+image))
+            if ((replaceUmlaute(toUTF8(entry.name))) === (replaceUmlaute(toUTF8(image))))
                 continue loop;
+        }
+        
         response.status(400).send({'status': 400, 'message': 'Missing dataset image \'' + image + '\'.'});
         console.log('parsedataset.js - Missing image for the uploaded dataset');
         return;
@@ -77,6 +95,26 @@ async function parseData(files, response) {
     // send successful response
     response.status(200).send({'status': 200, 'message': 'Upload successful.', 'id': id});
 }
+
+function toUTF8(body) {
+    // convert from iso-8859-1 to utf-8
+    var ic = new iconv.Iconv('utf-8','iso-8859-1');
+    var buf = ic.convert(body);
+    return buf.toString('binary');
+  }
+
+  function replaceUmlaute(str) {
+    return str
+      .replace(/[\u00dc|\u00c4|\u00d6][a-z]/g, (a) => {
+        const big = umlautMap[a.slice(0, 1)];
+        return big.charAt(0) + big.charAt(1).toLowerCase() + a.slice(1);
+      })
+      .replace(new RegExp('['+Object.keys(umlautMap).join('|')+']',"g"),
+        (a) => umlautMap[a]
+      );
+  }
+  
+  
 
 // Handle dataset requests   TODO remove this because everything is now in the public folder
 function readData(id, response) {

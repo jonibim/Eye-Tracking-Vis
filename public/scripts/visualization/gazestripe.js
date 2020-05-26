@@ -8,6 +8,7 @@ class GazeStripe extends Visualization {
 
         this.img = new Image();
         this.zoomValue = 50;
+        this.users;
 
 		let svg = d3.select(box.inner)
 			.classed('smalldot',true)
@@ -34,8 +35,9 @@ class GazeStripe extends Visualization {
 
         properties.onchange.set('gazestripe', () => {
         	scale();	
-            if (this.img !== properties.image || this.zoomValue !== zoomValue) {
+            if (this.img !== properties.image || this.zoomValue !== properties.zoomValue || this.users !== properties.users) {
 	            this.img = properties.image;
+	            this.users = properties.users;
 	            if (typeof properties.zoomValue !== 'undefined') {
 	            	this.zoomValue = properties.zoomValue;
 	            }
@@ -88,15 +90,17 @@ class GazeStripe extends Visualization {
 	                
 	        let map = Object.values(mapObj).indexOf((img));
 	        data[map]['values'].forEach(function(participant) {
-	            let user = participant['user']
-	            if (typeof usersx[user] == 'undefined') {
-	                usersx[user] = [];
-	                usersy[user] = [];
-	                longestTime[user] = [];
-	            }
-	            usersx[user].push(participant['MappedFixationPointX']);
-	            usersy[user].push(participant['MappedFixationPointY']);
-	            longestTime[user].push(participant['Timestamp']);
+	        	if (properties.users.includes(participant['user'])) {
+		            let user = participant['user']
+		            if (typeof usersx[user] == 'undefined') {
+		                usersx[user] = [];
+		                usersy[user] = [];
+		                longestTime[user] = [];
+		            }
+		            usersx[user].push(participant['MappedFixationPointX']);
+		            usersy[user].push(participant['MappedFixationPointY']);
+		            longestTime[user].push(participant['Timestamp']);
+		        }
 	        });                
 
 	        for (const key of Object.keys(usersx)) {
@@ -117,7 +121,7 @@ class GazeStripe extends Visualization {
 	        let width = (Math.floor(frameWidth / (shortestPath + 3))).toString();
 	        let imgHeight = width;
 	        let textHeight = ((Math.floor(frameWidth / shortestPath)) / 3).toString();
-	        let fontsize1 = textHeight * 0.6;
+	        let fontsize1 = textHeight * 0.7;
 	        let fontsize2 = fontsize1 * 0.7;
 	        let height = Object.keys(usersx).length * (Number(imgHeight) + Number(textHeight));
 	    	let counter = 0;

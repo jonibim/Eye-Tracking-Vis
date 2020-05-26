@@ -91,12 +91,14 @@ $('.clear.button')
     .on('click', function() {
         $('.dropdown.search.selection.user')
             .dropdown('clear');
+        settingChanged();
     });
 
 //- Select All User Dropdown Button -//
 $('.add.button')
     .on('click', function() {
         enableAllUsers()
+        settingChanged();
     });
 
 //- RGB Slider initialization -//

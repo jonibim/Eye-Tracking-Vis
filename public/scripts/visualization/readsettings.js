@@ -73,7 +73,12 @@ function usersAdd(addedUser) {
 }
 
 function usersRemove(removedUser) {
-    selected_users.pop(removedUser);
+
+    for (user in selected_users) {
+        if (selected_users[user] === removedUser) {
+            selected_users.splice(user, 1);
+        }
+    }
     setUserSelectionButtons();
 }
 

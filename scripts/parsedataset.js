@@ -4,6 +4,11 @@ const csv2json = require('csvtojson')
 const fileSystem = require('fs')
 const iconv = require('iconv')
 
+
+/**
+ * The umlaut map, the enconding are given in UEFI codes
+ * you can look them up
+ */
 const umlautMap = {
     '\u00dc': 'UE',
     '\u00c4': 'AE',
@@ -25,11 +30,8 @@ const imagesFolderName = 'images/';
 async function parseData(files, response) {
     console.log('parsedataset.js - Parsing uploaded dataset...');
 
-    // var iconv = new Iconv('UTF-8', 'ISO-8859-1');
-    // iconv.convert(files.dataset.data.toString())
-
     let data = files.dataset.data.toString('binary');
-    data = replaceUmlaute(toUTF8(data))
+    data = replaceUmlaute(toUTF8(data)) //convert data to UTF8 for the umlauts
     data = data.replace(/\t/g, ',');
 
     // try to parse the csv data into JSON
@@ -64,11 +66,21 @@ async function parseData(files, response) {
         files.images = [files.images]
     loop: for(let image of images){
         for(let entry of files.images){
+            /**
+             * The whole problem relies in here as some characters don't want to be convrted
+             *  I suspect the data from the JSON conversion wrongly converts ISO to UTF-8 and i cannot therefore
+             * convert it back to UTF-8. I get some strange results for Dusseldor 
+             */
             console.log((replaceUmlaute(toUTF8(entry.name))+' '+image))
             if ((replaceUmlaute(toUTF8(entry.name))) === (replaceUmlaute(toUTF8(image))))
                 continue loop;
         }
         
+        /**
+         * You can see in here that even after we replace the characters dont converted
+         */
+        console.log(image)
+        console.log(replaceUmlaute(toUTF8(image)))
         response.status(400).send({'status': 400, 'message': 'Missing dataset image \'' + image + '\'.'});
         console.log('parsedataset.js - Missing image for the uploaded dataset');
         return;
@@ -95,14 +107,23 @@ async function parseData(files, response) {
     // send successful response
     response.status(200).send({'status': 200, 'message': 'Upload successful.', 'id': id});
 }
-
+/**
+ * Convert to proper enconding for the umlauts to be identified and converted
+ * 
+ * @param {String} body 
+ */
 function toUTF8(body) {
-    // convert from iso-8859-1 to utf-8
+    // convert from utf-8 to iso-8859-1  
     var ic = new iconv.Iconv('utf-8','iso-8859-1');
     var buf = ic.convert(body);
     return buf.toString('binary');
   }
 
+  /**
+   * Replace the umlayts according to the map
+   * 
+   * @param {String} str 
+   */
   function replaceUmlaute(str) {
     return str
       .replace(/[\u00dc|\u00c4|\u00d6][a-z]/g, (a) => {

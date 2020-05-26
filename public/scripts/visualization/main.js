@@ -57,8 +57,13 @@ window.onload = async () => {
 
     // load the test dataset
     const url = '/visualization';
-    const data = fetch(url, {method: 'POST'});
-    await data.then(data => data.text()).then(data => dataset.importData(data));
+    const request = fetch(url, { method: 'POST' });
+    await request.then(response => response.arrayBuffer()).then(buffer => {
+        decoder = new TextDecoder("iso-8859-1");
+        data = decoder.decode(buffer);
+        dataset.importData(data);
+    });
+    
 
     console.log('main.js - Dataset loaded')
 

@@ -15,12 +15,15 @@
     "fs": "^0.0.1-security",
     "gulp": "^4.0.2",
     "http-errors": "~1.6.3",
+    "iconv": "^3.0.0",
     "jsdoc": "^3.6.4",
     "jsdom": "^16.2.2",
     "morgan": "~1.9.1",
     "multipart": "^0.1.5",
     "patternfills": "^0.4.1",
     "pug": "^2.0.4",
+    "remove-accents": "^0.4.2",
+    "unidecode": "^0.1.8",
     "uuid": "^7.0.3"
   },
   "nodemonConfig": {

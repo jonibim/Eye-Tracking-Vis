@@ -50,6 +50,8 @@ class AttentionMap extends Visualization {
         properties.onchange.set('attentionmap', event => {
             if(event.type === 'image')
                 this.image.src = properties.image ? '/testdataset/images/' + properties.image : ''
+            if(event.type === 'color')
+                this.draw();
         })
 
         if(properties.image)

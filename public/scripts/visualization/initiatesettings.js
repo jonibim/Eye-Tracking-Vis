@@ -35,13 +35,27 @@ function settingHelp(setting) {
         });
     }
 
-
 //- Auto Apply Behavior -//
 function settingChanged() {
     if ($('input#auto_apply[type="checkbox"]').is(":checked")) {
         applySettings()
     };
 };
+
+//- Prevent Users Update Spam -//
+userTimer = undefined
+function usersChanged() {
+    $('#usersLoadingIcon').removeClass()
+    $('#usersLoadingIcon').addClass("ui sync alternate loading icon");
+    if (userTimer !== undefined) {
+        clearTimeout(userTimer)
+    }
+    userTimer = setTimeout(function() {
+        $('#usersLoadingIcon').removeClass()
+        $('#usersLoadingIcon').addClass("ui dropdown icon");
+        settingChanged();
+    }, 500);
+}
 
 //****************** Set Element Behaviors/States ******************//
 
@@ -81,11 +95,11 @@ $('.dropdown.search.selection.user')
         fullTextSearch: 'exact',
         onAdd: function(addedValue, addedText) {
             usersAdd(addedText);
-            settingChanged();
+            usersChanged();
         },
         onRemove: function(removedValue, removedText) {
             usersRemove(removedText);
-            settingChanged();
+            usersChanged();
         }
     });
 
@@ -100,7 +114,7 @@ $('.clear.button')
 //- Select All User Dropdown Button -//
 $('.add.button')
     .on('click', function() {
-        enableAllUsers()
+        enableAllUsers();
         settingChanged();
     });
 

@@ -50,6 +50,7 @@ function updateUsers(image) {
     enableAllUsers();
 }
 
+//- Enable All Possible Users -//
 function enableAllUsers() {
     users.sort((a, b) => {return Number(a.slice(1)) - Number(b.slice(1));});
     if (users.length != selected_users.length) {
@@ -67,13 +68,14 @@ function enableAllUsers() {
     }   
 }
 
+//- Add Single User -//
 function usersAdd(addedUser) {
     selected_users.push(addedUser);
     setUserSelectionButtons();
 }
 
+//- Remove Single User -//
 function usersRemove(removedUser) {
-
     for (user in selected_users) {
         if (selected_users[user] === removedUser) {
             selected_users.splice(user, 1);
@@ -82,6 +84,7 @@ function usersRemove(removedUser) {
     setUserSelectionButtons();
 }
 
+//- Select All & Clear User Selection Buttons -//
 function setUserSelectionButtons() {
     if (selected_users.length == 0) {
         $('.clear.button').addClass('disabled');
@@ -123,24 +126,10 @@ function readSlidersRGBA(id, value) {
 //- Zoom Lever Slider -//
 function readSlidersZoom(value) {
     zoomValue = value;
+    $('.zoom-preview').text(value);
 }
 
-
-/*
-function editorMode(mode) {
-    edit = mode == "edit" ? true : false;
-    if (edit) {
-        $('.editorEdit').addClass('positive')
-        $('.editorDrag').removeClass('positive')
-        //EDIT MODE ENABLED (use this for any function calls)
-    } else {
-        $('.editorDrag').addClass('positive')
-        $('.editorEdit').removeClass('positive')
-        //EDIT MODE DISABLED (use this for any function calls)
-    }
-}
-*/
-
+//- Show Help Icons -//
 function showHelp() {
     $('#show_help').toggleClass('green basic')
     $('.settinghelp').toggleClass('hidden')

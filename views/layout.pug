@@ -44,34 +44,30 @@ html
 
     block post_scripts
 
-    //- Show sidebar based on unique class(es) -//
+    
     script.
+        //- Show sidebar based on unique class(es) -//
         function showSidebar(bar) {
             $('.ui.sidebar.'+bar).sidebar('show')
         };
 
-    //- Hide sidebar based on unique class(es) -//
-    script.
+        //- Hide sidebar based on unique class(es) -//
         function hideSidebar(bar) {
             $('.ui.sidebar.'+bar).sidebar('hide');
         };
 
-    //- Pulse image based on unique class(es) -//
-    script.
+        //- Pulse image based on unique class(es) -//
         function pulseImage(cls) {
             $('.'+cls).transition('pulse');
         };
 
-    //- Enable accordion functionaliy -//
-    script.
+        //- Enable accordion functionaliy -//
         $('.ui.accordion')
           .accordion({
             selector: {
-              trigger: '.title :not(.exclude)'
+              trigger: '.title'
             }
-          })
-        ;
+          });
 
-    //- Set sidebar transition to 'overlay' -//
-    script.
+        //- Set sidebar transition to 'overlay' -//
         $('.ui.sidebar').sidebar('setting', 'transition', 'overlay');

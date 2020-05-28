@@ -52,7 +52,7 @@ function usersChanged() {
     }
     userTimer = setTimeout(function() {
         $('#usersLoadingIcon').removeClass()
-        $('#usersLoadingIcon').addClass("ui dropdown icon");
+        $('#usersLoadingIcon').addClass("ui users icon");
         settingChanged();
     }, 500);
 }

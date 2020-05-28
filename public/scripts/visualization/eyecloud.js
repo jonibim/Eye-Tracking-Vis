@@ -6,6 +6,9 @@ class EyeCloud extends Visualization {
     constructor(box) {
         super(box, 'Eye Cloud');
 
+        this.img = new Image();
+        this.zoom = d3.zoom();
+
         const width = box.inner.clientWidth; // Width of the box
         const height = box.inner.clientHeight; // Height of box
 
@@ -13,31 +16,36 @@ class EyeCloud extends Visualization {
         const minRadius = 10;
         const maxRadius = 100;
 
-        this.img = new Image();
+        let radiusScale; // scale that determines the size of the radii
 
-        let allCoordinates = [];
+        let allCoordinates = []; // set of all the coordinates of an image in the dataset
         let densityScores = [];
         let coordinates = []; // final coordinates that will be used to generate the circles
-        let densities = []; // the density of each coordinate in newCoordinates
+        let densities = []; // the density of each coordinate in the coordinates array
 
         let drawing = false; // Boolean that is true when the eye cloud is being drawn
+
+        let clickedObject; // Holds the object that is being right clicked
 
         let menu = [
             {
                 title: 'Show info',
                 action: function() {
+                    getInfo(clickedObject);
                     console.log('eyecloud.js - Showing info...');
                 }
             },
             {
                 title: 'Disable circle',
                 action: function () {
+                    disableCircle(clickedObject);
                     console.log('eyecloud.js - Disabling circle...');
                 }
             },
             {
                 title: 'Enable all circles',
                 action: function () {
+                    enableCircles();
                     console.log('eyecloud.js - Enabling all circles...');
                 }
             },
@@ -45,9 +53,18 @@ class EyeCloud extends Visualization {
                 title: 'Center visualization',
                 action: function () {
                     // This code fits the eye cloud by height
+                    let bWidth = box.inner.clientWidth / 4;
+                    let bHeight = box.inner.clientHeight / 4;
                     d3.select('#cloud_group')
-                        .attr('transform', 'translate(' + (box.inner.clientWidth / 4) + ',' + (box.inner.clientHeight / 4) + ') scale(0.5)');
+                        .attr('transform', 'translate(' + bWidth + ',' + bHeight + ') scale(0.5)');
                     console.log('eyecloud.js - Centering visualization...');
+                }
+            },
+            {
+                title: 'Save image',
+                action: function () {
+                    saveImage();
+                    console.log('Saving image...');
                 }
             }
         ];
@@ -61,12 +78,13 @@ class EyeCloud extends Visualization {
             .attr('id', 'cloud_svg')
             .attr('width', width) // Full screen
             .attr('height', height) // Full screen
-            .call(d3.zoom().on('zoom', function () {
+            .call(this.zoom.on('zoom', function () {
                 svg.attr('transform', d3.event.transform)
             }))
             .append('g')
             .attr('id', 'cloud_group')
             .attr('transform', 'translate(0,0)')
+            .attr('oncontextmenu', 'log()');
 
         /**
          * Create a defs-tag inside the svg-tag
@@ -75,6 +93,12 @@ class EyeCloud extends Visualization {
             .append('defs')
             .attr('id', 'pattern_defs');
 
+        /*
+        // Sets default zoom on load (does not work properly)
+        svg.call(this.zoom.scaleTo, 0.5);
+        svg.call(this.zoom.translateTo, 3 * (width / 4), 2 * (height / 4));
+         */
+
         /**
          * Upon any change of the properties class, check what settings have changed
          * and apply the new settings to the visualization
@@ -82,20 +106,20 @@ class EyeCloud extends Visualization {
         properties.onchange.set('eyecloud', () => {
             if (this.img !== properties.image) { // If the image has been changed
                 this.img = properties.image;
+                //disabledCircles = [];
                 if (!drawing) {
                     drawing = true;
-                    draw(dataset.getImageData(properties.image));
+                    generateData(dataset.getImageData(properties.image));
+                    draw();
+                    //this.center();
                 }
             }
         });
 
         /**
-         * Draw the eye cloud visualization
+         * Generate the necessary data for the eye cloud visualization
          */
-        function draw(imageData) {
-            d3.select('#cloud_group').selectAll('circle').remove(); // Remove already existing circles
-            d3.select('#pattern_defs').selectAll('pattern').remove(); // Remove already existing patterns
-
+        function generateData(imageData) {
             allCoordinates = [];
             imageData.scanpaths.forEach(function (user) {
                 user.points.forEach(function (point) {
@@ -144,10 +168,10 @@ class EyeCloud extends Visualization {
                     let yDistance = Math.pow(allCoordinates[j].co_y - allCoordinates[densityScores[i].c_index].co_y, 2);
                     let distance = Math.sqrt(xDistance + yDistance);
                     // If coordinate at j is inside of the radius of coordinate at i and not the same coordinate
-                    if (distance <= range && densityScores[i].c_index != j) {
+                    if (distance <= range && densityScores[i].c_index !== j) {
                         // Remove the coordinate with the index that is in the range of the coordinate at i
                         densityScores = densityScores.filter(function (e) {
-                            return e.c_index != j;
+                            return e.c_index !== j;
                         })
                     }
                 }
@@ -158,12 +182,27 @@ class EyeCloud extends Visualization {
             //console.log(newCoordinates);
             //console.log(densities);
 
+            // Set the radius scale depending on the maximum and minimum density
+            let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
+            let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
+            radiusScale = d3.scaleSqrt().domain([densityMin, densityMax]).range([minRadius, maxRadius]);
+        }
+
+        /**
+         * Draw the eye cloud visualization
+         */
+        function draw() {
+            d3.select('#cloud_group').selectAll('circle').remove(); // Remove already existing circles
+            d3.select('#pattern_defs').selectAll('pattern').remove(); // Remove already existing patterns
+
+            /*
             let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
             let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
             let radiusScale = d3.scaleSqrt().domain([densityMin, densityMax]).range([minRadius, maxRadius]);
+             */
 
             /**
-             * For every element in newCoordinates create a circle with the necessary attributes
+             * For every element in coordinates create a circle with the necessary attributes
              */
             let radiusCount = -1; // Keeps track of the index of the densities array
             let circleCount = -1; // Keeps track of the circle number
@@ -184,7 +223,7 @@ class EyeCloud extends Visualization {
                 .attr('fill', function () {
                     mapCount++;
                     return 'url(#map_c' + mapCount + ')';
-                })
+                });
 
             /**
              * Collection of forces that dictate where the circles should go
@@ -200,7 +239,7 @@ class EyeCloud extends Visualization {
                 }))
 
             /**
-             * For each (new) coordinate object, create a pattern that contains the coordinates
+             * For each enabled coordinate object, create a pattern that contains the coordinates
              */
             for (let i = 0; i < coordinates.length; i++) {
                 let circleRadius = document.getElementById('circle_' + i.toString()).getAttribute('r');
@@ -225,7 +264,11 @@ class EyeCloud extends Visualization {
 
             /**
              * Upon right clicking a circle, display a context menu
+             * and register the id of the clicked element
              */
+            d3.select('#cloud_group').selectAll('circle').on('contextmenu', function (object) {
+                clickedObject = object; // set variable to the clicked object
+            })
             d3.select('#cloud_group').on('contextmenu', d3.contextMenu(menu));
 
             /**
@@ -248,6 +291,43 @@ class EyeCloud extends Visualization {
             }
 
             drawing = false; // Reset drawing variable
+        }
+
+        /**
+         * Display the coordinates and density of the selected circle object with the used range
+         */
+        function getInfo(object) {
+            let x = object.co_x;
+            let y = object.co_y;
+            let density = densities[object.index];
+
+            let message = 'This circle represents point (' + x + ', ' + y + ') on the image.\n' +
+                'There are ' + density + ' other points in a range of ' + range + ' pixels to this point.';
+
+            alert(message);
+        }
+
+        /**
+         * Disables circle by remove it from the coordinates array and removing its density
+         */
+        function disableCircle(object) {
+            // Remove selected circle from the coordinates array
+            coordinates = coordinates.filter(coordinate => coordinate.index !== object.index);
+            // Remove density that belongs to the removed circle
+            densities.splice(object.index, 1);
+            draw(); // Redraw
+        }
+
+        /**
+         * Enables are circles again by regenerating the data
+         */
+        function enableCircles() {
+            generateData(dataset.getImageData(properties.image)); // Regenerate all coordinates
+            draw(); // Redraw
+        }
+
+        function saveImage() {
+            // COMING SOON!
         }
     }
 }

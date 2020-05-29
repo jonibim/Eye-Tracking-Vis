@@ -24,17 +24,17 @@ readSlidersZoom(defaultZoomValue)
 function settingHelp(setting) {
     $('.toast')
         .toast('close')
-        $('body')
-            .toast({
-                showIcon: 'info',
-                title: setting + ' setting',
-                displayTime: 0,
-                message: settingHelpMap[setting],
-                class: 'info',
-                position: 'top center',
-                closeIcon: true
-        });
-    }
+    $('body')
+        .toast({
+            showIcon: 'info',
+            title: setting + ' setting',
+            displayTime: 0,
+            message: settingHelpMap[setting],
+            class: 'info',
+            position: 'top center',
+            closeIcon: true
+    });
+}
 
 //- Auto Apply Behavior -//
 function settingChanged() {

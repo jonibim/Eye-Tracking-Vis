@@ -129,8 +129,8 @@ function readSlidersZoom(value) {
     $('.zoom-preview').text(value);
 }
 
-//- Show Help Icons -//
-function showHelp() {
-    $('#show_help').toggleClass('green basic')
-    $('.settinghelp').toggleClass('hidden')
-}
+//- Show Help Icons on Hover -//
+$('.item.setting')
+            .hover(function() {
+                $(this).find('.settinghelp').toggleClass("hidden");
+            });

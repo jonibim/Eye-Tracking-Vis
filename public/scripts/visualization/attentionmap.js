@@ -14,8 +14,8 @@ class AttentionMap extends Visualization {
     constructor(box) {
         super(box, 'Attention Map');
 
-        this.width = this.box.inner.clientWidth;
-        this.height = this.box.inner.clientHeight;
+        this.width = this.box.inner.offsetWidth;
+        this.height = this.box.inner.offsetHeight;
 
         this.svg = d3.select(this.box.inner)
             .classed('smalldot ', true)
@@ -29,12 +29,13 @@ class AttentionMap extends Visualization {
         this.svg.call(
             this.zoom.on('zoom', () => this.graphics.attr('transform', d3.event.transform))
         );
+        this.hasBeenCentered = false;
 
         this.resizeTimer = setInterval(() => {
-            if (this.width !== this.box.inner.clientWidth || this.height !== this.box.inner.clientHeight) {
-                this.maintainTransform(this.box.inner.clientWidth, this.box.inner.clientHeight);
-                this.width = this.box.inner.clientWidth;
-                this.height = this.box.inner.clientHeight;
+            if (this.width !== this.box.inner.offsetWidth || this.height !== this.box.inner.offsetHeight) {
+                this.hasBeenCentered ? this.maintainTransform(this.box.inner.offsetWidth, this.box.inner.offsetHeight) : this.center();
+                this.width = this.box.inner.offsetWidth;
+                this.height = this.box.inner.offsetHeight;
                 this.svg
                     .attr('width', this.width)
                     .attr('height', this.height);
@@ -43,6 +44,7 @@ class AttentionMap extends Visualization {
 
         this.image = new Image();
         this.image.onload = () => {
+            this.hasBeenCentered = false;
             this.draw();
             this.center();
         }
@@ -101,9 +103,14 @@ class AttentionMap extends Visualization {
      * Centers the attention map on the box
      */
     center(){
+        if(this.width === 0 || this.height === 0)
+            return;
+
         let scale = Math.min(this.width / this.image.naturalWidth, this.height / this.image.naturalHeight);
         this.svg.call(this.zoom.translateTo, this.image.naturalWidth / 2, this.image.naturalHeight / 2);
         this.svg.call(this.zoom.scaleTo, scale);
+
+        this.hasBeenCentered = true;
     }
 
     /**

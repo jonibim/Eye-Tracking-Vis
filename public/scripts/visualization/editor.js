@@ -9,13 +9,17 @@ class Editor extends Visualization {
      */
     constructor(box) {
 
-        super(box, 'AOI Editor');
+		/**
+		 * the third parameter is used as a identifier for the HTML 
+		 * object so that it can be modified easily from the code
+		 * Such modicaitons can be as adding a loader 
+		 */
+        super(box, 'AOI Editor', 'editor');
 
         this.margin = { top: 30, right: 20, bottom: 30, left: 50 }
         this.width = this.box.inner.clientWidth
         this.height = this.box.inner.clientHeight
-        //this.aoiCount = 0;
-        //this.aoiMap = new Map()
+        this.AOIinsertionListeners = []
 
         this.img = new Image();
         this.img.onload = () => {
@@ -94,7 +98,7 @@ class Editor extends Visualization {
 
         if (properties.image)
             this.img.src = '/testdataset/images/' + properties.image;
-            
+
         this.draw();
 
         this.clearAllAoiMenu = {
@@ -102,8 +106,10 @@ class Editor extends Visualization {
             action: () => {
                 this.svgGdots.selectAll('.aoi').remove()
                 this.svgG.selectAll('circle').classed('underAoi', false)
+                properties.aoi.set(properties.image, '')
+                this.sync()
             }
-    
+
         }
 
         this.devOptions = [
@@ -133,6 +139,9 @@ class Editor extends Visualization {
                 title: 'Enable Brush',
                 action: () => this.startBrush()
             },
+            {
+                divider: true
+            },
             this.clearAllAoiMenu,
             {
                 divider: true
@@ -151,7 +160,7 @@ class Editor extends Visualization {
                     return 'Y-Coordinate ' + d.y;
                 }
             },
-            ...this.devOptions
+            //...this.devOptions
 
         ]
 
@@ -160,10 +169,17 @@ class Editor extends Visualization {
 
             let addAoiMenu = {
                 title: 'Add AOI',
-                action: () => this.addAoi()
+                action: () => {
+                    this.addAoi()
+                    this.sync()
+                }
             }
 
             let result = []
+
+            var x = event.clientX, y = event.clientY,
+                elementMouseIsOver = document.elementFromPoint(x, y);
+            //console.log(elementMouseIsOver)
 
             if (this.brush) {
                 if (this.extent) {
@@ -182,13 +198,30 @@ class Editor extends Visualization {
                 })
 
             } else {
-                result.push({
-                    title: 'Enable Brush',
-                    action: () => this.startBrush()
-                })
+                result.push(
+                    {
+                        title: 'Enable Brush',
+                        action: () => this.startBrush()
+                    },
+                    {
+                        divider: true
+                    })
+
+                //console.log(elementMouseIsOver.classList)
+                if (elementMouseIsOver.classList.contains('ontop')) {
+                    this.rectangle = elementMouseIsOver
+                    result.push(
+                        {
+                            title: 'Delete AOI',
+                            action: () => this.deleteAOI(this.rectangle)
+                        })
+                }
+
             }
+
+
             result.push(this.clearAllAoiMenu)
-            result.push(...this.devOptions)
+            //result.push(...this.devOptions)
 
             return result
         };
@@ -217,11 +250,11 @@ class Editor extends Visualization {
         this.clearBrush()
 
         if (!properties.image) {
-            console.log("leaving editor drawing===>")
+            //console.log("leaving editor drawing===>")
             return;
         }
 
-        console.log("==>entering on editor drawing")
+        //console.log("==>entering on editor drawing")
 
         /**
          * Scale the points
@@ -243,7 +276,7 @@ class Editor extends Visualization {
             .attr('y', this.top)
             .attr('width', this.naturalWidth)
             .attr('height', this.naturalHeight)
-        console.log(this.svgG.append('svg:image'))
+        //console.log(this.svgG.append('svg:image'))
 
         /**
          * The loop for displaying the dots and the paths
@@ -252,8 +285,8 @@ class Editor extends Visualization {
 
             const points = scanPath.getPoints();
 
-            x.domain([0, d3.max(points, function (d) { return d.x })]);
-            y.domain([0, d3.max(points, function (d) { return d.y })]);
+            //x.domain([0, d3.max(points, function (d) { return d.x })]);
+            //y.domain([0, d3.max(points, function (d) { return d.y })]);
 
             this.lineFunction = d3.line()
                 .x(function (d) {
@@ -340,7 +373,7 @@ class Editor extends Visualization {
     clearBrush() {
 
         if (!this.brush) {
-            console.log("No Brush Exists")
+            //console.log("No Brush Exists")
             return;
         }
         this.svgG.selectAll('circle').classed('underAoi', false).classed('selected', false)
@@ -350,16 +383,16 @@ class Editor extends Visualization {
         ///this.svgG.selectAll('rect').remove()
         this.svgG.attr('pointer-events', null)
         this.brush = null;
+
     }
 
     /**
      * Maintaining the brush tool
      */
     startBrush() {
-        //this.svg.on('.zoom', null);
 
         if (this.brush) {
-            console.log("Exists")
+            //console.log("Exists")
             return;
         }
 
@@ -392,38 +425,101 @@ class Editor extends Visualization {
 
     addAoi() {
 
-        this.aoiCount = properties.aoi.size + 1
-        this.name = 'aoi' + this.aoiCount
-        this.aoiObject = properties.getCurrentAOI()
+        this.currentAOI = properties.aoi.get(properties.image)
+        this.trackAOI = this.currentAOI.slice(-1)[0] || 1
+        //console.log(this.trackAOI)
+        this.name = ((this.trackAOI !== 1) ? ('aoi' + (Number(this.trackAOI.object._groups[0][0].id) + 1)) : 'aoi1')
 
-        this.top = this.extent[0][1]
-        this.left = this.extent[0][0]
-        this.bottom = this.extent[1][1] - this.extent[0][1]
-        this.right = this.extent[1][0] - this.extent[0][0]
-        this.svgGdots.append('rect')
+        if (this.name == 'aoi1')
+            this.id = 1
+        else
+            this.id = Number(this.trackAOI.object._groups[0][0].id) + 1
+
+        this.aoiObject = new AOI(properties.image)
+
+        this.topSelection = this.extent[0][1]
+        this.leftSelection = this.extent[0][0]
+        this.bottomSelection = this.extent[1][1]
+        this.rightSelection = this.extent[1][0]
+        this.heightSelection = this.bottomSelection - this.topSelection
+        this.widthSelection = this.rightSelection - this.leftSelection
+
+        this.rect = this.svgGdots.append('g').attr('id', this.id).classed('aoi', true)
+        .classed(this.name, true)
+        
+        this.rect.append('rect')
             .classed('aoi', true)
             .classed(this.name, true)
-            .attr('width', this.right)
-            .attr('height', this.bottom)
-            .attr('x', this.left)
-            .attr('y', this.top)
+            .attr('width', this.widthSelection)
+            .attr('height', this.heightSelection)
+            .attr('x', this.leftSelection)
+            .attr('y', this.topSelection)
             .attr('opacity', 0.5)
-            .attr('fill', 'gray')
+            .attr('fill', '#878787')
             .attr('z-index', 1)
+            .on('mouseover', function () {
+                d3.select(this)
+                    .classed('ontop', true)
+                    .transition().duration(250).style('fill', '#0f2fff');
+
+            })
+            .on('mouseout', function () {
+                d3.select(this)
+                    .classed('ontop', false)
+                    .transition().duration(250).style('fill', '#878787');
+            })
+            
+            
+            this.rect.append('text')
+            .attr('x', this.leftSelection + 5)
+            .attr('y', this.topSelection + 27)
+            //.attr('alignment-baseline','middle')
+            //.attr('text-anchor','middle')
+            .style('fill', 'white')
+            .attr('font-size', '30px')
+            .text(this.name.toUpperCase())
+    
+
 
         this.svgG.selectAll("circle").classed("underAoi", (d) => {
             return this.isBrushed(this.extent, (d.x), (d.y))
         })
-            
 
-        //this.aoiObject.setSelection(this.left, this.top, this.right, this.bottom)
-        //this.aoiMap.set(this.name, this.aoiObject)
+        this.aoiObject.setSelection(this.leftSelection, this.topSelection, this.rightSelection, this.bottomSelection, this.rect)
 
-        this.aoiObject.setSelection(this.left, this.top, this.right, this.bottom)
-        properties.aoi.set(this.aoiCount, this.aoiObject)
-        //properties.getCurrentAOI().setSelection(this.left, this.top, this.right, this.bottom);
-        //this.aoiCount = this.aoiCount + 1
+        //console.log(this.currentAOI)
+        if (!this.currentAOI) {
+            this.tempArray = [this.aoiObject]
+            properties.aoi.set(properties.image, this.tempArray)
+        } else {
+            this.currentAOI.push(this.aoiObject)
+            properties.aoi.set(properties.image, this.currentAOI)
+        }
 
+    }
+
+    deleteAOI(object) {
+        
+        this.svgGdots.selectAll('.' + object.classList[1]).remove()
+        console.log('selected object', object)
+
+        this.newAOI = []
+
+        this.currentAOI = properties.aoi.get(properties.image)
+        this.currentAOI.forEach(aois => {
+            console.log(aois.object._groups[0][0].classList[1], object.classList[1])
+            if (aois.object._groups[0][0].classList[1] !== object.classList[1]) {
+                this.newAOI.push(aois)
+                console.log('add')
+                console.log('The object ->>', aois.object)
+            }
+            properties.aoi.set(properties.image, this.newAOI)
+            this.sync()
+        })
+    }
+
+    sync(){
+        this.AOIinsertionListeners.forEach(listener => listener())
     }
 
 

@@ -1,7 +1,13 @@
 class GazeStripe extends Visualization {
     
     constructor(box) {
-        super(box, 'Gaze Stripe')
+
+		/**
+		 * the third parameter is used as a identifier for the HTML 
+		 * object so that it can be modified easily from the code
+		 * Such modicaitons can be as adding a loader 
+		 */
+        super(box, 'Gaze Stripe', 'gzviz')
 
         let frameWidth = box.inner.clientWidth;
         let frameHeight = box.inner.clientHeight;

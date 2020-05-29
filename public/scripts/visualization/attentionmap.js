@@ -12,7 +12,13 @@ class AttentionMap extends Visualization {
      * @param {Box} box
      */
     constructor(box) {
-        super(box, 'Attention Map');
+
+        /**
+		 * the third parameter is used as a identifier for the HTML 
+		 * object so that it can be modified easily from the code
+		 * Such modicaitons can be as adding a loader 
+		 */
+        super(box, 'Attention Map', 'atviz');
 
         this.width = this.box.inner.offsetWidth;
         this.height = this.box.inner.offsetHeight;

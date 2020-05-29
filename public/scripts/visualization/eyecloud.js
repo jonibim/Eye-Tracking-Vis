@@ -4,13 +4,13 @@
 
 class EyeCloud extends Visualization {
     constructor(box) {
-        super(box, 'Eye Cloud');
+        super(box, 'Eye Cloud', 'eyecloud');
 
         this.img = new Image();
         this.zoom = d3.zoom();
 
-        const width = box.inner.clientWidth; // Width of the box
-        const height = box.inner.clientHeight; // Height of box
+        let width = box.inner.clientWidth; // Width of the box
+        let height = box.inner.clientHeight; // Height of box
 
         const range = 150;
         const minRadius = 10;
@@ -115,6 +115,26 @@ class EyeCloud extends Visualization {
                 }
             }
         });
+
+        /**
+         * Workaround to draw visualization when turned off an on
+         */
+        if(properties.image){
+            generateData(dataset.getImageData(properties.image));
+            draw()
+        }
+
+        /**
+         * Resizing the visualizations
+         */
+        this.timer = setInterval(() => {
+            if (width !== box.inner.clientWidth || height !== box.inner.clientHeight) {
+                width = box.inner.clientWidth
+                height = box.inner.clientHeight
+                console.log("Size: " + box.inner.clientHeight, box.inner.clientWidth)
+                resize();
+            }
+        }, 100);
 
         /**
          * Generate the necessary data for the eye cloud visualization
@@ -328,6 +348,16 @@ class EyeCloud extends Visualization {
 
         function saveImage() {
             // COMING SOON!
+        }
+        
+        /**
+         * Resizing the "canvas" for the svg
+         */
+        function resize(){
+            d3.select('#cloud_svg')
+            .attr('width', width) 
+            .attr('height', height) 
+            
         }
     }
 }

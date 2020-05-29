@@ -3,17 +3,19 @@
  * @property {Box} box
  */
 class Visualization {
-    constructor(box, title) {
+    constructor(box, title, classname) {
         this.box = box;
-        this.setTitle(title)
+        this.setTitle(title,classname)
     }
 
     /**
      * Sets the box title for this visualization
      * @param {string} title
+     * @param {string} classname used to identify the container in HTML from javascript
      */
-    setTitle(title){
+    setTitle(title, classname){
         this.box.title.textContent = title;
+        this.box.inner.id = classname;
     }
 
     /**

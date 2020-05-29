@@ -16,6 +16,7 @@ for ([x, y] of Object.entries(RGBA)) {
 }
 
 let defaultZoomValue = 50;
+readSlidersZoom(defaultZoomValue)
 
 //****************** Define Settings Functions ******************//
 

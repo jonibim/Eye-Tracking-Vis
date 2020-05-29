@@ -3,7 +3,7 @@ let visualizations = {};
 let users = [];
 let selected_users = [];
 //let edit = false;
-let zoomValue = 50;
+let zoomValue;
 
 function applySettings() {
     //- Apply visualization type changes -//

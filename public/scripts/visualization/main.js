@@ -59,8 +59,8 @@ window.onload = async () => {
     const url = '/visualization';
     const request = fetch(url, { method: 'POST' });
     await request.then(response => response.arrayBuffer()).then(buffer => {
-        decoder = new TextDecoder("iso-8859-1");
-        data = decoder.decode(buffer);
+        let decoder = new TextDecoder("iso-8859-1");
+        let data = decoder.decode(buffer);
         dataset.importData(data);
     });
     

@@ -20,7 +20,7 @@ class Dataset {
         console.log('dataset.js - Importing data...')
         this.images = [];
 
-        this.name = 'Test Data Set'; // TODO add proper dataset name
+        this.name = 'Metro maps research by Rudolf Netzel'; // TODO add dynamic naming
 
         const lines = data.split('\n');
 
@@ -204,6 +204,14 @@ class ScanPath {
         for (let i = 0; i < this.points.length; i++) {
             if (this.points[i].time === time)
                 return this.points[i];
+        }
+        return null;
+    }
+
+    getNextPoint(time) {
+        for (let i = 0; i < this.points.length; i++) {
+            if (this.points[i].time === time)
+                return this.points[i+1];
         }
         return null;
     }

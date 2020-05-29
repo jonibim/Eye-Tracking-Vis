@@ -16,7 +16,7 @@ class Properties {
         this.aoi = new Map();
         this.zoomValue = undefined;
         this.users = [];
-
+      
         this.onchange = new Map();
     }
 
@@ -25,16 +25,17 @@ class Properties {
      * @param {string} image
      */
     setImage(image) {
-        if (this.image === image)
+        if (this.image === image || !image)
             return;
 
-        console.log('properties.js - Setting image to ' + image);
+        //console.log('properties.js - Setting image to ' + image);
 
         let oldImage = this.image;
         this.image = image;
 
-        if (this.image && !this.aoi[image])
-            this.aoi[image] = new AOI(this.image);
+        //console.log(this.aoi.get(image))
+        if (this.image && !this.aoi.get(image))
+            this.aoi.set(image,'')
 
         for (let listener of this.onchange.values())
             listener({type: 'image', oldImage: oldImage, newImage: image});
@@ -48,7 +49,7 @@ class Properties {
         if (this.rgba && this.rgba[0] === rgba[0] && this.rgba[1] === rgba[1] && this.rgba[2] === rgba[2] && this.rgba[3] === rgba[3])
             return;
 
-        console.log('properties.js - Setting color to (' + rgba + ')');
+        //console.log('properties.js - Setting color to (' + rgba + ')');
 
         this.rgba = [...rgba];
         for (let listener of this.onchange.values())
@@ -71,7 +72,7 @@ class Properties {
         if (this.zoomValue === zoomValue)
             return;
 
-        console.log('properties.js - Setting zoom level to ' + zoomValue);
+        //console.log('properties.js - Setting zoom level to ' + zoomValue);
 
         let oldZoom = this.zoomValue;
         this.zoomValue = zoomValue;
@@ -96,7 +97,7 @@ class Properties {
                 return;
         }
 
-        console.log('properties.js - Setting users to ' + users.length + (users.length === 1 ? ' user' : ' users'));
+        //console.log('properties.js - Setting users to ' + users.length + (users.length === 1 ? ' user' : ' users'));
 
         this.users = [...users];
         for (let listener of this.onchange.values())
@@ -115,7 +116,7 @@ class Properties {
 /**
  * Stores the selected AOI
  * @property {string} image - the image the aoi is for
- * @property {boolean} hasSelection - whether something is currently selected
+ * @property {Object} object - whether something is currently selected
  * @property {float} left - left side of the selected area
  * @property {float} top - top side of the selected area
  * @property {float} right - right side of the selected area
@@ -130,7 +131,7 @@ class AOI {
      */
     constructor(image) {
         this.image = image;
-        this.hasSelection = false;
+        this.object = null;
         this.left = 0;
         this.right = 0;
         this.top = 0;
@@ -146,13 +147,13 @@ class AOI {
      * @param {float} right - right side of the selected area
      * @param {float} bottom - bottom side of the selected area
      */
-    setSelection(left, top, right, bottom) {
+    setSelection(left, top, right, bottom, object) {
         if (!properties.image) { // an image must be selected first
             console.error('properties.js - An image must be set first, before an area can be selected!');
             return;
         }
 
-        this.hasSelection = true;
+        this.object = object
         this.left = left;
         this.right = right;
         this.top = top;
@@ -166,8 +167,6 @@ class AOI {
                     this.points.push(point);
             }
         }
-        if (!this.points.length)
-            this.hasSelection = false;
 
         for (let listener of this.onchange.values())
             listener();

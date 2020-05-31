@@ -16,34 +16,34 @@ class Editor extends Visualization {
 		 */
         super(box, 'AOI Editor', 'editor');
 
-        this.margin = { top: 30, right: 20, bottom: 30, left: 50 }
-        this.width = this.box.inner.clientWidth
-        this.height = this.box.inner.clientHeight
-        this.AOIinsertionListeners = []
+        this.width = this.box.inner.clientWidth;
+        this.height = this.box.inner.clientHeight;
+        this.AOIinsertionListeners = [];
 
-        this.img = new Image();
-        this.img.onload = () => {
-            this.ratio = 0;
+        /**
+         * create an image element just to load the image from the server
+         */
+        this.image = new Image();
+        this.image.onload = () => {
+            this.hasBeenCentered = false;
             this.draw();
+            this.center();
         }
 
         /**
-         * Create the svg insde the box
+         * Create the svg inside the box
          */
         this.svg = d3.select(this.box.inner)
             .classed("smalldot ", true)
             .append("svg")
-            .attr("width", this.width + this.margin.left + this.margin.right)
-            .attr("height", this.height + this.margin.top + this.margin.bottom)
-            .style('position', 'relative')
-
-        //G stands for Graphic
+            .attr("width", this.width)
+            .attr("height", this.height);
 
         /**
         * Create the object for the zoom
         * We create an element as we later are going to modify this element
         */
-        this.zoom = d3.zoom()
+        this.zoom = d3.zoom();
 
         /**
          * Create the graphic element for all the visualization
@@ -53,9 +53,9 @@ class Editor extends Visualization {
             .call(this.zoom.on("zoom", () => {
                 this.svgG.attr("transform", d3.event.transform)
             }))
-            .append("g")
+            .append("g");
 
-        this.svgGdots = this.svgG.append('g')
+        this.svgGdots = this.svgG.append('g');
 
         /**
          * We filter the zoom function as it usually binds 
@@ -64,53 +64,41 @@ class Editor extends Visualization {
          * the function to the mouse wheel for zooming in and out
          * and mouse wheel click for the Pan tool
          */
-        this.zoom.filter(function () {
-            switch (d3.event.type) {
-                case "mousedown": return d3.event.button === 1
-                case "wheel": return d3.event.button === 0
-                default: return false
-            }
-        })
+        this.zoom.filter(() => (d3.event.type === 'mousedown' && d3.event.button === 1) || (d3.event.type === 'wheel' && d3.event.button === 0));
 
 
         /**
-         * This is used for maintaing the windows size 
+         * This is used for maintaining the windows size
          * Instead we could also use an event listener
          */
-        this.timer = setInterval(() => {
-            if (this.width !== this.box.inner.clientWidth || this.height !== this.box.inner.clientHeight) {
-                this.width = this.box.inner.clientWidth
-                this.height = this.box.inner.clientHeight
-                console.log("Size: " + this.box.inner.clientHeight, this.box.inner.clientWidth)
-                this.redraw();
+        this.resizeTimer = setInterval(() => {
+            if (this.width !== this.box.inner.offsetWidth || this.height !== this.box.inner.offsetHeight) {
+                this.hasBeenCentered ? this.maintainTransform(this.box.inner.offsetWidth, this.box.inner.offsetHeight) : this.center();
+                this.width = this.box.inner.offsetWidth;
+                this.height = this.box.inner.offsetHeight;
+                this.svg
+                    .attr('width', this.width)
+                    .attr('height', this.height);
             }
         }, 100);
 
-        /**
-         * create an image element just to load the image from the server
-        */
-
-        properties.onchange.set('editor', () => {
-            if (this.img.src)
-                if (this.img.src.match('([^\/]+$)')[0] === properties.image) return;
-            this.img.src = properties.image ? '/testdataset/images/' + properties.image : '';
+        properties.onchange.set('editor', event => {
+            if(event.type === 'image')
+                this.image.src = properties.image ? '/testdataset/images/' + properties.image : '';
         })
 
         if (properties.image)
-            this.img.src = '/testdataset/images/' + properties.image;
-
-        this.draw();
+            this.image.src = '/testdataset/images/' + properties.image;
 
         this.clearAllAoiMenu = {
             title: 'Clear all AOIs',
             action: () => {
                 this.svgGdots.selectAll('.aoi').remove()
                 this.svgG.selectAll('circle').classed('underAoi', false)
-                properties.aoi.set(properties.image, '')
+                properties.aoi.set(properties.image, [])
                 this.sync()
             }
-
-        }
+        };
 
         this.devOptions = [
             {
@@ -132,7 +120,7 @@ class Editor extends Visualization {
                 action: () => console.log(properties.image)
             },
 
-        ]
+        ];
 
         this.menu = [
             {
@@ -162,7 +150,7 @@ class Editor extends Visualization {
             },
             //...this.devOptions
 
-        ]
+        ];
 
 
         this.menu2 = () => {
@@ -170,14 +158,14 @@ class Editor extends Visualization {
             let addAoiMenu = {
                 title: 'Add AOI',
                 action: () => {
-                    this.addAoi()
-                    this.sync()
+                    this.addAoi();
+                    this.sync();
                 }
-            }
+            };
 
-            let result = []
+            let result = [];
 
-            var x = event.clientX, y = event.clientY,
+            let x = event.clientX, y = event.clientY,
                 elementMouseIsOver = document.elementFromPoint(x, y);
             //console.log(elementMouseIsOver)
 
@@ -228,16 +216,6 @@ class Editor extends Visualization {
     }
 
     /**
-     * Updates the image as soon as the editor panel sends the command
-     */
-    updateImage() {
-        this.img.setAttribute('src', properties.image ? '/testdataset/images/' + properties.image : '');
-        // this.canvas.width = 0;//this.img.naturalWidth;
-        // this.canvas.height = 0;//this.img.naturalHeight;
-        //console.log('width: ' + this.img.naturalWidth + ' height: ' + this.img.naturalHeight);
-    }
-
-    /**
      * Draws the visualization
      */
     draw() {
@@ -245,38 +223,25 @@ class Editor extends Visualization {
         /**
          * Clear the previous drawing
          */
-        //this.clearBrush()
         this.svgG.selectAll("*").remove();
         this.clearBrush()
 
         if (!properties.image) {
-            //console.log("leaving editor drawing===>")
             return;
         }
 
-        //console.log("==>entering on editor drawing")
-
-        /**
-         * Scale the points
-         */
-        let x = d3.scaleLinear().range([0, this.width]);
-        let y = d3.scaleLinear().range([0, this.height]);
         const imageData = dataset.getImageData(properties.image);
         const scanPaths = imageData.getScanPaths();
-
-        //console.log(this.img)
-        //console.log(this.svgG.append('svg:image'))
 
         /**
          * Attach the image to the background of svg
          */
         this.svgG.append('svg:image')
-            .attr('xlink:href', this.img.src)
+            .attr('xlink:href', this.image.src)
             .attr('x', this.left)
             .attr('y', this.top)
             .attr('width', this.naturalWidth)
             .attr('height', this.naturalHeight)
-        //console.log(this.svgG.append('svg:image'))
 
         /**
          * The loop for displaying the dots and the paths
@@ -284,9 +249,6 @@ class Editor extends Visualization {
         scanPaths.forEach(scanPath => {
 
             const points = scanPath.getPoints();
-
-            //x.domain([0, d3.max(points, function (d) { return d.x })]);
-            //y.domain([0, d3.max(points, function (d) { return d.y })]);
 
             this.lineFunction = d3.line()
                 .x(function (d) {
@@ -339,9 +301,10 @@ class Editor extends Visualization {
         /**
          * Call the brush
          */
-        this.startBrush()
+        this.startBrush();
 
     }
+
     /**
      * Identify the points under the region
      * @param {The brush coordinates} brush_coords 
@@ -349,25 +312,11 @@ class Editor extends Visualization {
      * @param {The data y-coordinate} cy 
      */
     isBrushed(brush_coords, cx, cy) {
-        var x0 = brush_coords[0][0],
+        let x0 = brush_coords[0][0],
             x1 = brush_coords[1][0],
             y0 = brush_coords[0][1],
             y1 = brush_coords[1][1];
         return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; //Return TRUE or alse
-    }
-
-    /**
-     * Fix the svg size
-     */
-    redraw() {
-
-        /**
-         * Use the extracted size to set the size of an SVG element.
-         */
-        this.svg
-            .attr("width", this.width + this.margin.left + this.margin.right)
-            .attr("height", this.height + this.margin.top + this.margin.bottom)
-
     }
 
     clearBrush() {
@@ -402,8 +351,8 @@ class Editor extends Visualization {
             .call(this.brush
                 // initialise the brush area: 
                 //   tolerate 100px outside the image size on the top left part
-                //       and finishes at width,height of the image at bottim right part with 100px as an offset
-                .extent([[-100, -100], [this.img.naturalWidth + 100, this.img.naturalWidth + 100]])
+                //       and finishes at width,height of the image at bottom right part with 100px as an offset
+                .extent([[-100, -100], [this.image.naturalWidth + 100, this.image.naturalWidth + 100]])
                 .on("start brush", () => {
                     //console.log('start Brsuh')
                     this.extent = d3.event.selection
@@ -512,18 +461,42 @@ class Editor extends Visualization {
                 console.log('add')
                 console.log('The object ->>', aois.object)
             }
-            properties.aoi.set(properties.image, this.newAOI)
-            this.sync()
-        })
+            properties.aoi.set(properties.image, this.newAOI);
+            this.sync();
+        });
     }
 
     sync(){
-        this.AOIinsertionListeners.forEach(listener => listener())
+        this.AOIinsertionListeners.forEach(listener => listener());
     }
 
+    /**
+     * Centers the attention map on the box
+     */
+    center() {
+        if (this.width === 0 || this.height === 0 || this.image.naturalWidth === 0 || this.image.naturalHeight === 0)
+            return;
 
+        let scale = Math.min(this.width / this.image.naturalWidth, this.height / this.image.naturalHeight);
+        this.svg.call(this.zoom.translateTo, this.image.naturalWidth / 2, this.image.naturalHeight / 2);
+        this.svg.call(this.zoom.scaleTo, scale);
 
+        this.hasBeenCentered = true;
+    }
 
+    /**
+     * Makes sure translation and scale stays the same when resized
+     * @param {number} newWidth - new box width
+     * @param {number} newHeight - new box height
+     */
+    maintainTransform(newWidth, newHeight) {
+        let scale = d3.zoomTransform(this.svg.node()).k;
+        this.svg.call(this.zoom.translateBy, (newWidth - this.width) / 2 / scale, (newHeight - this.height) / 2 / scale);
+    }
 
+    onRemoved() {
+        if (this.resizeTimer)
+            clearInterval(this.resizeTimer);
+    }
 
 }

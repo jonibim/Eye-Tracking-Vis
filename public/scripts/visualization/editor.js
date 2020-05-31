@@ -5,14 +5,14 @@ class Editor extends Visualization {
 
     /**
      * The constructor for maintating the whole visualization
-     * @param {The box containing the visualization} box 
+     * @param {Box} box - The box containing the visualization
      */
     constructor(box) {
 
 		/**
 		 * the third parameter is used as a identifier for the HTML 
 		 * object so that it can be modified easily from the code
-		 * Such modicaitons can be as adding a loader 
+		 * Such modifications can be as adding a loader
 		 */
         super(box, 'AOI Editor', 'editor');
 
@@ -485,8 +485,6 @@ class Editor extends Visualization {
             return this.isBrushed(this.extent, (d.x), (d.y))
         })
 
-        this.aoiObject.setSelection(this.leftSelection, this.topSelection, this.rightSelection, this.bottomSelection, this.rect)
-
         //console.log(this.currentAOI)
         if (!this.currentAOI) {
             this.tempArray = [this.aoiObject]
@@ -496,6 +494,7 @@ class Editor extends Visualization {
             properties.aoi.set(properties.image, this.currentAOI)
         }
 
+        this.aoiObject.setSelection(this.leftSelection, this.topSelection, this.rightSelection, this.bottomSelection, this.rect)
     }
 
     deleteAOI(object) {

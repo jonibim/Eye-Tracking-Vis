@@ -124,7 +124,7 @@ class AttentionMap extends Visualization {
      * Centers the attention map on the box
      */
     center() {
-        if (this.width === 0 || this.height === 0)
+        if (this.width === 0 || this.height === 0 || this.image.naturalWidth === 0 || this.image.naturalHeight === 0)
             return;
 
         let scale = Math.min(this.width / this.image.naturalWidth, this.height / this.image.naturalHeight);

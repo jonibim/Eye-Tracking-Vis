@@ -35,7 +35,7 @@ class Properties {
 
         //console.log(this.aoi.get(image))
         if (this.image && !this.aoi.get(image))
-            this.aoi.set(image,'')
+            this.aoi.set(image,new AOI(image))
 
         for (let listener of this.onchange.values())
             listener({type: 'image', oldImage: oldImage, newImage: image});

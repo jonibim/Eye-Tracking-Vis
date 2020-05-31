@@ -14,10 +14,10 @@ class AttentionMap extends Visualization {
     constructor(box) {
 
         /**
-		 * the third parameter is used as a identifier for the HTML 
-		 * object so that it can be modified easily from the code
-		 * Such modicaitons can be as adding a loader 
-		 */
+         * the third parameter is used as a identifier for the HTML
+         * object so that it can be modified easily from the code
+         * Such modicaitons can be as adding a loader
+         */
         super(box, 'Attention Map', 'atviz');
 
         this.width = this.box.inner.offsetWidth;
@@ -56,22 +56,20 @@ class AttentionMap extends Visualization {
         }
 
         properties.onchange.set('attentionmap', event => {
-            if(event.type === 'image')
+            if (event.type === 'image')
                 this.image.src = properties.image ? '/testdataset/images/' + properties.image : ''
-            if(event.type === 'color')
-                this.draw();
-            if(event.type === 'users')
+            if (event.type === 'color' || event.type === 'users' || event.type === 'aoi')
                 this.draw();
         })
 
-        if(properties.image)
+        if (properties.image)
             this.image.src = '/testdataset/images/' + properties.image;
     }
 
     /**
      * Draws the attention map on the canvas
      */
-    draw(){
+    draw() {
         this.graphics.selectAll('*').remove();
 
         if (!properties.image)
@@ -86,10 +84,21 @@ class AttentionMap extends Visualization {
 
         let points = [];
         imageData.scanpaths.forEach(path => {
-            if(properties.users.includes(path.person))
+            if (properties.users.includes(path.person))
                 points = points.concat(path.points);
         });
 
+        // remove points not in the AOIs
+        if(properties.getCurrentAOI().length) {
+            loop: for (let i = 0; i < points.length; i++) {
+                for (let aoi of properties.getCurrentAOI()) {
+                    if (aoi.includesPoint(points[i]))
+                        continue loop;
+                }
+                points.splice(i, 1);
+                i--;
+            }
+        }
 
         let contours = d3.contourDensity()
             .x(point => point.x)
@@ -97,7 +106,7 @@ class AttentionMap extends Visualization {
             .size([this.image.naturalWidth, this.image.naturalHeight])
             .bandwidth(20)(points);
 
-        let color = d3.scalePow().domain([0,d3.max(contours, d => d.value)]).range(['#ffffff00',properties.getColorHex()]);
+        let color = d3.scalePow().domain([0, d3.max(contours, d => d.value)]).range(['#ffffff00', properties.getColorHex()]);
 
         this.graphics.append('g')
             .attr('fill', 'none')
@@ -114,8 +123,8 @@ class AttentionMap extends Visualization {
     /**
      * Centers the attention map on the box
      */
-    center(){
-        if(this.width === 0 || this.height === 0)
+    center() {
+        if (this.width === 0 || this.height === 0)
             return;
 
         let scale = Math.min(this.width / this.image.naturalWidth, this.height / this.image.naturalHeight);
@@ -130,13 +139,13 @@ class AttentionMap extends Visualization {
      * @param {number} newWidth - new box width
      * @param {number} newHeight - new box height
      */
-    maintainTransform(newWidth, newHeight){
+    maintainTransform(newWidth, newHeight) {
         let scale = d3.zoomTransform(this.svg.node()).k;
         this.svg.call(this.zoom.translateBy, (newWidth - this.width) / 2 / scale, (newHeight - this.height) / 2 / scale);
     }
 
     onRemoved() {
-        if(this.resizeTimer)
+        if (this.resizeTimer)
             clearInterval(this.resizeTimer);
     }
 }

@@ -60,6 +60,8 @@ class AttentionMap extends Visualization {
                 this.image.src = properties.image ? '/testdataset/images/' + properties.image : ''
             if(event.type === 'color')
                 this.draw();
+            if(event.type === 'users')
+                this.draw();
         })
 
         if(properties.image)
@@ -83,7 +85,11 @@ class AttentionMap extends Visualization {
         const imageData = dataset.getImageData(properties.image);
 
         let points = [];
-        imageData.scanpaths.forEach(path => points = points.concat(path.points));
+        imageData.scanpaths.forEach(path => {
+            if(properties.users.includes(path.person))
+                points = points.concat(path.points);
+        });
+
 
         let contours = d3.contourDensity()
             .x(point => point.x)

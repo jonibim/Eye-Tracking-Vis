@@ -84,11 +84,11 @@ class Editor extends Visualization {
 
         properties.onchange.set('editor', event => {
             if(event.type === 'image')
-                this.image.src = properties.image ? '/testdataset/images/' + properties.image : '';
+                this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
         })
 
         if (properties.image)
-            this.image.src = '/testdataset/images/' + properties.image;
+            this.image.src = dataset.url + '/images/' + properties.image;
 
         this.clearAllAoiMenu = {
             title: 'Clear all AOIs',

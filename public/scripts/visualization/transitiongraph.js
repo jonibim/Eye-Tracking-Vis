@@ -72,12 +72,12 @@ class TransitionGraph extends Visualization {
         properties.onchange.set('transitiongraph', () => {
             if (this.img.src)
                 if (this.img.src.match('([^\/]+$)')[0] === properties.image) return;
-            this.img.src = properties.image ? '/testdataset/images/' + properties.image : '';
+            this.img.src = properties.image ? dataset.url + '/images/' + properties.image : '';
         })
 
 
         if (properties.image)
-            this.img.src = '/testdataset/images/' + properties.image;
+            this.img.src = dataset.url + '/images/' + properties.image;
 
         registry.map.get('editor').instance.AOIinsertionListeners.push(() => this.draw())
 

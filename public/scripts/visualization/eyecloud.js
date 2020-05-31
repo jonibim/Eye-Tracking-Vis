@@ -273,7 +273,7 @@ class EyeCloud extends Visualization {
                     // and the radius is taken into account to center the coordinate
                     .attr('x', -coordinates[i].co_x + parseInt(circleRadius))
                     .attr('y', -coordinates[i].co_y + parseInt(circleRadius))
-                    .attr('xlink:href', '/testdataset/images/' + properties.image);
+                    .attr('xlink:href', dataset.url + '/images/' + properties.image);
             }
 
             /**

@@ -83,7 +83,7 @@ $('.image-selector')
     .on('mouseenter', function(evt){
         $('.preview').show();
         $('.inner-frame').hide();
-        $('#preview-image').attr("src", "/testdataset/images/" + this.innerHTML);
+        $('#preview-image').attr("src", dataset.url + "/images/" + this.innerHTML);
         $(this).on('mouseleave', function(){
             $('.preview').hide();
             $('.inner-frame').show();

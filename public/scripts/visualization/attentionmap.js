@@ -57,13 +57,13 @@ class AttentionMap extends Visualization {
 
         properties.onchange.set('attentionmap', event => {
             if (event.type === 'image')
-                this.image.src = properties.image ? '/testdataset/images/' + properties.image : ''
+                this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
             if (event.type === 'color' || event.type === 'users' || event.type === 'aoi')
                 this.draw();
         })
 
         if (properties.image)
-            this.image.src = '/testdataset/images/' + properties.image;
+            this.image.src = dataset.url + '/images/' + properties.image;
     }
 
     /**

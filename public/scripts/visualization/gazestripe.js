@@ -73,7 +73,7 @@ class GazeStripe extends Visualization {
 	    	shortestPath = Math.pow(10, 1000);
 	    	longestTime = {};
 
-	        d3.tsv('/testdataset/all_fixation_data_cleaned_up.csv').then(function(data) {
+	        d3.tsv(dataset.url + '/dataset.csv').then(function(data) {
 	            let dataByCity = d3.nest().key(function(data) {
 	                return data.StimuliName;
 	            }).entries(data);
@@ -153,7 +153,7 @@ class GazeStripe extends Visualization {
 						.attr('viewBox', '' + (x-zoomValue) + ' ' + (y-zoomValue) + ' ' + (2*zoomValue) + ' ' + (2*zoomValue))
 	        			.attr('preserveAspectRatio', 'xMinYMin slice')
 	        			.append('image')
-	                    .attr('xlink:href', '/testdataset/images/' + (img))
+	                    .attr('xlink:href', dataset.url + '/images/' + (img))
 	                if (i >= 1) {
 	                    let longestTimeIndex = Math.round(divisor * i);              
 	                    timestamp.push(((longestTime[key][longestTimeIndex] - longestTime[key][longestTimeIndex-1]) + timestamp[timestamp.length - 1]));

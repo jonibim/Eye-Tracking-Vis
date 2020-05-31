@@ -11,7 +11,7 @@ class Properties {
 
     constructor() {
         this.image = undefined;
-        this.rgba = undefined;
+        this.rgba = [0,0,0,0];
         this.time = 0;
         this.aoi = new Map();
         this.zoomValue = undefined;

@@ -4,7 +4,7 @@
  * @property {string} image - the image currently selected
  * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
- * @property {Map<string,AOI>} aoi - the selected area of interest per image
+ * @property {Map<string,AOI[]>} aoi - the areas of interest per image
  * @property {Map<string,function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]})>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
@@ -35,7 +35,7 @@ class Properties {
 
         //console.log(this.aoi.get(image))
         if (this.image && !this.aoi.get(image))
-            this.aoi.set(image,'');
+            this.aoi.set(image,[]);
 
         for (let listener of this.onchange.values())
             listener({type: 'image', oldImage: oldImage, newImage: image});
@@ -105,24 +105,23 @@ class Properties {
     }
 
     getCurrentAOI() {
-        return !this.image ? new AOI('') : this.aoi[this.image];
+        return !this.image ? [] : this.aoi[this.image];
     }
 
     getCurrentAOIsize() {
-        return this.aoi.size;
+        return this.aoi[this.image].size;
     }
 }
 
 /**
  * Stores the selected AOI
  * @property {string} image - the image the aoi is for
- * @property {Object} object - whether something is currently selected
+ * @property {Object} object -
  * @property {float} left - left side of the selected area
  * @property {float} top - top side of the selected area
  * @property {float} right - right side of the selected area
  * @property {float} bottom - bottom side of the selected area
  * @property {ScanPoint[]} points - all points in the selected area
- * @property {Map<string,function()>} onchange - area of interest change listeners for all visualizations, registered by tag
  */
 class AOI {
 
@@ -137,7 +136,6 @@ class AOI {
         this.top = 0;
         this.bottom = 0;
         this.points = [];
-        this.onchange = new Map();
     }
 
     /**
@@ -168,19 +166,25 @@ class AOI {
             }
         }
 
-        for (let listener of this.onchange.values())
-            listener();
+        if(this.image === properties.image)
+            for (let listener of properties.onchange.values())
+                listener({type: 'aoi', aoi: properties.aoi[this.image]});
     }
 
     /**
-     * Clears the selection
+     * Removes this AOI
      */
-    clearSelection() {
-        this.hasSelection = false;
-        this.points = [];
+    remove() {
+        let index = properties.aoi[this.image].indexOf();
 
-        for (let listener of this.onchange.values())
-            listener();
+        if(index < 0)
+            return;
+
+        properties.aoi[this.image].splice(index, 1);
+
+        if(this.image === properties.image)
+            for (let listener of properties.onchange.values())
+                listener({type: 'aoi', aoi: properties.aoi[this.image]});
     }
 
 }

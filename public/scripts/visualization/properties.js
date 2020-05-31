@@ -105,7 +105,7 @@ class Properties {
     }
 
     getCurrentAOI() {
-        return !this.image ? [] : this.aoi[this.image];
+        return this.image ? this.aoi[this.image] : [];
     }
 
     getCurrentAOIsize() {

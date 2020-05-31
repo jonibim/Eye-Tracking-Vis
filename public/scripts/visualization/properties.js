@@ -5,7 +5,7 @@
  * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
  * @property {Map<string,AOI[]>} aoi - the areas of interest per image
- * @property {Map<string,function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]})>} onchange - property change listeners for all visualizations, registered by tag
+ * @property {Map<string,function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]})|{type: 'aoi', aoi: AOI[]}>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
 
@@ -108,14 +108,14 @@ class Properties {
      * @return {AOI[]} AOIs for the selected image
      */
     getCurrentAOI() {
-        return this.image ? this.aoi[this.image] : [];
+        return this.image ? this.aoi.get(this.image) : [];
     }
 
     /**
-     * @return {integer} the number of AOIs for the selected image
+     * @return {int} the number of AOIs for the selected image
      */
     getCurrentAOIsize() {
-        return this.aoi[this.image].size;
+        return this.aoi.get(this.image).length;
     }
 }
 
@@ -174,7 +174,7 @@ class AOI {
 
         if(this.image === properties.image)
             for (let listener of properties.onchange.values())
-                listener({type: 'aoi', aoi: properties.aoi[this.image]});
+                listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
     }
 
     /**
@@ -191,16 +191,16 @@ class AOI {
      * Removes this AOI
      */
     remove() {
-        let index = properties.aoi[this.image].indexOf();
+        let index = properties.aoi.get(this.image).indexOf(this);
 
         if(index < 0)
             return;
 
-        properties.aoi[this.image].splice(index, 1);
+        properties.aoi.get(this.image).splice(index, 1);
 
         if(this.image === properties.image)
             for (let listener of properties.onchange.values())
-                listener({type: 'aoi', aoi: properties.aoi[this.image]});
+                listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
     }
 
 }

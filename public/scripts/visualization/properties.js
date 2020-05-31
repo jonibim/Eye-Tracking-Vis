@@ -104,10 +104,16 @@ class Properties {
             listener({type: 'users', users: users});
     }
 
+    /**
+     * @return {AOI[]} AOIs for the selected image
+     */
     getCurrentAOI() {
         return this.image ? this.aoi[this.image] : [];
     }
 
+    /**
+     * @return {integer} the number of AOIs for the selected image
+     */
     getCurrentAOIsize() {
         return this.aoi[this.image].size;
     }

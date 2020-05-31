@@ -23,13 +23,9 @@ function handleFormSubmit(event) {
             document.getElementById('failureSection').style.display='none';
             document.getElementById('successSection').style.display='';
 
-            document.getElementById('visualizationButton').href = '/visualization?id=' + json.id;
+            document.getElementById('visualizationButton').setAttribute('href','/visualization?id=' + json.id);
         }
     }
-
-    // request.onerror = event => {
-    //     console.err('upload.js - Http request gave an error: ', event);
-    // }
 
     request.open('post','/dataset/upload');
     request.send(new FormData(event.target));

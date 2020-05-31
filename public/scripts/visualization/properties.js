@@ -172,6 +172,16 @@ class AOI {
     }
 
     /**
+     * @param {ScanPoint | [2]} point - the point to check, can be either a ScanPath or [x, y]
+     * @return {boolean} whether the given point is inside this aoi
+     */
+    includesPoint(point){
+        if(point instanceof ScanPoint)
+            return this.points.includes(point);
+        return this.left <= point[0] && this.right >= point[0] && this.top <= point[1] && this.bottom >= point[1];
+    }
+
+    /**
      * Removes this AOI
      */
     remove() {

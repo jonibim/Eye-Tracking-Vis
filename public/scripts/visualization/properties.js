@@ -117,12 +117,22 @@ class Properties {
     getCurrentAOIsize() {
         return this.aoi.get(this.image).length;
     }
+
+    /**
+     * Removes all AOIs for the selected image
+     */
+    removeCurrentAOIs(){
+        let aoi = [];
+        this.aoi.set(this.image, aoi);
+
+        for (let listener of properties.onchange.values())
+            listener({type: 'aoi', aoi: aoi});
+    }
 }
 
 /**
  * Stores the selected AOI
  * @property {string} image - the image the aoi is for
- * @property {Object} object -
  * @property {float} left - left side of the selected area
  * @property {float} top - top side of the selected area
  * @property {float} right - right side of the selected area
@@ -136,7 +146,6 @@ class AOI {
      */
     constructor(image) {
         this.image = image;
-        this.object = null;
         this.left = 0;
         this.right = 0;
         this.top = 0;
@@ -151,13 +160,12 @@ class AOI {
      * @param {float} right - right side of the selected area
      * @param {float} bottom - bottom side of the selected area
      */
-    setSelection(left, top, right, bottom, object) {
+    setSelection(left, top, right, bottom) {
         if (!properties.image) { // an image must be selected first
             console.error('properties.js - An image must be set first, before an area can be selected!');
             return;
         }
 
-        this.object = object
         this.left = left;
         this.right = right;
         this.top = top;
@@ -178,12 +186,12 @@ class AOI {
     }
 
     /**
-     * @param {ScanPoint | [2]} point - the point to check, can be either a ScanPath or [x, y]
+     * @param {ScanPoint | number[]} point - the point to check, can be either a ScanPath or [x, y]
      * @return {boolean} whether the given point is inside this aoi
      */
     includesPoint(point){
         if(point instanceof ScanPoint)
-            return this.points.includes(point);
+            point = [point.x, point.y];
         return this.left <= point[0] && this.right >= point[0] && this.top <= point[1] && this.bottom >= point[1];
     }
 

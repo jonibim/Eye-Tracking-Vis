@@ -124,7 +124,7 @@ class TransitionGraph extends Visualization {
 
         //console.log("==>entering transition")
 
-        const AOIs = properties.getCurrentAOI();
+        const AOIs = properties.aoi.get(properties.image)
 
         const imageData = dataset.getImageData(properties.image);
         //const scanPaths = imageData.getScanPaths();
@@ -154,15 +154,15 @@ class TransitionGraph extends Visualization {
         this.matrix = Array(this.dimension).fill().map(() => Array(this.dimension).fill(0))
 
         for (let i = 0; i < this.dimension; i++) {
-            for (let j = 0; j < AOIs[i].points().length; j++) {
-                this.pointSource = AOIs[i].points()[j]
+            for (let j = 0; j < AOIs[i].points.length; j++) {
+                this.pointSource = AOIs[i].points[j]
                 this.pointPerson = this.pointSource.path.person
                 this.pointColor = this.pointSource.path.color
                 this.pointPath = imageData.getScanPaths(this.pointPerson, this.pointColor)[0];
                 this.nextPoint = this.pointPath.getNextPoint(this.pointSource.time)
                 for (let k = 0; k < this.dimension; k++) {
                     if (i === k) continue;
-                    if (AOIs[k].points().includes(this.nextPoint)) {
+                    if (AOIs[k].points.includes(this.nextPoint)) {
                         this.matrix[i][k]++
                     }
                 }
@@ -176,11 +176,11 @@ class TransitionGraph extends Visualization {
         let _links = []
 
         for (let i = 0; i < this.dimension; i++) {
-            let AOIname = 'aoi' + i;
+            var AOIname = AOIs[i].object._groups[0][0].classList[1]
             _nodes.push({ "id": AOIname })
             for (let j = 0; j < this.dimension; j++) {
                 if (this.matrix[i][j] !== 0) {
-                    var AOIname2 = 'aoi' + j;
+                    var AOIname2 = AOIs[j].object._groups[0][0].classList[1]
                     _links.push({ 'source': AOIname, 'target': AOIname2 })
                 }
             }

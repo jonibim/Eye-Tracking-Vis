@@ -70,25 +70,38 @@ $('input.settings')
 //- Image Dropdown -//
 $('.dropdown.search.selection.image')
     .dropdown({
+        selectOnKeydown: false,
         fullTextSearch: 'exact', 
         match: 'both',
         onChange: function(value,text) {
             selectImage(text);
             settingChanged();
+        },
+        onShow: function() {
+            $('#frame').dimmer('show');
+        },
+        onHide: function() {
+            $('#frame').dimmer('hide');
         }
     });
 
-//- Image Preview on Dropdown -//
+//- Image Preview Source on Dropdown MouseOver and KeyDown (Arrow Up/Down or Page Up/Down) -//
 $('.image-selector')
-    .on('mouseenter', function(evt){
-        $('.preview').show();
-        $('.inner-frame').hide();
-        $('#preview-image').attr("src", dataset.url + "/images/" + this.innerHTML);
-        $(this).on('mouseleave', function(){
-            $('.preview').hide();
-            $('.inner-frame').show();
-        });
+    .on('mouseenter', function(evt) {
+        $('#preview-image').attr("src", dataset.url + "/images/" + $(this).text());
     });
+$('.dropdown.search.selection.image .menu')
+    .on('mouseleave', function(evt) {
+        $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+    });
+document.onkeydown = function(e) {
+    if ((e.which === 38 || e.which === 40 || e.which === 33 || e.which === 34) && $('.dropdown.search.selection.image').hasClass('active')) {
+        $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+    }
+};
+
+//- Image Preview Dimmer Behavior -//
+$('#frame').dimmer({duration: 0});
 
 //- User Dropdown -//
 $('.dropdown.search.selection.user')
@@ -101,6 +114,15 @@ $('.dropdown.search.selection.user')
         onRemove: function(removedValue, removedText) {
             usersRemove(removedText);
             usersChanged();
+        },
+        onLabelSelect: function (label) {
+            let $label = $(label)
+            $label.parent('.ui.multiple.dropdown')
+                    .dropdown('remove selected', $label.data('value'));
+            if (label !== undefined) {
+                usersRemove(label.text);
+                usersChanged();
+            }
         }
     });
 

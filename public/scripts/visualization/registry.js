@@ -48,6 +48,7 @@ class Registry {
             console.log('registry.js - Enabling \'' + tag + '\'');
             type.enable(column, row);
         }
+        resizeBoxes();
     }
 
     /**
@@ -63,6 +64,7 @@ class Registry {
             console.log('registry.js - Disabling \'' + tag + '\'');
             type.disable();
         }
+        resizeBoxes();
     }
 
     /**

@@ -215,8 +215,8 @@ class ScanPath {
  * @property {int} time
  * @property {int} fixationIndex
  * @property {int} fixationDuration
- * @property {float} x
- * @property {float} y
+ * @property {number} x
+ * @property {number} y
  */
 class ScanPoint {
 
@@ -225,8 +225,8 @@ class ScanPoint {
      * @param {int} time
      * @param {int} fixationIndex
      * @param {int} fixationDuration
-     * @param {float} x
-     * @param {float} y
+     * @param {number} x
+     * @param {number} y
      */
     constructor(path, time, fixationIndex, fixationDuration, x, y) {
         this.path = path;

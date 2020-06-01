@@ -25,6 +25,10 @@ let topbar = null;
  */
 let registry = null;
 
+function resizeBoxes() {
+    console.log("Box Size Changed");
+}
+
 // initialize default visualizations
 window.onload = async () => {
 
@@ -51,6 +55,7 @@ window.onload = async () => {
 
 
     console.log('main.js - Enabling visualizations...')
+    window.onresize = resizeBoxes;
     openSettings() // keep the settings opened in the start
     registry.enableAll();
     console.log('main.js - Visualizations enabled')

@@ -1,4 +1,4 @@
-/*
+/**
     Eye Cloud visualization
  */
 
@@ -6,7 +6,6 @@ class EyeCloud extends Visualization {
     constructor(box) {
         super(box, 'Eye Cloud', 'eyecloud');
 
-        this.img = new Image();
         this.zoom = d3.zoom();
 
         let width = box.inner.clientWidth; // Width of the box
@@ -16,6 +15,7 @@ class EyeCloud extends Visualization {
         const minRadius = 10;
         const maxRadius = 100;
 
+        let strokeColor = 'red'; // color of the stroke of the most frequently viewed circle. Default color is red
         let radiusScale; // scale that determines the size of the radii
 
         let allCoordinates = []; // set of all the coordinates of an image in the dataset
@@ -27,27 +27,32 @@ class EyeCloud extends Visualization {
 
         let clickedObject; // Holds the object that is being right clicked
 
-        let menu = [
-            {
-                title: 'Show info',
-                action: function() {
-                    getInfo(clickedObject);
-                    console.log('eyecloud.js - Showing info...');
-                }
-            },
-            {
-                title: 'Disable circle',
-                action: function () {
-                    disableCircle(clickedObject);
-                    console.log('eyecloud.js - Disabling circle...');
-                }
-            },
+        let infoMenuItem = {
+            title: 'Show info',
+            action: function() {
+                getInfo(clickedObject);
+                console.log('eyecloud.js - Showing info...');
+            }
+        };
+
+        let disableMenuItem = {
+            title: 'Disable circle',
+            action: function () {
+                disableCircle(clickedObject);
+                console.log('eyecloud.js - Disabling circle...');
+            }
+        };
+
+        let generalMenuItems = [
             {
                 title: 'Enable all circles',
                 action: function () {
                     enableCircles();
                     console.log('eyecloud.js - Enabling all circles...');
                 }
+            },
+            {
+                divider: true
             },
             {
                 title: 'Center visualization',
@@ -62,12 +67,43 @@ class EyeCloud extends Visualization {
             },
             {
                 title: 'Save image',
+                disabled: true, // Disabled for now...
                 action: function () {
                     saveImage();
-                    console.log('Saving image...');
+                    console.log('eyecloud.js - Saving image...');
                 }
             }
         ];
+
+        let menu = () => {
+            let result = [];
+
+            result.push(infoMenuItem);
+            result[0].disabled = true;
+            result.push(disableMenuItem);
+            result[1].disabled = true;
+
+            generalMenuItems.forEach(function (object) {
+                result.push(object);
+            })
+
+            return result;
+        };
+
+        let circleMenu = () => {
+            let result = [];
+
+            result.push(infoMenuItem);
+            result[0].disabled = false;
+            result.push(disableMenuItem);
+            result[1].disabled = false;
+
+            generalMenuItems.forEach(function (object) {
+                result.push(object);
+            })
+
+            return result;
+        };
 
         /**
          * Create an svg- and g-tag inside the graph class
@@ -83,8 +119,7 @@ class EyeCloud extends Visualization {
             }))
             .append('g')
             .attr('id', 'cloud_group')
-            .attr('transform', 'translate(0,0)')
-            .attr('oncontextmenu', 'log()');
+            .attr('transform', 'translate(0,0)');
 
         /**
          * Create a defs-tag inside the svg-tag
@@ -103,35 +138,38 @@ class EyeCloud extends Visualization {
          * Upon any change of the properties class, check what settings have changed
          * and apply the new settings to the visualization
          */
-        properties.onchange.set('eyecloud', () => {
-            if (this.img !== properties.image) { // If the image has been changed
-                this.img = properties.image;
-                //disabledCircles = [];
-                if (!drawing) {
+        properties.onchange.set('eyecloud', event => {
+            //if (this.img !== properties.image) { // If the image has been changed
+            if (event.type === 'image') { // If the image has been changed
+                //this.img = properties.image;
+                if (!drawing) { // If we are not already drawing the eye cloud
                     drawing = true;
                     generateData(dataset.getImageData(properties.image));
+                    $('.toast').toast('close') // Close popups
                     draw();
-                    //this.center();
                 }
+            } else if (event.type === 'color') { // If the color setting has been changed
+                strokeColor = properties.getColorHex(); // set global color variable
+                setColor(properties.getColorHex());
             }
         });
 
         /**
          * Workaround to draw visualization when turned off an on
          */
-        if(properties.image){
+        if (properties.image) {
             generateData(dataset.getImageData(properties.image));
-            draw()
+            draw();
         }
 
         /**
-         * Resizing the visualizations
+         * Resizing the visualizations.
          */
         this.timer = setInterval(() => {
             if (width !== box.inner.clientWidth || height !== box.inner.clientHeight) {
-                width = box.inner.clientWidth
-                height = box.inner.clientHeight
-                console.log("Size: " + box.inner.clientHeight, box.inner.clientWidth)
+                width = box.inner.clientWidth;
+                height = box.inner.clientHeight;
+                console.log("eyecloud.js - Size: " + box.inner.clientHeight, box.inner.clientWidth);
                 resize();
             }
         }, 100);
@@ -277,19 +315,21 @@ class EyeCloud extends Visualization {
             }
 
             /**
-             * Make the stroke of the most frequently viewed area red
+             * Make the stroke of the most frequently viewed area the color of the global color variable and thicker
              */
             d3.select('#circle_0')
-                .attr('stroke', 'red')
+                .attr('stroke', strokeColor)
+                .attr('stroke-width', 2);
 
             /**
-             * Upon right clicking a circle, display a context menu
-             * and register the id of the clicked element
+             * Upon a right click, display a context menu
+             * and, if necessary, register the id of the clicked element
              */
+            d3.select('#cloud_group').on('contextmenu', d3.contextMenu(circleMenu));
+            d3.select('#cloud_svg').on('contextmenu', d3.contextMenu(menu));
             d3.select('#cloud_group').selectAll('circle').on('contextmenu', function (object) {
-                clickedObject = object; // set variable to the clicked object
-            })
-            d3.select('#cloud_group').on('contextmenu', d3.contextMenu(menu));
+                clickedObject = object;
+            });
 
             /**
              * On every tick during the simulation, call the update function
@@ -314,6 +354,14 @@ class EyeCloud extends Visualization {
         }
 
         /**
+         * Set the stroke color of the largest circle
+         */
+        function setColor() {
+            d3.select('#circle_0')
+                .attr('stroke', properties.getColorHex());
+        }
+
+        /**
          * Display the coordinates and density of the selected circle object with the used range
          */
         function getInfo(object) {
@@ -321,14 +369,32 @@ class EyeCloud extends Visualization {
             let y = object.co_y;
             let density = densities[object.index];
 
-            let message = 'This circle represents point (' + x + ', ' + y + ') on the image.\n' +
+            let message = 'This circle represents point (' + x + ', ' + y + ') on the image. ' +
                 'There are ' + density + ' other points in a range of ' + range + ' pixels to this point.';
 
-            alert(message);
+            infoPopup(message);
         }
 
         /**
-         * Disables circle by remove it from the coordinates array and removing its density
+         * Displays an informative popup with Fomantic-UI that contains a message
+         */
+        function infoPopup(message) {
+            $('.toast') // Close previous toast
+                .toast('close')
+            $('body')
+                .toast({
+                    showIcon: 'info',
+                    title: 'Eye Cloud info',
+                    displayTime: 0,
+                    message: message,
+                    class: 'info',
+                    position: 'bottom left',
+                    closeIcon: true
+                });
+        }
+
+        /**
+         * Disables circle by removing it from the coordinates array and removing its density
          */
         function disableCircle(object) {
             // Remove selected circle from the coordinates array
@@ -339,25 +405,44 @@ class EyeCloud extends Visualization {
         }
 
         /**
-         * Enables are circles again by regenerating the data
+         * Enables all circles again by regenerating the data
          */
         function enableCircles() {
             generateData(dataset.getImageData(properties.image)); // Regenerate all coordinates
             draw(); // Redraw
         }
 
+        // Work in progress...
+        // Requires html2canvas.js
         function saveImage() {
-            // COMING SOON!
+            let element = document.querySelector("#cloud_svg");
+            html2canvas(element).then(function (canvas) {
+                let imageURL = canvas.toDataURL();
+                let image = new Image();
+                image.src = imageURL;
+
+                // IE/Edge Support (PNG only)
+                if (window.navigator.msSaveBlob) {
+                    window.navigator.msSaveBlob(canvas.msToBlob(), 'eyecloud-screenshot.png');
+                } else {
+                    const a = document.createElement('a');
+
+                    document.body.appendChild(a); // For FireFox support
+                    a.href = imageURL;
+                    a.download = 'eyecloud-screenshot.png';
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            });
         }
         
         /**
-         * Resizing the "canvas" for the svg
+         * Resize the SVG-element
          */
         function resize(){
             d3.select('#cloud_svg')
-            .attr('width', width) 
-            .attr('height', height) 
-            
+                .attr('width', width)
+                .attr('height', height)
         }
     }
 }

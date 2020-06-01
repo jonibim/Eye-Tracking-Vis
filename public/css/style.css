@@ -75,4 +75,15 @@ a.label:hover{
     stroke-width: 1px;
     fill: blue !important;
 }
+
+.aoiText {
+    fill: white;
+    font-size: 30px;
+}
+
+.aoiRect {
+    opacity: 0.5;
+    fill: #878787;
+    z-index: 1;
+}
   

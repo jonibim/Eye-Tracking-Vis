@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const fs = require("fs");
-const imagePath = __dirname + '/../public/testdataset/images';
+const imagePath = __dirname + '/../public/datasets/default/images';
 let images = fs.readdirSync(imagePath);
 let tags = {};
 let tagMap = {

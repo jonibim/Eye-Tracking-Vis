@@ -137,7 +137,6 @@ class Properties {
  * @property {float} top - top side of the selected area
  * @property {float} right - right side of the selected area
  * @property {float} bottom - bottom side of the selected area
- * @property {ScanPoint[]} points - all points in the selected area
  */
 class AOI {
 
@@ -150,7 +149,6 @@ class AOI {
         this.right = 0;
         this.top = 0;
         this.bottom = 0;
-        this.points = [];
     }
 
     /**
@@ -170,15 +168,6 @@ class AOI {
         this.right = right;
         this.top = top;
         this.bottom = bottom;
-
-        this.points = [];
-        const imageData = dataset.getImageData(properties.image);
-        for (let scanPath of imageData.scanpaths) {
-            for (let point of scanPath.points) {
-                if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom)
-                    this.points.push(point);
-            }
-        }
 
         if(this.image === properties.image)
             for (let listener of properties.onchange.values())
@@ -209,6 +198,23 @@ class AOI {
         if(this.image === properties.image)
             for (let listener of properties.onchange.values())
                 listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
+    }
+
+    /**
+     * @return {ScanPoint[]} points inside this AOI
+     */
+    points(){
+        let imageData = dataset.getImageData(this.image);
+        let points = [];
+        let paths = imageData.scanpaths;
+
+        // filter for selected users
+        if(this.image === properties.image && properties.users.length)
+            paths = imageData.scanpaths.filter(path => properties.users.length ? properties.users.includes(path.person) : true);
+
+        paths.forEach(path => points = points.concat(path.points));
+
+        return points;
     }
 
 }

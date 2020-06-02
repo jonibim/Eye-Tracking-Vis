@@ -184,9 +184,6 @@ block sidebars
                     i(class="ui fitted save icon")
                 div(class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted upload icon")
-            //- Toggle Help -//
-                div#show_help(class="ui green basic circular button bottom floated" onclick="showHelp()" data-tooltip="Toggle help icons" data-position="top left" data-inverted="" data-variation="tiny basic")
-                    i(class="ui fitted question icon")
 
 
 
@@ -203,10 +200,9 @@ block header_content
 block content
     div#container(class='container')
         div#frame(class='blurring frame')
-            div(class="preview ui dimmer")
-                div(class="content")
-                    div(class="ui big centered image")
-                        img#preview-image(src="/datasets/default/images/" + default_image)
+            div(class="preview ui top aligned dimmer" style="text-align: -webkit-center;")
+                div(class="ui image" style="max-height: 90% !important; max-width: 90% !important;")
+                    img#preview-image(style="max-height: 90% !important;" src="/datasets/default/images/" + default_image)
             div#innerframe(class='inner-frame')
 
 block post_scripts

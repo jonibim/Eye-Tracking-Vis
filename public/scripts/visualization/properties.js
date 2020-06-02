@@ -15,7 +15,11 @@ class Properties {
         this.time = 0;
         this.aoi = new Map();
         this.zoomValue = undefined;
-        this.users = [];
+        this.users = []
+        this.eventListeners = []
+        this.zoomListeners = [] //tbh i am thinking of making all these listeners  
+                                // in one Map however idk how i will distinguish between listenrs 
+
       
         this.onchange = new Map();
     }
@@ -117,26 +121,17 @@ class Properties {
     getCurrentAOIsize() {
         return this.aoi.get(this.image).length;
     }
-
-    /**
-     * Removes all AOIs for the selected image
-     */
-    removeCurrentAOIs(){
-        let aoi = [];
-        this.aoi.set(this.image, aoi);
-
-        for (let listener of properties.onchange.values())
-            listener({type: 'aoi', aoi: aoi});
-    }
 }
 
 /**
  * Stores the selected AOI
  * @property {string} image - the image the aoi is for
+ * @property {String} id - the id for the aoi in that image
  * @property {float} left - left side of the selected area
  * @property {float} top - top side of the selected area
  * @property {float} right - right side of the selected area
  * @property {float} bottom - bottom side of the selected area
+ * @property {ScanPoint[]} points - all points in the selected area
  */
 class AOI {
 
@@ -145,10 +140,12 @@ class AOI {
      */
     constructor(image) {
         this.image = image;
+        this.id = null;
         this.left = 0;
         this.right = 0;
         this.top = 0;
         this.bottom = 0;
+        this.points = [];
     }
 
     /**
@@ -157,17 +154,28 @@ class AOI {
      * @param {float} top - top side of the selected area
      * @param {float} right - right side of the selected area
      * @param {float} bottom - bottom side of the selected area
+     * @param {String} id - used to idenitfy the created aoi unqieluely. 
      */
-    setSelection(left, top, right, bottom) {
+    setSelection(left, top, right, bottom, id) {
         if (!properties.image) { // an image must be selected first
             console.error('properties.js - An image must be set first, before an area can be selected!');
             return;
         }
 
+        this.id = id
         this.left = left;
         this.right = right;
         this.top = top;
         this.bottom = bottom;
+
+        this.points = [];
+        const imageData = dataset.getImageData(properties.image);
+        for (let scanPath of imageData.scanpaths) {
+            for (let point of scanPath.points) {
+                if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom)
+                    this.points.push(point);
+            }
+        }
 
         if(this.image === properties.image)
             for (let listener of properties.onchange.values())
@@ -175,12 +183,12 @@ class AOI {
     }
 
     /**
-     * @param {ScanPoint | number[]} point - the point to check, can be either a ScanPath or [x, y]
+     * @param {ScanPoint | [2]} point - the point to check, can be either a ScanPath or [x, y]
      * @return {boolean} whether the given point is inside this aoi
      */
     includesPoint(point){
         if(point instanceof ScanPoint)
-            point = [point.x, point.y];
+            return this.points.includes(point);
         return this.left <= point[0] && this.right >= point[0] && this.top <= point[1] && this.bottom >= point[1];
     }
 
@@ -200,21 +208,6 @@ class AOI {
                 listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
     }
 
-    /**
-     * @return {ScanPoint[]} points inside this AOI
-     */
-    points(){
-        let imageData = dataset.getImageData(this.image);
-        let points = [];
-        let paths = imageData.scanpaths;
-
-        // filter for selected users
-        if(this.image === properties.image && properties.users.length)
-            paths = imageData.scanpaths.filter(path => properties.users.length ? properties.users.includes(path.person) : true);
-
-        paths.forEach(path => points = points.concat(path.points));
-
-        return points;
-    }
+    
 
 }

@@ -33,7 +33,10 @@ class AttentionMap extends Visualization {
 
         this.zoom = d3.zoom();
         this.svg.call(
-            this.zoom.on('zoom', () => this.graphics.attr('transform', d3.event.transform))
+            this.zoom.on('zoom', () => {
+                this.graphics.attr('transform', d3.event.transform)
+                properties.zoomListeners.forEach(listener => listener(d3.event.transform))
+            })
         );
         this.hasBeenCentered = false;
 
@@ -64,6 +67,12 @@ class AttentionMap extends Visualization {
 
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;
+
+        properties.zoomListeners.push((zoomCord) => this.syncZoom(zoomCord))
+    }
+
+    syncZoom(zoomCord){
+        this.graphics.attr('transform', zoomCord)
     }
 
     /**

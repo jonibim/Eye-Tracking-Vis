@@ -18,7 +18,6 @@ class Editor extends Visualization {
 
         this.width = this.box.inner.clientWidth;
         this.height = this.box.inner.clientHeight;
-        this.AOIinsertionListeners = [];
 
         /**
          * create an image element just to load the image from the server
@@ -52,6 +51,8 @@ class Editor extends Visualization {
         this.svgG = this.svg
             .call(this.zoom.on("zoom", () => {
                 this.svgG.attr("transform", d3.event.transform)
+                properties.zoomListeners.forEach(listener => listener(d3.event.transform))
+
             }))
             .append("g");
 
@@ -93,7 +94,7 @@ class Editor extends Visualization {
         this.clearAllAoiMenu = {
             title: 'Clear all AOIs',
             action: () => {
-                this.svgGdots.selectAll('.aoi').remove()
+                this.svgG.selectAll('.aoi').remove()
                 this.svgG.selectAll('circle').classed('underAoi', false)
                 properties.aoi.set(properties.image, [])
                 this.sync()
@@ -213,6 +214,15 @@ class Editor extends Visualization {
 
             return result
         };
+
+        properties.zoomListeners.push((zoomCord) => this.syncZoom(zoomCord))
+
+        
+    }
+
+    syncZoom(zoomCord){
+        console.log('this')
+        this.svgG.attr('transform', zoomCord)
     }
 
     /**
@@ -297,6 +307,16 @@ class Editor extends Visualization {
 
         });
 
+        this.previousAOIs = properties.getCurrentAOI()
+        console.log(this.previousAOIs)
+
+        if(this.previousAOIs){
+            this.previousAOIs.forEach( aoi => {
+                var tempName = 'aoi' + aoi.id
+                this.drawAOI(aoi.id, tempName, aoi.right, aoi.bottom, aoi.left, aoi.top)
+            })
+        }
+
 
         /**
          * Call the brush
@@ -374,15 +394,20 @@ class Editor extends Visualization {
 
     addAoi() {
 
-        this.currentAOI = properties.aoi.get(properties.image)
-        this.trackAOI = this.currentAOI.slice(-1)[0] || 1
-        //console.log(this.trackAOI)
-        this.name = ((this.trackAOI !== 1) ? ('aoi' + (Number(this.trackAOI.object._groups[0][0].id) + 1)) : 'aoi1')
+        this.currentAOI = properties.getCurrentAOI()
 
-        if (this.name == 'aoi1')
-            this.id = 1
-        else
-            this.id = Number(this.trackAOI.object._groups[0][0].id) + 1
+        //Track AOI - tracking the last aoi
+        //If there isn't any aoi in the array then we create the first one
+        this.trackAOI = this.currentAOI.slice(-1)[0]
+        console.log(this.trackAOI)
+
+        if (this.trackAOI){
+            this.newName = 'aoi' + (this.trackAOI.id + 1)
+            this.newId = this.trackAOI.id + 1
+        } else{
+            this.newName = 'aoi1'
+            this.newId = 1
+        }
 
         this.aoiObject = new AOI(properties.image)
 
@@ -393,43 +418,8 @@ class Editor extends Visualization {
         this.heightSelection = this.bottomSelection - this.topSelection
         this.widthSelection = this.rightSelection - this.leftSelection
 
-        this.rect = this.svgGdots.append('g').attr('id', this.id).classed('aoi', true)
-        .classed(this.name, true)
+        this.drawAOI(this.newId, this.newName, this.widthSelection, this.heightSelection, this.leftSelection, this.topSelection)
         
-        this.rect.append('rect')
-            .classed('aoi', true)
-            .classed(this.name, true)
-            .attr('width', this.widthSelection)
-            .attr('height', this.heightSelection)
-            .attr('x', this.leftSelection)
-            .attr('y', this.topSelection)
-            .attr('opacity', 0.5)
-            .attr('fill', '#878787')
-            .attr('z-index', 1)
-            .on('mouseover', function () {
-                d3.select(this)
-                    .classed('ontop', true)
-                    .transition().duration(250).style('fill', '#0f2fff');
-
-            })
-            .on('mouseout', function () {
-                d3.select(this)
-                    .classed('ontop', false)
-                    .transition().duration(250).style('fill', '#878787');
-            })
-            
-            
-            this.rect.append('text')
-            .attr('x', this.leftSelection + 5)
-            .attr('y', this.topSelection + 27)
-            //.attr('alignment-baseline','middle')
-            //.attr('text-anchor','middle')
-            .style('fill', 'white')
-            .attr('font-size', '30px')
-            .text(this.name.toUpperCase())
-    
-
-
         this.svgG.selectAll("circle").classed("underAoi", (d) => {
             return this.isBrushed(this.extent, (d.x), (d.y))
         })
@@ -443,20 +433,60 @@ class Editor extends Visualization {
             properties.aoi.set(properties.image, this.currentAOI)
         }
 
-        this.aoiObject.setSelection(this.leftSelection, this.topSelection, this.rightSelection, this.bottomSelection, this.rect)
+        this.aoiObject.setSelection(this.leftSelection, this.topSelection, this.rightSelection, this.bottomSelection, this.newId)
+    }
+
+
+    drawAOI (id, name, widthSelection, heightSelection, leftSelection, topSelection) {
+
+        this.rect = this.svgGdots.append('g').attr('id', id).classed('aoi', true)
+        .classed(name, true)
+
+        this.rect.append('rect')
+        .classed('aoi', true)
+        .classed(name, true)
+        .attr('width', widthSelection)
+        .attr('height', heightSelection)
+        .attr('x', leftSelection)
+        .attr('y', topSelection)
+        .attr('opacity', 0.5)
+        .attr('fill', '#878787')
+        .attr('z-index', 1)
+        .on('mouseover', function () {
+            d3.select(this)
+                .classed('ontop', true)
+                .transition().duration(250).style('fill', '#0f2fff');
+
+        })
+        .on('mouseout', function () {
+            d3.select(this)
+                .classed('ontop', false)
+                .transition().duration(250).style('fill', '#878787');
+        })
+        
+        
+        this.rect.append('text')
+        .attr('x', leftSelection + 5)
+        .attr('y', topSelection + 27)
+        //.attr('alignment-baseline','middle')
+        //.attr('text-anchor','middle')
+        .style('fill', 'white')
+        .attr('font-size', '30px')
+        .text(name.toUpperCase())
+        
     }
 
     deleteAOI(object) {
         
-        this.svgGdots.selectAll('.' + object.classList[1]).remove()
+        this.svgG.selectAll('.' + object.classList[1]).remove()
         console.log('selected object', object)
 
         this.newAOI = []
 
-        this.currentAOI = properties.aoi.get(properties.image)
+        this.currentAOI = properties.getCurrentAOI()
         this.currentAOI.forEach(aois => {
-            console.log(aois.object._groups[0][0].classList[1], object.classList[1])
-            if (aois.object._groups[0][0].classList[1] !== object.classList[1]) {
+            console.log('aoi'+aois.id, object.classList[1])
+            if ('aoi'+ aois.id !== object.classList[1]) {
                 this.newAOI.push(aois)
                 console.log('add')
                 console.log('The object ->>', aois.object)
@@ -467,7 +497,8 @@ class Editor extends Visualization {
     }
 
     sync(){
-        this.AOIinsertionListeners.forEach(listener => listener());
+        if (registry.map.get('transitiongraph').instance)
+            properties.eventListeners.forEach(listener => listener());
     }
 
     /**

@@ -28,7 +28,7 @@ function checkboxChanged(id) {
     }  else if (id === 'gazestripe') {
         $(".accordion.zoomsettings").accordion(state ? "open" : "close", 0);
     }
-    //resizeBoxes()
+    resizeBoxes()
 }
 
 //- Read image selector -//

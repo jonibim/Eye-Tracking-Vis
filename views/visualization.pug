@@ -20,7 +20,6 @@ block pre_scripts
     script(src='scripts/visualization/styles.js')
     script(src='scripts/visualization/registry.js')
     // visualizations
-    script(src='scripts/visualization/aoivisualization.js')
     script(src='scripts/visualization/transitiongraph.js')
     script(src='scripts/visualization/eyecloud.js')
     script(src='scripts/visualization/gazestripe.js')
@@ -202,11 +201,9 @@ block header_content
 
 block content
     div#container(class='container')
-        div#frame(class='blurring frame')
-            div(class="preview ui dimmer")
-                div(class="content")
-                    div(class="ui big centered image")
-                        img#preview-image(src="/datasets/default/images/" + default_image)
+        div#frame(class='frame')
+            div(class="preview ui big centered image" style="display:none;")
+                img#preview-image(src="/datasets/default/images/" + default_image)
             div#innerframe(class='inner-frame')
 
 block post_scripts
@@ -218,7 +215,7 @@ block post_scripts
                 .hide();
             //- Open Settings -//
             showSidebar('settings');
-            resizeBoxes();
+            //resizeBoxes()
         };
 
         function closeSettings() {
@@ -227,7 +224,7 @@ block post_scripts
                 .show();
             //- Close Settings -//
             hideSidebar('settings');
-            resizeBoxes();
+            //resizeBoxes()
         };
 
         //- Prevent 'settings' sidebar from dimming the page -//

@@ -92,11 +92,17 @@ $('.image-selector')
     });
 $('.dropdown.search.selection.image .menu')
     .on('mouseleave', function(evt) {
-        $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+        if ($('.image-selector.selected').length) {
+            $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+        }
     });
 document.onkeydown = function(e) {
-    if ((e.which === 38 || e.which === 40 || e.which === 33 || e.which === 34) && $('.dropdown.search.selection.image').hasClass('active')) {
-        $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+    if ($('.dropdown.search.selection.image').hasClass('active')) {
+        setTimeout(function() {
+            if ($('.image-selector.selected').length) {
+                $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+            }
+        }, 100)
     }
 };
 

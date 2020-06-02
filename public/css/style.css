@@ -15,39 +15,39 @@
 }
 
 .sidebar.visible.settings + .pusher {
-  width: calc(100% - 260px) !important;
+  width: calc(100% - 260px);
 }
 
 .sidebar.settings {
-  transition-duration: 0.2s !important;
+  transition-duration: 0.2s;
 }
 
 body.pushable {
-   background-color: white !important;
+   background-color: white;
 }
 
 .left-align {
-    text-align: left !important;
+    text-align: left;
 }
 
 .right-align {
-    text-align: right !important;
+    text-align: right;
 }
 
 .right-float {
-    float: right !important;
+    float: right;
 }
 
 .small-right-padding {
-    padding-right: 5px !important; 
+    padding-right: 5px; 
 }
 
 .small-padding {
-    padding:3px !important;
+    padding:3px;
 }
 
 .vertical-centered {
-    vertical-align: middle !important;
+    vertical-align: middle;
 }
 
 a.label:hover{

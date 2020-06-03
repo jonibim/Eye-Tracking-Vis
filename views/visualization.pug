@@ -188,9 +188,12 @@ block sidebars
 
 block header_content
     //- Topbar Centered Text -//
-    div(class="ui item")
-        div(class="ui center aligned container")
-            div#topbar(class="ui tiny header selectable")
+    div(class="ui item middle")
+        div(class="ui labeled icon search selection dropdown dataset")
+            input(class="search" name="dataset")
+            div(class="text")
+            label#dataset_icon(for="dataset")
+                i(class="file alternate outline icon" style="height:100%;")
     //-  Settings Sidebar Button -//
     div(class="ui item")
         div(class="ui right aligned container" style="margin-right:5px;")

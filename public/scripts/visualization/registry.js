@@ -92,6 +92,15 @@ class Registry {
         this.map.forEach(value => value.disable());
     }
 
+    /**
+     * @param {string} tag - unique name of the visualization
+     * @return {Visualization | null}
+     */
+    getVisualizationInstance(tag){
+        let type = this.getVisualizationType(tag);
+        return type === null ? null : type.instance;
+    }
+
 }
 
 /**

@@ -15,12 +15,19 @@ for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
 }
 
+updateDatasets()
+
 let defaultZoomValue = 50;
 readSlidersZoom(defaultZoomValue)
 
 //****************** Define Settings Functions ******************//
 
+function updateDatasets() {
+    //Loop through all datasets and store with correct format to values
+    $('.dropdown.search.selection.dataset').dropdown({values: [{name: 'Default', value: 'default', selected : true},{name: 'Custom', value: 'custom'}]})
+}
 
+//- Display Help Toast Per Setting -//
 function settingHelp(setting) {
     $('.toast')
         .toast('close')
@@ -60,6 +67,19 @@ function usersChanged() {
 
 //****************** Set Element Behaviors/States ******************//
 
+//- Dataset Dropdown -//
+$('.dropdown.search.selection.dataset')
+    .dropdown({
+        selectOnKeydown: false,
+        forceSelection: false,
+        fullTextSearch: 'exact',
+        minCharacters: 3,
+        match: 'both',
+        onChange: function(value,text) {
+            selectDataset(value);
+        }   
+    });
+
 //- Detect checkbox update -//
 $('input.settings')
     .click(function() {
@@ -71,6 +91,7 @@ $('input.settings')
 $('.dropdown.search.selection.image')
     .dropdown({
         selectOnKeydown: false,
+        forceSelection: false,
         fullTextSearch: 'exact', 
         match: 'both',
         onChange: function(value,text) {
@@ -113,6 +134,7 @@ $('#frame').dimmer({duration: 0});
 $('.dropdown.search.selection.user')
     .dropdown({
         fullTextSearch: 'exact',
+        forceSelection: false,
         onAdd: function(addedValue, addedText) {
             usersAdd(addedText);
             usersChanged();

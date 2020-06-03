@@ -3,7 +3,8 @@
  * @property {boolean} isLoaded - whether a dataset is loaded
  * @property {function()[]} onload - listeners for when a dataset is loaded
  * @property {ImageData[]} images - stores the data of all images in the dataset
- * @property name - name of the loaded dataset
+ * @property {string} name - name of the loaded dataset
+ * @property {string} url - url of the folder for the loaded dataset
  */
 class Dataset {
 
@@ -15,37 +16,19 @@ class Dataset {
     /**
      * Imports the data from the given string
      * @param {string} data - the data to be imported
+     * @param {string} url - url of the folder for the data
      */
-    importData(data) {
+    importData(data, url) {
         console.log('dataset.js - Importing data...')
+        this.url = url;
         this.images = [];
 
-        this.name = 'Test Data Set'; // TODO add proper dataset name
+        this.name = 'Metro maps research by Rudolf Netzel'; // TODO add dynamic naming
 
-        const lines = data.split('\n');
+        let json = JSON.parse(data);
 
-        for (let i = 1; i < lines.length; i++) { // ignore the first line
-            const line = lines[i];
-
-            // if(i % 1000 === 0)
-            //     console.log('dataset.js - Reading line ' + (i + 1) + '/' + lines.length);
-
-            let words = [];
-            let word = '';
-            for (let i2 = 0; i2 < line.length; i2++) {
-                const char = line.charAt(i2);
-                if (char.trim().length === 0) {
-                    if (word !== '')
-                        words.push(word);
-                    word = '';
-                } else
-                    word += char;
-            }
-            if (word !== '')
-                words.push(word);
-
-            this.addData(words[1], words[0], words[2], words[3], words[4], words[5], words[6], words[7])
-        }
+        for (let entry of json)
+            this.addData(entry.StimuliName, entry.Timestamp, entry.FixationIndex, entry.FixationDuration, entry.MappedFixationPointX, entry.MappedFixationPointY, entry.user, entry.description);
 
         this.isLoaded = true;
         for (let i = 0; i < this.onload.length; i++)
@@ -80,7 +63,7 @@ class Dataset {
         }
 
         imageData.addScanPathPoint(parseInt(timestamp), parseInt(fixationIndex), parseInt(fixationDuration),
-            parseFloat(pointX), parseFloat(pointY), person, color === 'true' || color === '1'); // TODO handle exceptions
+            parseFloat(pointX), parseFloat(pointY), person, color === 'color'); // TODO handle exceptions
     }
 
     /**
@@ -208,6 +191,14 @@ class ScanPath {
         return null;
     }
 
+    getNextPoint(time) {
+        for (let i = 0; i < this.points.length; i++) {
+            if (this.points[i].time === time)
+                return this.points[i+1];
+        }
+        return null;
+    }
+
     /**
      * Gets all points
      * @return {ScanPoint[]}
@@ -224,8 +215,8 @@ class ScanPath {
  * @property {int} time
  * @property {int} fixationIndex
  * @property {int} fixationDuration
- * @property {float} x
- * @property {float} y
+ * @property {number} x
+ * @property {number} y
  */
 class ScanPoint {
 
@@ -234,8 +225,8 @@ class ScanPoint {
      * @param {int} time
      * @param {int} fixationIndex
      * @param {int} fixationDuration
-     * @param {float} x
-     * @param {float} y
+     * @param {number} x
+     * @param {number} y
      */
     constructor(path, time, fixationIndex, fixationDuration, x, y) {
         this.path = path;

@@ -80,7 +80,9 @@ class Registry {
      * Enables all visualization types
      */
     enableAll() {
-        this.map.forEach(value => value.enable());
+        this.map.forEach(value => {
+            $('#'+value.tag).is(':checked') ? value.enable() : null
+        })
     }
 
     /**

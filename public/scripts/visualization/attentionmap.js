@@ -6,71 +6,38 @@
  * @property {number} resizeTimer - id for the timer which checks for changes in box size
  * @property {HTMLImageElement} image - image used to get the natural width and height
  */
-class AttentionMap extends Visualization {
+class AttentionMap extends AOIVisualization {
 
     /**
      * @param {Box} box
      */
     constructor(box) {
-        super(box, 'Attention Map');
-
-        this.width = this.box.inner.clientWidth;
-        this.height = this.box.inner.clientHeight;
-
-        this.svg = d3.select(this.box.inner)
-            .classed('smalldot ', true)
-            .append('svg')
-            .attr('width', this.width)
-            .attr('height', this.height);
-
-        this.graphics = this.svg.append('g');
-
-        this.zoom = d3.zoom();
-        this.svg.call(
-            this.zoom.on('zoom', () => this.graphics.attr('transform', d3.event.transform))
-        );
-
-        this.resizeTimer = setInterval(() => {
-            if (this.width !== this.box.inner.clientWidth || this.height !== this.box.inner.clientHeight) {
-                this.maintainTransform(this.box.inner.clientWidth, this.box.inner.clientHeight);
-                this.width = this.box.inner.clientWidth;
-                this.height = this.box.inner.clientHeight;
-                this.svg
-                    .attr('width', this.width)
-                    .attr('height', this.height);
-            }
-        }, 100);
-
-        this.image = new Image();
-        this.image.onload = () => {
-            this.draw();
-            this.center();
-        }
-
-        properties.onchange.set('attentionmap', () => this.image.src = properties.image ? '/testdataset/images/' + properties.image : '')
-
-        if(properties.image)
-            this.image.src = '/testdataset/images/' + properties.image;
+        super(box, 'Attention Map', 'atviz', 'attentionmap');
     }
 
     /**
      * Draws the attention map on the canvas
      */
-    draw(){
-        this.graphics.selectAll('*').remove();
-
-        if (!properties.image)
-            return;
-
-        this.graphics.append('image')
-            .attr('href', this.image.src)
-            .attr('width', this.image.naturalWidth)
-            .attr('height', this.image.naturalHeight);
-
+    drawForeground() {
         const imageData = dataset.getImageData(properties.image);
 
         let points = [];
-        imageData.scanpaths.forEach(path => points = points.concat(path.points));
+        imageData.scanpaths.forEach(path => {
+            if (properties.users.includes(path.person))
+                points = points.concat(path.points);
+        });
+
+        // remove points not in the AOIs
+        if(properties.getCurrentAOI().length) {
+            loop: for (let i = 0; i < points.length; i++) {
+                for (let aoi of properties.getCurrentAOI()) {
+                    if (aoi.includesPoint(points[i]))
+                        continue loop;
+                }
+                points.splice(i, 1);
+                i--;
+            }
+        }
 
         let contours = d3.contourDensity()
             .x(point => point.x)
@@ -78,7 +45,7 @@ class AttentionMap extends Visualization {
             .size([this.image.naturalWidth, this.image.naturalHeight])
             .bandwidth(20)(points);
 
-        let color = d3.scalePow().domain([0,d3.max(contours, d => d.value)]).range(['#ffffff00',properties.getColorHex()]);
+        let color = d3.scalePow().domain([0, d3.max(contours, d => d.value)]).range(['#ffffff00', properties.getColorHex()]);
 
         this.graphics.append('g')
             .attr('fill', 'none')
@@ -90,29 +57,5 @@ class AttentionMap extends Visualization {
             .attr('fill', d => color(d.value))
             .attr('stroke-width', (d, i) => i % 5 ? 0.25 : 1)
             .attr('d', d3.geoPath());
-    }
-
-    /**
-     * Centers the attention map on the box
-     */
-    center(){
-        let scale = Math.min(this.width / this.image.naturalWidth, this.height / this.image.naturalHeight);
-        this.svg.call(this.zoom.translateTo, this.image.naturalWidth / 2, this.image.naturalHeight / 2);
-        this.svg.call(this.zoom.scaleTo, scale);
-    }
-
-    /**
-     * Makes sure translation and scale stays the same when resized
-     * @param {number} newWidth - new box width
-     * @param {number} newHeight - new box height
-     */
-    maintainTransform(newWidth, newHeight){
-        let scale = d3.zoomTransform(this.svg.node()).k;
-        this.svg.call(this.zoom.translateBy, (newWidth - this.width) / 2 / scale, (newHeight - this.height) / 2 / scale);
-    }
-
-    onRemoved() {
-        if(this.resizeTimer)
-            clearInterval(this.resizeTimer);
     }
 }

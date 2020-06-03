@@ -1,7 +1,7 @@
 const {v4: uuid} = require('uuid');
 
-const csv2json = require('csvtojson')
-const fileSystem = require('fs')
+const csvToJson = require('./csvtojson.js');
+const fileSystem = require('fs');
 
 const datasetsFolder = __dirname + '/../public/datasets/';
 const defaultFolder = datasetsFolder + 'default/';
@@ -14,14 +14,15 @@ const imagesFolderName = 'images/';
 async function parseData(files, response) {
     console.log('parsedataset.js - Parsing uploaded dataset...');
 
-    let data = files.dataset.data.toString();
+    // get the file as a string
+    let data = files.dataset.data.toString('utf8');
     data = data.replace(/\t/g, ',');
 
     // try to parse the csv data into JSON
     try {
-        data = await csv2json().fromString(data);
+        data = csvToJson(data);
     } catch (e) {
-        response.status(400).send({'status': 400, 'message': 'The uploaded dataset is not properly formatted.'});
+        response.status(400).send({'status': 400, 'message': 'The uploaded dataset is not properly formatted. ' + e.err});
         console.log('parsedataset.js - Failed to parse uploaded dataset');
         return;
     }
@@ -46,11 +47,13 @@ async function parseData(files, response) {
         return;
     }
     if(files.images.name)
-        files.images = [files.images];
+        files.images = [files.images]
     loop: for(let image of images){
-        for(let entry of files.images)
-            if(entry.name === image)
+        for(let entry of files.images){
+            if (entry.name === image)
                 continue loop;
+        }
+
         response.status(400).send({'status': 400, 'message': 'Missing dataset image \'' + image + '\'.'});
         console.log('parsedataset.js - Missing image for the uploaded dataset');
         return;
@@ -61,13 +64,18 @@ async function parseData(files, response) {
 
     // try to write the data and images to the uploads folder
     try {
+        // write the dataset
+        fileSystem.mkdirSync(uploadsFolder + id);
         let string = JSON.stringify(data, null, 1);
         fileSystem.writeFileSync(uploadsFolder + id + '/' + dataFileName, string, 'utf-8');
+
+        // write the images
+        fileSystem.mkdirSync(uploadsFolder + id + '/' + imagesFolderName);
         for(let image of files.images)
             fileSystem.writeFileSync(uploadsFolder + id + '/' + imagesFolderName + image.name, image.data);
     } catch (e) {
         response.status(400).send({'status': 400, 'message': 'The uploaded dataset is not properly formatted.'});
-        console.err('parsedataset.js - Failed to write file to disk');
+        console.error('parsedataset.js - Failed to write file to disk');
         console.log(e);
         return;
     }
@@ -77,6 +85,8 @@ async function parseData(files, response) {
     // send successful response
     response.status(200).send({'status': 200, 'message': 'Upload successful.', 'id': id});
 }
+  
+  
 
 // Handle dataset requests   TODO remove this because everything is now in the public folder
 function readData(id, response) {

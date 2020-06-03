@@ -1,13 +1,20 @@
 class GazeStripe extends Visualization {
     
     constructor(box) {
-        super(box, 'Gaze Stripe')
+
+		/**
+		 * the third parameter is used as a identifier for the HTML 
+		 * object so that it can be modified easily from the code
+		 * Such modicaitons can be as adding a loader 
+		 */
+        super(box, 'Gaze Stripe', 'gzviz')
 
         let frameWidth = box.inner.clientWidth;
         let frameHeight = box.inner.clientHeight;
 
         this.img = new Image();
         this.zoomValue = 50;
+        this.users;
 
 		let svg = d3.select(box.inner)
 			.classed('smalldot',true)
@@ -34,8 +41,9 @@ class GazeStripe extends Visualization {
 
         properties.onchange.set('gazestripe', () => {
         	scale();	
-            if (this.img !== properties.image || this.zoomValue !== zoomValue) {
+            if (this.img !== properties.image || this.zoomValue !== properties.zoomValue || this.users !== properties.users) {
 	            this.img = properties.image;
+	            this.users = properties.users;
 	            if (typeof properties.zoomValue !== 'undefined') {
 	            	this.zoomValue = properties.zoomValue;
 	            }
@@ -65,7 +73,7 @@ class GazeStripe extends Visualization {
 	    	shortestPath = Math.pow(10, 1000);
 	    	longestTime = {};
 
-	        d3.tsv('/testdataset/all_fixation_data_cleaned_up.csv').then(function(data) {
+	        d3.tsv(dataset.url + '/dataset.csv').then(function(data) {
 	            let dataByCity = d3.nest().key(function(data) {
 	                return data.StimuliName;
 	            }).entries(data);
@@ -88,15 +96,17 @@ class GazeStripe extends Visualization {
 	                
 	        let map = Object.values(mapObj).indexOf((img));
 	        data[map]['values'].forEach(function(participant) {
-	            let user = participant['user']
-	            if (typeof usersx[user] == 'undefined') {
-	                usersx[user] = [];
-	                usersy[user] = [];
-	                longestTime[user] = [];
-	            }
-	            usersx[user].push(participant['MappedFixationPointX']);
-	            usersy[user].push(participant['MappedFixationPointY']);
-	            longestTime[user].push(participant['Timestamp']);
+	        	if (properties.users.includes(participant['user'])) {
+		            let user = participant['user']
+		            if (typeof usersx[user] == 'undefined') {
+		                usersx[user] = [];
+		                usersy[user] = [];
+		                longestTime[user] = [];
+		            }
+		            usersx[user].push(participant['MappedFixationPointX']);
+		            usersy[user].push(participant['MappedFixationPointY']);
+		            longestTime[user].push(participant['Timestamp']);
+		        }
 	        });                
 
 	        for (const key of Object.keys(usersx)) {
@@ -117,7 +127,7 @@ class GazeStripe extends Visualization {
 	        let width = (Math.floor(frameWidth / (shortestPath + 3))).toString();
 	        let imgHeight = width;
 	        let textHeight = ((Math.floor(frameWidth / shortestPath)) / 3).toString();
-	        let fontsize1 = textHeight * 0.6;
+	        let fontsize1 = textHeight * 0.7;
 	        let fontsize2 = fontsize1 * 0.7;
 	        let height = Object.keys(usersx).length * (Number(imgHeight) + Number(textHeight));
 	    	let counter = 0;
@@ -143,7 +153,7 @@ class GazeStripe extends Visualization {
 						.attr('viewBox', '' + (x-zoomValue) + ' ' + (y-zoomValue) + ' ' + (2*zoomValue) + ' ' + (2*zoomValue))
 	        			.attr('preserveAspectRatio', 'xMinYMin slice')
 	        			.append('image')
-	                    .attr('xlink:href', '/testdataset/images/' + (img))
+	                    .attr('xlink:href', dataset.url + '/images/' + (img))
 	                if (i >= 1) {
 	                    let longestTimeIndex = Math.round(divisor * i);              
 	                    timestamp.push(((longestTime[key][longestTimeIndex] - longestTime[key][longestTimeIndex-1]) + timestamp[timestamp.length - 1]));

@@ -15,6 +15,9 @@ class Box {
 
         this.title = document.createElement('div');
         this.title.className = styles.title;
+        // z-index is used to display the header in top of the dimmer
+        this.title.setAttribute("style", "z-index:100")
+        //
         this.div.appendChild(this.title);
         this.inner = document.createElement('div');
         this.inner.className = styles.innerbox;

@@ -1,34 +1,34 @@
 let selected_image = "";
 let visualizations = {};
-let userValues = [];
+let users = [];
 let selected_users = [];
 //let edit = false;
-let zoomValue = 50;
+let zoomValue;
 
 function applySettings() {
     //- Apply visualization type changes -//
     for ([key, value] of Object.entries(visualizations)) {value ? registry.enable(key) : registry.disable(key);}
     //- Reset visualization type changes -//
     visualizations = {};
-    
+
     properties.setImage(selected_image);
+    properties.setUsers(selected_users);
     properties.setColor(Object.values(RGBA));
     properties.setZoom(zoomValue);
-    properties.setUsers(selected_users);
 }
 
 //- Read checkbox changes -//
 function checkboxChanged(id) {
     let state = document.getElementById(id).checked
     visualizations[id] = state;
-    if (id == 'attentionmap') {
+    if (id === 'attentionmap') {
         $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
-    }  else if (id == 'editor') {
+    }  else if (id === 'editor') {
         $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
-    }  else if (id == 'gazestripe') {
+    }  else if (id === 'gazestripe') {
         $(".accordion.zoomsettings").accordion(state ? "open" : "close", 0);
     }
-    //resizeBoxes()
+    resizeBoxes()
 }
 
 //- Read image selector -//
@@ -39,31 +39,63 @@ function selectImage(image) {
 
 //- Update User Dropdown -//
 function updateUsers(image) {
-    let selected_users = users = ['P1', 'P4', 'P5', 'P2', 'P3'];
-    //TODO: Get users for selected image from dataset
-
-    users.sort();
-    for (user in users) {
-        let value = {};
-        value['name'] = users[user];
-        value['value'] = users[user];
-        value['selected'] = selected_users.includes(users[user]);
-        userValues.push(value);
+    users = [];
+    if(image) {
+        let imageData = dataset.getImageData(image);
+        for (let path of imageData.scanpaths) {
+            users.push(path.person);
+        }
     }
-    $('.dropdown.search.selection.user')
-        .dropdown('change values', userValues);
+
+    enableAllUsers();
 }
 
+//- Enable All Possible Users -//
+function enableAllUsers() {
+    users.sort((a, b) => {return Number(a.slice(1)) - Number(b.slice(1));});
+    if (users.length != selected_users.length) {
+        let userValues = [];
+        for (let user in users) {
+            let value = {};
+            value['name'] = users[user];
+            value['value'] = users[user];
+            value['selected'] = true;
+            userValues.push(value);
+        }
+        $('.dropdown.search.selection.user')
+            .dropdown('change values', userValues);
+        setUserSelectionButtons();
+    }   
+}
+
+//- Add Single User -//
 function usersAdd(addedUser) {
-    console.log(addedUser)
     selected_users.push(addedUser);
-    console.log('USERS SELECTED:'+ selected_users);
+    setUserSelectionButtons();
 }
 
+//- Remove Single User -//
 function usersRemove(removedUser) {
-    console.log(removedUser)
-    selected_users.pop(removedUser);
-    console.log('USERS SELECTED:'+ selected_users);
+    for (user in selected_users) {
+        if (selected_users[user] === removedUser) {
+            selected_users.splice(user, 1);
+        }
+    }
+    setUserSelectionButtons();
+}
+
+//- Select All & Clear User Selection Buttons -//
+function setUserSelectionButtons() {
+    if (selected_users.length == 0) {
+        $('.clear.button').addClass('disabled');
+        $('.add.button').removeClass('disabled');
+    } else if (selected_users.length == users.length) {
+        $('.add.button').addClass('disabled');
+        $('.clear.button').removeClass('disabled');
+    } else {
+        $('.clear.button').removeClass('disabled');
+        $('.add.button').removeClass('disabled');
+    }
 }
 
 //- RGBA Sliders handler
@@ -94,25 +126,11 @@ function readSlidersRGBA(id, value) {
 //- Zoom Lever Slider -//
 function readSlidersZoom(value) {
     zoomValue = value;
+    $('.zoom-preview').text(value);
 }
 
-
-/*
-function editorMode(mode) {
-    edit = mode == "edit" ? true : false;
-    if (edit) {
-        $('.editorEdit').addClass('positive')
-        $('.editorDrag').removeClass('positive')
-        //EDIT MODE ENABLED (use this for any function calls)
-    } else {
-        $('.editorDrag').addClass('positive')
-        $('.editorEdit').removeClass('positive')
-        //EDIT MODE DISABLED (use this for any function calls)
-    }
-}
-*/
-
-function showHelp() {
-    $('#show_help').toggleClass('green basic')
-    $('.settinghelp').toggleClass('hidden')
-}
+//- Show Help Icons on Hover -//
+$('.item.setting')
+            .hover(function() {
+                $(this).find('.settinghelp').toggleClass("hidden");
+            });

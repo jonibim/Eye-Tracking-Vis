@@ -25,11 +25,33 @@ block content
             div(class="ui segment")
                 i(class="ui green inverted circular upload large icon")
             div(class="ui segment")
-                p On this page you can upload your own custom dataset. This can then be used to visualize the date, as long as you used the format given below.
-                p ~To be added~
-                //PLACE FORMAT DISPLAY HERE
+                p(class="ui small dividing header") Custom Data
+                p On this page you can upload your own custom dataset. This can then be used to visualize the date, as long as you used the format specified below.
+                p(class="ui small dividing header") Format
+                p To make sure that the visualizations work on your dataset, the dataset must follow the specified format. The faded rows are not used in the current algorithms, however they should be included.
+                div(class="ui styled accordion")
+                    div(class="title") #[i(class="dropdown icon")] CSV Format
+                    div(class="content")
+                        table(class="ui celled definition table")
+                            thead
+                                tr #[th] #[th Type] #[th Example]
+                            tbody
+                                tr #[td Timestamp] #[td Number] #[td 462478]
+                                tr #[td StimuliName] #[td Filename] #[td 14b_Düsseldorf_S2.jpg]
+                                tr(class="disabled") #[td FixationIndex] #[td Number] #[td 1285]
+                                tr #[td FixationDuration] #[td Number] #[td 1149]
+                                tr #[td MappedFixationPointX] #[td Number] #[td 490]
+                                tr #[td MappedFixationPointY] #[td Number] #[td 378]
+                                tr #[td user] #[td 'p'Number] #[td p24]
+                                tr(class="disabled") #[td description] #[td "Color"/"Gray"] #[td gray]
+                div(class="ui styled accordion")
+                    div(class="title") #[i(class="dropdown icon")] Image Format
+                    div(class="content")
+                        p Any of the following image extensions can be used: 
+                        div(class="ui bulleted list") #[div(class="item") .png] #[div(class="item") .jpg] #[div(class="item") .jpeg]
 
                 //-  Interactive form -//
+                p(class="ui small dividing header") Upload Form
                 form(id="datasetForm" enctype="multipart/form-data" method="POST" class="ui form")
                     div(class="field")
                         div(class="ui blue input")
@@ -52,7 +74,7 @@ block content
                 div(class="ui icon header")
                     i(class="ui green check icon")
                     p Dataset uploaded successfully!
-                    button(id='visualizationButton' type="button" class="ui blue button") Open Visualization
+                    a(id='visualizationButton' type="button" class="ui blue button") Open Visualization
             div(id="failureSection" class="ui placeholder secondary segment" style="display: none")
                 div(class="ui icon header")
                     i(class="ui red exclamation icon")

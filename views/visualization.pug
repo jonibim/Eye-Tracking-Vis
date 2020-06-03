@@ -20,6 +20,7 @@ block pre_scripts
     script(src='scripts/visualization/styles.js')
     script(src='scripts/visualization/registry.js')
     // visualizations
+    script(src='scripts/visualization/aoivisualization.js')
     script(src='scripts/visualization/transitiongraph.js')
     script(src='scripts/visualization/eyecloud.js')
     script(src='scripts/visualization/gazestripe.js')
@@ -33,14 +34,14 @@ block sidebars
             div(class="ui header") Settings:
                 i(class="ui times red inverted icon circular small fitted right-float" onclick="closeSettings()")
         //-  Visualization type(s) -//
-        div(class="item")
-            div(class="ui styled accordion")
-                div(class="active title")
-                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Visualizations')")
-                        i(class="ui fitted question icon exclude")
-                    i(class="ui dropdown icon")
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Visualizations')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui eye outline icon")
                     label Visualizations:
-                div(class="ui form content active")
+                div(class="ui form content")
                     div(class="grouped fields left-align")
                         //- Eye Cloud -//
                         div(class="field")
@@ -73,14 +74,14 @@ block sidebars
         -var default_image = "01b_Antwerpen_S2.jpg"
         script.let image = "#{default_image}";
 
-        div(class="item")
-            div(class="ui styled accordion")
-                div(class="active title")
-                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Image')")
-                        i(class="ui fitted question icon exclude")
-                    i(class="ui dropdown icon")
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Image')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui map outline icon")
                     label Image:
-                div(class="ui form content active")
+                div(class="ui form content")
                     //- Dropdown selection menu -//
                     div(class="ui fluid search selection dropdown image")
                         div(class="default text") #{default_image}
@@ -93,14 +94,14 @@ block sidebars
                                 div(class="item") No images were found
 
         //- User Selection -//
-        div(class="item")
-            div(class="ui styled accordion")
-                div(class="active title" data-tooltip="Not working yet!")
-                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Users')")
-                        i(class="ui fitted question icon exclude")
-                    i(class="ui dropdown icon")
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Users')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion" style="margin-top:0px !important;")
+                div(class="title")
+                    i#usersLoadingIcon(class="ui users icon")
                     label Users:
-                div(class="ui form content active")
+                div(class="ui form content")
                     //- Dropdown selection menu -//
                     div(class="ui fluid search selection multiple dropdown user")
                         div(class="default text") Select users
@@ -108,19 +109,21 @@ block sidebars
                         div(class="menu")
                             //- Values are added in initiatesettings.js -//
                             div(class="item") No users were found
+                    div(class="ui add circular green basic button")
+                        i(class="ui add fitted icon")
                     div(class="ui clear circular red basic button")
                         i(class="ui remove fitted icon")
+                    
         //- RGBA -//
-        div(class="item")
-            div(class="ui styled accordion colorsettings")
-                div(class="inline active title")
-                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Color')")
-                        i(class="ui fitted question icon exclude")
-                    i(class="ui dropdown icon")
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Color')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion colorsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    div(class="ui tiny right pointing inverted basic label color-preview")
+                        i(class="ui fitted inverted eye dropper icon color-preview")
                     label Color:
-                    //- Color Preview Icon -//
-                    i(class="ui inverted circular eye dropper icon color-preview")
-                div(class="ui form content active ")
+                div(class="ui form content")
                     //- Red Slider -//
                     div(class="ui inline fields")
                         div(class="ui inverted label r-color-preview") R
@@ -138,45 +141,49 @@ block sidebars
                             div(class="ui inverted label a-color-preview") A
                             div(class="ui slider small-padding alpha" id="a") 
 
-
         //- Editor Mode -//
-        div(class="item")
-                div(class="ui styled accordion editorsettings")
-                    div(class="inline active title")
-                        div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Editor')")
-                            i(class="ui fitted question icon exclude")
-                        i(class="ui dropdown icon")
-                        label Editor Commands:
-                    div(class="ui form content active ")
-                        p  
-                        |  Use middle click to move the image around
-                        |  <br>  <br>
-                        |  In brush mode, you can create AOI by holding left click button
-                        |  <br>  <br>
-                        |  Use the context menu by pressing right click to switch between brush mode and view mode 
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Editor')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion editorsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui pencil alternate icon")
+                    label Editor Commands:
+                div(class="ui form content")
+                    p  
+                    |  Use middle click to move the image around
+                    |  <br>  <br>
+                    |  In brush mode, you can create AOI by holding left click button
+                    |  <br>  <br>
+                    |  Use the context menu by pressing right click to switch between brush mode and view mode 
 
         //- Zoom Level -//
-        div(class="item")
-            div(class="ui styled accordion zoomsettings")
-                div(class="inline active title")
-                    div(class="ui teal tiny basic circular label exclude settinghelp" onclick="settingHelp('Zoom')" data-position="top left" data-inverted="" data-variation="tiny basic")
-                        i(class="ui fitted question icon exclude")
-                    i(class="ui dropdown icon")
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Zoom')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion zoomsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui search icon")
                     label Zoom Level:
-                div(class="ui form content active ")
-                    div(class="ui slider zoom small-padding")
+                div(class="ui form content")
+                    div(class="ui inline fields")
+                        div(class="ui basic label zoom-preview")
+                        div(class="ui slider zoom small-padding")
 
 
         //- Apply Settings & Auto Apply -//
         div(class="ui basic center aligned fitted segment")
-            div(class="field")
+            div(class="field small-padding")
                 div(class="ui green basic button" onclick="applySettings()") Apply Settings
+            div(class="field small-padding")
                 div(class="ui checkbox")
                     input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
                     label(for="auto_apply") Apply On Change
-
-            div#show_help(class="ui green basic circular button bottom floated" onclick="showHelp()" data-tooltip="Toggle help icons" data-position="top left" data-inverted="" data-variation="tiny basic")
-                i(class="ui fitted question icon")
+            div(class="inline field small-padding")
+                div(class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
+                    i(class="ui fitted save icon")
+                div(class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
+                    i(class="ui fitted upload icon")
 
 
 
@@ -184,7 +191,7 @@ block header_content
     //- Topbar Centered Text -//
     div(class="ui item")
         div(class="ui center aligned container")
-            div#topbar(class="ui large header selectable")
+            div#topbar(class="ui tiny header selectable")
     //-  Settings Sidebar Button -//
     div(class="ui item")
         div(class="ui right aligned container" style="margin-right:5px;")
@@ -192,9 +199,10 @@ block header_content
 
 block content
     div#container(class='container')
-        div#frame(class='frame')
-            div(class="preview ui big centered image" style="display:none;")
-                img#preview-image(src="/testdataset/images/" + default_image)
+        div#frame(class='blurring frame')
+            div(class="preview ui top aligned dimmer" style="text-align: -webkit-center;")
+                div(class="ui image" style="max-height: 90% !important; max-width: 90% !important;")
+                    img#preview-image(style="max-height: 90% !important;" src="/datasets/default/images/" + default_image)
             div#innerframe(class='inner-frame')
 
 block post_scripts
@@ -206,7 +214,7 @@ block post_scripts
                 .hide();
             //- Open Settings -//
             showSidebar('settings');
-            //resizeBoxes()
+            resizeBoxes();
         };
 
         function closeSettings() {
@@ -215,7 +223,7 @@ block post_scripts
                 .show();
             //- Close Settings -//
             hideSidebar('settings');
-            //resizeBoxes()
+            resizeBoxes();
         };
 
         //- Prevent 'settings' sidebar from dimming the page -//

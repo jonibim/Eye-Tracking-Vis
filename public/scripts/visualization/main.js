@@ -25,8 +25,12 @@ let topbar = null;
  */
 let registry = null;
 
+function resizeBoxes() {
+    console.log("Box Size Changed");
+}
+
 // initialize default visualizations
-window.onload = () => {
+window.onload = async () => {
 
     console.log('main.js - Loading...');
 
@@ -39,28 +43,42 @@ window.onload = () => {
     registry = new Registry();
 
     // register visualizations
-    registry.register('gazestripe',box => new GazeStripe(box));
-    registry.register('eyecloud',box => new EyeCloud(box));
-    registry.register('attentionmap',box => new AttentionMap(box));
-    registry.register('transitiongraph',box => new TransitionGraph(box));
-    registry.register('editor',box => new Editor(box));
+    
+    registry.register('gazestripe', box => new GazeStripe(box));
+    registry.register('eyecloud', box => new EyeCloud(box));
+    registry.register('attentionmap', box => new AttentionMap(box));
+    registry.register('editor', box => new Editor(box));
+    registry.register('transitiongraph', box => new TransitionGraph(box));
+
+
     console.log('main.js - Finished Loading')
 
 
     console.log('main.js - Enabling visualizations...')
+    window.onresize = resizeBoxes;
+    openSettings() // keep the settings opened in the start
     registry.enableAll();
     console.log('main.js - Visualizations enabled')
 
 
     console.log('main.js - Requesting dataset...')
 
-    const url = '/visualization';
-    const data = fetch(url, {method: 'POST'});
-    data.then(data => data.text()).then(data => {
-        dataset.importData(data);
-
-        applySettings();
-
-        console.log('main.js - Dataset loaded')
+    // get the url parameters
+    let params = new URLSearchParams(window.location.search);
+    // get dataset url for id or the default
+    const url = params.has('id') ? '/datasets/uploads/' + params.get('id') : '/datasets/default';
+    const request = fetch(url + '/data.json', { method: 'GET' });
+    await request.then(response => response.arrayBuffer()).then(buffer => {
+        let decoder = new TextDecoder("utf8");
+        let data = decoder.decode(buffer);
+        dataset.importData(data, url);
     });
+
+    console.log('main.js - Dataset loaded')
+
+
+    console.log('main.js - Initializing Settings...')
+    selectImage(dataset.images[0].image);
+    applySettings();
+    console.log('main.js - Settings Initialized')
 }

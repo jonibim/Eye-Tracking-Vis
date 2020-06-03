@@ -1,205 +1,448 @@
-/*
+/**
     Eye Cloud visualization
  */
 
 class EyeCloud extends Visualization {
     constructor(box) {
-        super(box, 'Eye Cloud');
+        super(box, 'Eye Cloud', 'eyecloud');
 
-        const width = box.inner.clientWidth; // Width of the box
-        const height = box.inner.clientHeight; // Height of box
+        this.zoom = d3.zoom();
+
+        let width = box.inner.clientWidth; // Width of the box
+        let height = box.inner.clientHeight; // Height of box
 
         const range = 150;
         const minRadius = 10;
         const maxRadius = 100;
 
-        this.img = new Image();
+        let strokeColor = 'red'; // color of the stroke of the most frequently viewed circle. Default color is red
+        let radiusScale; // scale that determines the size of the radii
 
-        let map;
+        let allCoordinates = []; // set of all the coordinates of an image in the dataset
+        let densityScores = [];
+        let coordinates = []; // final coordinates that will be used to generate the circles
+        let densities = []; // the density of each coordinate in the coordinates array
+
         let drawing = false; // Boolean that is true when the eye cloud is being drawn
 
-        // Create an svg- and g-tag inside the graph class
+        let clickedObject; // Holds the object that is being right clicked
+
+        let infoMenuItem = {
+            title: 'Show info',
+            action: function() {
+                getInfo(clickedObject);
+                console.log('eyecloud.js - Showing info...');
+            }
+        };
+
+        let disableMenuItem = {
+            title: 'Disable circle',
+            action: function () {
+                disableCircle(clickedObject);
+                console.log('eyecloud.js - Disabling circle...');
+            }
+        };
+
+        let generalMenuItems = [
+            {
+                title: 'Enable all circles',
+                action: function () {
+                    enableCircles();
+                    console.log('eyecloud.js - Enabling all circles...');
+                }
+            },
+            {
+                divider: true
+            },
+            {
+                title: 'Center visualization',
+                action: function () {
+                    // This code fits the eye cloud by height
+                    let bWidth = box.inner.clientWidth / 4;
+                    let bHeight = box.inner.clientHeight / 4;
+                    d3.select('#cloud_group')
+                        .attr('transform', 'translate(' + bWidth + ',' + bHeight + ') scale(0.5)');
+                    console.log('eyecloud.js - Centering visualization...');
+                }
+            },
+            {
+                title: 'Save image',
+                disabled: true, // Disabled for now...
+                action: function () {
+                    saveImage();
+                    console.log('eyecloud.js - Saving image...');
+                }
+            }
+        ];
+
+        let menu = () => {
+            let result = [];
+
+            result.push(infoMenuItem);
+            result[0].disabled = true;
+            result.push(disableMenuItem);
+            result[1].disabled = true;
+
+            generalMenuItems.forEach(function (object) {
+                result.push(object);
+            })
+
+            return result;
+        };
+
+        let circleMenu = () => {
+            let result = [];
+
+            result.push(infoMenuItem);
+            result[0].disabled = false;
+            result.push(disableMenuItem);
+            result[1].disabled = false;
+
+            generalMenuItems.forEach(function (object) {
+                result.push(object);
+            })
+
+            return result;
+        };
+
+        /**
+         * Create an svg- and g-tag inside the graph class
+         */
         let svg = d3.select(box.inner)
             .classed('smalldot', true)
             .append('svg')
             .attr('id', 'cloud_svg')
             .attr('width', width) // Full screen
             .attr('height', height) // Full screen
-            .call(d3.zoom().on('zoom', function () {
+            .call(this.zoom.on('zoom', function () {
                 svg.attr('transform', d3.event.transform)
             }))
             .append('g')
             .attr('id', 'cloud_group')
             .attr('transform', 'translate(0,0)');
 
-        // Create a defs-tag inside the svg-tag
+        /**
+         * Create a defs-tag inside the svg-tag
+         */
         d3.select('#cloud_svg')
             .append('defs')
             .attr('id', 'pattern_defs');
 
-        properties.onchange.set('eyecloud', () => {
-            if (this.img !== properties.image) { // If the image has been changed
-                this.img = properties.image;
-                if (drawing == false) {
+        /*
+        // Sets default zoom on load (does not work properly)
+        svg.call(this.zoom.scaleTo, 0.5);
+        svg.call(this.zoom.translateTo, 3 * (width / 4), 2 * (height / 4));
+         */
+
+        /**
+         * Upon any change of the properties class, check what settings have changed
+         * and apply the new settings to the visualization
+         */
+        properties.onchange.set('eyecloud', event => {
+            //if (this.img !== properties.image) { // If the image has been changed
+            if (event.type === 'image') { // If the image has been changed
+                //this.img = properties.image;
+                if (!drawing) { // If we are not already drawing the eye cloud
                     drawing = true;
-                    draw(this.img);
+                    generateData(dataset.getImageData(properties.image));
+                    $('.toast').toast('close') // Close popups
+                    draw();
+                }
+            } else if (event.type === 'color') { // If the color setting has been changed
+                strokeColor = properties.getColorHex(); // set global color variable
+                setColor(properties.getColorHex());
+            }
+        });
+
+        /**
+         * Workaround to draw visualization when turned off an on
+         */
+        if (properties.image) {
+            generateData(dataset.getImageData(properties.image));
+            draw();
+        }
+
+        /**
+         * Resizing the visualizations.
+         */
+        this.timer = setInterval(() => {
+            if (width !== box.inner.clientWidth || height !== box.inner.clientHeight) {
+                width = box.inner.clientWidth;
+                height = box.inner.clientHeight;
+                console.log("eyecloud.js - Size: " + box.inner.clientHeight, box.inner.clientWidth);
+                resize();
+            }
+        }, 100);
+
+        /**
+         * Generate the necessary data for the eye cloud visualization
+         */
+        function generateData(imageData) {
+            allCoordinates = [];
+            imageData.scanpaths.forEach(function (user) {
+                user.points.forEach(function (point) {
+                    allCoordinates.push({co_x: parseInt(point.x), co_y: parseInt(point.y)});
+                })
+            });
+
+            //console.log(coordinates);
+
+            /**
+             * Generate an array of 'density scores' for each coordinate
+             */
+            densityScores = [];
+            for (let i = 0; i < allCoordinates.length; i++) {
+                densityScores[i] = {c_index: i, density: 0}; // Set density of the coordinate to zero
+                for (let j = 0; j < allCoordinates.length; j++) {
+                    // Calculate distance between points
+                    let xDistance = Math.pow(allCoordinates[j].co_x - allCoordinates[i].co_x, 2);
+                    let yDistance = Math.pow(allCoordinates[j].co_y - allCoordinates[i].co_y, 2);
+                    let distance = Math.sqrt(xDistance + yDistance);
+                    // If point j is within the radius of or close to point i and not too close
+                    if (distance <= range) {
+                        densityScores[i].density++;
+                    }
+
                 }
             }
-        })
 
-        function draw(image) {
+            /**
+             * Sort the density scores in a descending order
+             */
+            densityScores = densityScores.sort((a, b) => b.density - a.density); // Descending sort
+
+            //console.log(densityScores);
+
+            /**
+             * Find close coordinates to the coordinates with the highest density scores
+             * and remove these coordinates from the coordinates list. Also, save the densities.
+             * We do this, because the coordinate with the highest density score has the highest priority.
+             */
+            coordinates = [];
+            densities = [];
+            for (let i = 0; i < densityScores.length; i++) {
+                for (let j = 0; j < allCoordinates.length; j++) {
+                    let xDistance = Math.pow(allCoordinates[j].co_x - allCoordinates[densityScores[i].c_index].co_x, 2);
+                    let yDistance = Math.pow(allCoordinates[j].co_y - allCoordinates[densityScores[i].c_index].co_y, 2);
+                    let distance = Math.sqrt(xDistance + yDistance);
+                    // If coordinate at j is inside of the radius of coordinate at i and not the same coordinate
+                    if (distance <= range && densityScores[i].c_index !== j) {
+                        // Remove the coordinate with the index that is in the range of the coordinate at i
+                        densityScores = densityScores.filter(function (e) {
+                            return e.c_index !== j;
+                        })
+                    }
+                }
+                coordinates.push(allCoordinates[densityScores[i].c_index]);
+                densities.push(densityScores[i].density);
+            }
+
+            //console.log(newCoordinates);
+            //console.log(densities);
+
+            // Set the radius scale depending on the maximum and minimum density
+            let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
+            let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
+            radiusScale = d3.scaleSqrt().domain([densityMin, densityMax]).range([minRadius, maxRadius]);
+        }
+
+        /**
+         * Draw the eye cloud visualization
+         */
+        function draw() {
             d3.select('#cloud_group').selectAll('circle').remove(); // Remove already existing circles
             d3.select('#pattern_defs').selectAll('pattern').remove(); // Remove already existing patterns
 
-            // We must load the dataset as a tsv, since its values are separated by tabs, not commas
-            d3.tsv('/testdataset/all_fixation_data_cleaned_up.csv').then(function (data) {
-                let dataByCity = d3.nest().key(function (data) { // Nest the data by StimuliName
-                    return data.StimuliName;
-                }).entries(data);
+            /*
+            let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
+            let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
+            let radiusScale = d3.scaleSqrt().domain([densityMin, densityMax]).range([minRadius, maxRadius]);
+             */
 
-                let mapObject = {}; // Object that contains the images of the maps
-                for (var i = 0; i < dataByCity.length; i++) {
-                    mapObject[i] = Object.values(dataByCity)[i]['key'];
-                }
-
-                //console.log('eyecloud.js - Selected map: ' + image);
-
-                map = Object.values(mapObject).indexOf(image);
-
-                // Generate the coordinate objects
-                let coordinates = []; // Array of all the coordinates for the selected map
-
-                dataByCity[map]['values'].forEach(function (element) {
-                    let x_coordinate = parseInt(element.MappedFixationPointX);
-                    let y_coordinate = parseInt(element.MappedFixationPointY);
-                    // Coordinates require the co_x and co_y tags in stead of just x and y to prevent issues with the
-                    // x and y locations of the circles of the graph
-                    coordinates.push({co_x: x_coordinate, co_y: y_coordinate});
+            /**
+             * For every element in coordinates create a circle with the necessary attributes
+             */
+            let radiusCount = -1; // Keeps track of the index of the densities array
+            let circleCount = -1; // Keeps track of the circle number
+            let mapCount = -1; // Local variable that counts the number of maps of the circles
+            let circles = svg.selectAll('.artist')
+                .data(coordinates)
+                .enter().append('circle')
+                //.attr('class', 'artist')
+                .attr('id', function () {
+                    circleCount++;
+                    return 'circle_' + circleCount;
+                })
+                .attr('r', function () {
+                    radiusCount++;
+                    return radiusScale(densities[radiusCount]);
+                })
+                .attr('stroke', 'black')
+                .attr('fill', function () {
+                    mapCount++;
+                    return 'url(#map_c' + mapCount + ')';
                 });
 
-                //console.log(coordinates);
+            /**
+             * Collection of forces that dictate where the circles should go
+             * and how we want them to interact
+             */
+            let collisionCount = -1; // Keeps track of the index of the densities array
+            let simulation = d3.forceSimulation()
+                .force('x', d3.forceX(box.inner.clientWidth / 2).strength(0.045))
+                .force('y', d3.forceY(box.inner.clientHeight / 2).strength(0.15))
+                .force('collide', d3.forceCollide(function () {
+                    collisionCount++;
+                    return radiusScale(densities[collisionCount]) + 2;
+                }))
 
-            // Generate an array of 'density scores' for each coordinate
-                let densityScores = [];
-                for (let i = 0; i < coordinates.length; i++) {
-                    densityScores[i] = {c_index: i, density: 0}; // Set density of the coordinate to zero
-                    for (let j = 0; j < coordinates.length; j++) {
-                        // Calculate distance between points
-                        let xDistance = Math.pow(coordinates[j].co_x - coordinates[i].co_x, 2);
-                        let yDistance = Math.pow(coordinates[j].co_y - coordinates[i].co_y, 2);
-                        let distance = Math.sqrt(xDistance + yDistance);
-                        // If point j is within the radius of or close to point i and not too close
-                        if (distance <= range) {
-                            densityScores[i].density++;
-                        }
+            /**
+             * For each enabled coordinate object, create a pattern that contains the coordinates
+             */
+            for (let i = 0; i < coordinates.length; i++) {
+                let circleRadius = document.getElementById('circle_' + i.toString()).getAttribute('r');
+                d3.select('defs')
+                    .append('pattern')
+                    .attr('id', 'map_c' + i) // Create id with the index of each object in the data
+                    .attr('width', 1)
+                    .attr('height', 1)
+                    .append('image')
+                    // Image coordinates have to be negated
+                    // and the radius is taken into account to center the coordinate
+                    .attr('x', -coordinates[i].co_x + parseInt(circleRadius))
+                    .attr('y', -coordinates[i].co_y + parseInt(circleRadius))
+                    .attr('xlink:href', dataset.url + '/images/' + properties.image);
+            }
 
-                    }
-                }
+            /**
+             * Make the stroke of the most frequently viewed area the color of the global color variable and thicker
+             */
+            d3.select('#circle_0')
+                .attr('stroke', strokeColor)
+                .attr('stroke-width', 2);
 
-                // Sort the density scores in a descending order
-                densityScores = densityScores.sort((a, b) => b.density - a.density); // Descending sort
-
-                //console.log(densityScores)
-
-                // Find close coordinates to the coordinates with the highest density scores
-                // and remove these coordinates from the coordinates list. Also, save the densities.
-                // We do this, because the coordinate with the highest density score has the highest priority.
-                let newCoordinates = []; // final coordinates that will be used to generate the circles
-                let densities = []; // the density of each coordinate in newCoordinates
-                for (let i = 0; i < densityScores.length; i++) {
-                    for (let j = 0; j < coordinates.length; j++) {
-                        let xDistance = Math.pow(coordinates[j].co_x - coordinates[densityScores[i].c_index].co_x, 2);
-                        let yDistance = Math.pow(coordinates[j].co_y - coordinates[densityScores[i].c_index].co_y, 2);
-                        let distance = Math.sqrt(xDistance + yDistance);
-                        // If coordinate at j is inside of the radius of coordinate at i and not the same coordinate
-                        if (distance <= range && densityScores[i].c_index != j) {
-                            // Remove the coordinate with the index that is in the range of the coordinate at i
-                            densityScores = densityScores.filter(function (e) {
-                                return e.c_index != j
-                            })
-                        }
-                    }
-                    newCoordinates.push(coordinates[densityScores[i].c_index]);
-                    densities.push(densityScores[i].density);
-                }
-
-                //console.log(newCoordinates);
-                //console.log(densities);
-
-                let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
-                let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
-                let radiusScale = d3.scaleSqrt().domain([densityMin, densityMax]).range([minRadius, maxRadius]);
-
-                // For every element in newCoordinates create a circle with the necessary attributes
-                let radiusCount = -1; // Keeps track of the index of the densities array
-                let circleCount = -1; // Keeps track of the circle number
-                let mapCount = -1; // Local variable that counts the number of maps of the circles
-                let circles = svg.selectAll('.artist')
-                    .data(newCoordinates)
-                    .enter().append('circle')
-                    //.attr('class', 'artist')
-                    .attr('id', function () {
-                        circleCount++;
-                        return 'circle_' + circleCount;
-                    })
-                    .attr('r', function () {
-                        radiusCount++;
-                        return radiusScale(densities[radiusCount]);
-                    })
-                    .attr('stroke', 'black')
-                    .attr('fill', function () {
-                        mapCount++;
-                        return 'url(#map_c' + mapCount + ')';
-                    })
-
-                // Collection of forces that dictate where the circles should go
-                // and how we want them to interact
-                let collisionCount = -1; // Keeps track of the index of the densities array
-                let simulation = d3.forceSimulation()
-                    .force('x', d3.forceX(box.inner.clientWidth / 2).strength(0.045))
-                    .force('y', d3.forceY(box.inner.clientHeight / 2).strength(0.15))
-                    .force('collide', d3.forceCollide(function () {
-                        collisionCount++;
-                        return radiusScale(densities[collisionCount]) + 2;
-                    }))
-
-                // For each (new) coordinate object, create a pattern that contains the coordinates
-                for (let i = 0; i < newCoordinates.length; i++) {
-                    let circleRadius = document.getElementById('circle_' + i.toString()).getAttribute('r');
-                    d3.select('defs')
-                        .append('pattern')
-                        .attr('id', 'map_c' + i) // Create id with the index of each object in the data
-                        .attr('width', 1)
-                        .attr('height', 1)
-                        .append('image')
-                        // Image coordinates have to be negated
-                        // and the radius is taken into account to center the coordinate
-                        .attr('x', -newCoordinates[i].co_x + parseInt(circleRadius))
-                        .attr('y', -newCoordinates[i].co_y + parseInt(circleRadius))
-                        .attr('xlink:href', '/testdataset/images/' + mapObject[map]);
-                }
-
-                // Make the stroke of the most frequently viewed area red
-                d3.select('#circle_0')
-                    .attr('stroke', 'red')
-
-                // On every tick during the simulation, call the update function
-                simulation.nodes(newCoordinates)
-                    .on('tick', update);
-
-                // Automatically update the location of each circle
-                function update() {
-                    circles
-                        .attr('cx', function (d) {
-                            return d.x;
-                        })
-                        .attr('cy', function (d) {
-                            return d.y;
-                        })
-                }
+            /**
+             * Upon a right click, display a context menu
+             * and, if necessary, register the id of the clicked element
+             */
+            d3.select('#cloud_group').on('contextmenu', d3.contextMenu(circleMenu));
+            d3.select('#cloud_svg').on('contextmenu', d3.contextMenu(menu));
+            d3.select('#cloud_group').selectAll('circle').on('contextmenu', function (object) {
+                clickedObject = object;
             });
 
+            /**
+             * On every tick during the simulation, call the update function
+             */
+            simulation.nodes(coordinates)
+                .on('tick', update);
+
+            /**
+             * Automatically update the location of each circle
+             */
+            function update() {
+                circles
+                    .attr('cx', function (d) {
+                        return d.x;
+                    })
+                    .attr('cy', function (d) {
+                        return d.y;
+                    })
+            }
+
             drawing = false; // Reset drawing variable
+        }
+
+        /**
+         * Set the stroke color of the largest circle
+         */
+        function setColor() {
+            d3.select('#circle_0')
+                .attr('stroke', properties.getColorHex());
+        }
+
+        /**
+         * Display the coordinates and density of the selected circle object with the used range
+         */
+        function getInfo(object) {
+            let x = object.co_x;
+            let y = object.co_y;
+            let density = densities[object.index];
+
+            let message = 'This circle represents point (' + x + ', ' + y + ') on the image. ' +
+                'There are ' + density + ' other points in a range of ' + range + ' pixels to this point.';
+
+            infoPopup(message);
+        }
+
+        /**
+         * Displays an informative popup with Fomantic-UI that contains a message
+         */
+        function infoPopup(message) {
+            $('.toast') // Close previous toast
+                .toast('close')
+            $('body')
+                .toast({
+                    showIcon: 'info',
+                    title: 'Eye Cloud info',
+                    displayTime: 0,
+                    message: message,
+                    class: 'info',
+                    position: 'bottom left',
+                    closeIcon: true
+                });
+        }
+
+        /**
+         * Disables circle by removing it from the coordinates array and removing its density
+         */
+        function disableCircle(object) {
+            // Remove selected circle from the coordinates array
+            coordinates = coordinates.filter(coordinate => coordinate.index !== object.index);
+            // Remove density that belongs to the removed circle
+            densities.splice(object.index, 1);
+            draw(); // Redraw
+        }
+
+        /**
+         * Enables all circles again by regenerating the data
+         */
+        function enableCircles() {
+            generateData(dataset.getImageData(properties.image)); // Regenerate all coordinates
+            draw(); // Redraw
+        }
+
+        // Work in progress...
+        // Requires html2canvas.js
+        function saveImage() {
+            let element = document.querySelector("#cloud_svg");
+            html2canvas(element).then(function (canvas) {
+                let imageURL = canvas.toDataURL();
+                let image = new Image();
+                image.src = imageURL;
+
+                // IE/Edge Support (PNG only)
+                if (window.navigator.msSaveBlob) {
+                    window.navigator.msSaveBlob(canvas.msToBlob(), 'eyecloud-screenshot.png');
+                } else {
+                    const a = document.createElement('a');
+
+                    document.body.appendChild(a); // For FireFox support
+                    a.href = imageURL;
+                    a.download = 'eyecloud-screenshot.png';
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            });
+        }
+        
+        /**
+         * Resize the SVG-element
+         */
+        function resize(){
+            d3.select('#cloud_svg')
+                .attr('width', width)
+                .attr('height', height)
         }
     }
 }

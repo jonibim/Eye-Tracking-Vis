@@ -2,11 +2,12 @@
 let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 1}
 
 let settingHelpMap = {
-    'Visualizations' : 'Enable or disable each visualization type or the AOI editor. Each enabled slider represents a single box with a visualization, when one is toggled, the box will be removed or added respectively. Settings specifically for one visualization type will be shown or hidden as well.',
+    'Visualizations' : 'Select the visualizations/viewports to display',
     'Image' : 'Select the image to display',
+    'Users' : 'Select the users to display',
     'Color' : 'Modify the color of the fixations on the Attention Map',
-    'Zoom' : 'Regulates the zoom level of the thumbnails in the Gaze Stripes',
-    'Editor' : 'Instructs the navigation commands for the AOI editor'
+    'Editor' : 'Instructs the navigation commands for the AOI editor',
+    'Zoom' : 'Modify the zoom level of the thumbnails in the Gaze Stripes'
 }
 
 //- Initialize State of RGBA sliders -//
@@ -14,7 +15,8 @@ for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
 }
 
-selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaultImageHere)
+let defaultZoomValue = 50;
+readSlidersZoom(defaultZoomValue)
 
 //****************** Define Settings Functions ******************//
 
@@ -22,18 +24,17 @@ selectImage(image); //Image is defined in visualization.pug (ctrl + f: setDefaul
 function settingHelp(setting) {
     $('.toast')
         .toast('close')
-        $('body')
-            .toast({
-                showIcon: 'info',
-                title: setting + ' setting',
-                displayTime: 0,
-                message: settingHelpMap[setting],
-                class: 'info',
-                position: 'top center',
-                closeIcon: true
-        });
-    }
-
+    $('body')
+        .toast({
+            showIcon: 'info',
+            title: setting + ' setting',
+            displayTime: 0,
+            message: settingHelpMap[setting],
+            class: 'info',
+            position: 'top center',
+            closeIcon: true
+    });
+}
 
 //- Auto Apply Behavior -//
 function settingChanged() {
@@ -41,6 +42,21 @@ function settingChanged() {
         applySettings()
     };
 };
+
+//- Prevent Users Update Spam -//
+userTimer = undefined
+function usersChanged() {
+    $('#usersLoadingIcon').removeClass()
+    $('#usersLoadingIcon').addClass("ui sync alternate loading icon");
+    if (userTimer !== undefined) {
+        clearTimeout(userTimer)
+    }
+    userTimer = setTimeout(function() {
+        $('#usersLoadingIcon').removeClass()
+        $('#usersLoadingIcon').addClass("ui users icon");
+        settingChanged();
+    }, 500);
+}
 
 //****************** Set Element Behaviors/States ******************//
 
@@ -54,25 +70,44 @@ $('input.settings')
 //- Image Dropdown -//
 $('.dropdown.search.selection.image')
     .dropdown({
+        selectOnKeydown: false,
         fullTextSearch: 'exact', 
         match: 'both',
         onChange: function(value,text) {
             selectImage(text);
             settingChanged();
+        },
+        onShow: function() {
+            $('#frame').dimmer('show');
+        },
+        onHide: function() {
+            $('#frame').dimmer('hide');
         }
     });
 
-//- Image Preview on Dropdown -//
+//- Image Preview Source on Dropdown MouseOver and KeyDown (Arrow Up/Down or Page Up/Down) -//
 $('.image-selector')
-    .on('mouseenter', function(evt){
-        $('.preview').show();
-        $('.inner-frame').hide();
-        $('#preview-image').attr("src", "/testdataset/images/" + this.innerHTML);
-        $(this).on('mouseleave', function(){
-            $('.preview').hide();
-            $('.inner-frame').show();
-        });
+    .on('mouseenter', function(evt) {
+        $('#preview-image').attr("src", dataset.url + "/images/" + $(this).text());
     });
+$('.dropdown.search.selection.image .menu')
+    .on('mouseleave', function(evt) {
+        if ($('.image-selector.selected').length) {
+            $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+        }
+    });
+document.onkeydown = function(e) {
+    if ($('.dropdown.search.selection.image').hasClass('active')) {
+        setTimeout(function() {
+            if ($('.image-selector.selected').length) {
+                $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
+            }
+        }, 100)
+    }
+};
+
+//- Image Preview Dimmer Behavior -//
+$('#frame').dimmer({duration: 0});
 
 //- User Dropdown -//
 $('.dropdown.search.selection.user')
@@ -80,11 +115,20 @@ $('.dropdown.search.selection.user')
         fullTextSearch: 'exact',
         onAdd: function(addedValue, addedText) {
             usersAdd(addedText);
-            settingChanged();
+            usersChanged();
         },
         onRemove: function(removedValue, removedText) {
             usersRemove(removedText);
-            settingChanged();
+            usersChanged();
+        },
+        onLabelSelect: function (label) {
+            let $label = $(label)
+            $label.parent('.ui.multiple.dropdown')
+                    .dropdown('remove selected', $label.data('value'));
+            if (label !== undefined) {
+                usersRemove(label.text);
+                usersChanged();
+            }
         }
     });
 
@@ -93,8 +137,15 @@ $('.clear.button')
     .on('click', function() {
         $('.dropdown.search.selection.user')
             .dropdown('clear');
+        settingChanged();
     });
 
+//- Select All User Dropdown Button -//
+$('.add.button')
+    .on('click', function() {
+        enableAllUsers();
+        settingChanged();
+    });
 
 //- RGB Slider initialization -//
 $('.ui.slider.rgb')
@@ -125,11 +176,12 @@ $('.alpha.ui.slider')
     });
 
 //- Zoom Level Slider -//
+$('.zoom-preview').text(defaultZoomValue);
 $('.ui.slider.zoom')
     .slider({
         min: 25,
         max: 200,
-        start: 50,
+        start: defaultZoomValue,
         step: 1,
         onChange: function(value) {
             readSlidersZoom(value)

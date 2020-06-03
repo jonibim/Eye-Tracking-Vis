@@ -186,11 +186,11 @@ class TransitionGraph extends Visualization {
             let _links = []
 
             for (let i = 0; i < this.dimension; i++) {
-                let AOIname = 'aoi' + AOIs[i].id();
+                let AOIname = 'aoi' + (AOIs[i].id() + 1);
                 _nodes.push({ "id": AOIname })
                 for (let j = 0; j < this.dimension; j++) {
                     if (this.matrix[i][j] !== 0) {
-                        let AOIname2 = 'aoi' + AOIs[j].id();
+                        let AOIname2 = 'aoi' + (AOIs[j].id() + 1);
                         _links.push({ 'source': AOIname, 'target': AOIname2 })
                     }
                 }

@@ -123,7 +123,7 @@ class AOIVisualization extends Visualization {
                         d3.select(this).classed('ontop', false).transition().duration(250).style('fill', '#878787');
                     })
 
-                rect.append('text').classed('aoiText', true).attr('x', aoi.left + 5).attr('y', aoi.top + 27).text('AOI ' + i);
+                rect.append('text').classed('aoiText', true).attr('x', aoi.left + 5).attr('y', aoi.top + 27).text('AOI ' + (i + 1));
 
                 this.graphics.selectAll('circle').classed('underAoi', (d) => this.isBrushed(aoi, (d.x), (d.y)));
             }

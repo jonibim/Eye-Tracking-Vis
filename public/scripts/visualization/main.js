@@ -35,8 +35,8 @@ window.onload = async () => {
     console.log('main.js - Loading...');
 
     dataset = new Dataset();
-    topbar = document.getElementById('topbar');
-    dataset.onload.push(() => topbar.textContent = 'DATASET: ' + dataset.name)
+    //topbar = document.getElementById('topbar');
+    //dataset.onload.push(() => topbar.textContent = 'DATASET: ' + dataset.name)
     frame = document.getElementById('innerframe');
     boxManager = new BoxManager(frame);
     properties = new Properties();

@@ -1,3 +1,21 @@
+#headbar {
+    margin-bottom: 0px;
+    overflow:visible;
+    z-index: 900;
+}
+
+#headbar .item {
+    width: 25%;
+}
+
+#headbar .item.middle {
+    width: 50%;
+}
+
+#headbar .dropdown .item {
+    width: 100%;
+}
+
 .content {
     width: 100%;
     max-width: 500px;
@@ -12,6 +30,21 @@
 
     display: flex;
     flex-flow: column;
+}
+
+.dropdown.dataset {
+    position:absolute;
+    top: 0px;
+    text-align: center;
+    width:90%;
+}
+
+.dropdown.dataset .filtered.text+label#dataset_icon{
+    visibility: hidden;
+}
+
+.dropdown.dataset input {
+    text-align: center;
 }
 
 .sidebar.visible.settings + .pusher {

@@ -5,6 +5,11 @@ let selected_users = [];
 //let edit = false;
 let zoomValue;
 
+//- React on Dataset Selection Dropdown -//
+function selectDataset(value) {
+    console.log(value);
+}
+
 function applySettings() {
     //- Apply visualization type changes -//
     for ([key, value] of Object.entries(visualizations)) {value ? registry.enable(key) : registry.disable(key);}

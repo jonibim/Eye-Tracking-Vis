@@ -35,6 +35,8 @@ class AttentionMap extends Visualization {
         this.svg.call(
             this.zoom.on('zoom', () => {
                 this.graphics.attr('transform', d3.event.transform);
+                if(d3.event.transform.ignore)
+                    return;
                 let visualization = registry.getVisualizationInstance('editor');
                 if(visualization) visualization.syncZoom(d3.event.transform);
             })
@@ -67,7 +69,8 @@ class AttentionMap extends Visualization {
     }
 
     syncZoom(zoomCord){
-        this.graphics.attr('transform', zoomCord)
+        zoomCord.ignore = true;
+        this.svg.call(this.zoom.transform, zoomCord);
     }
 
     /**

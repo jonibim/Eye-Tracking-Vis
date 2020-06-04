@@ -101,6 +101,18 @@ class Registry {
         return type === null ? null : type.instance;
     }
 
+    /**
+     * @return {Visualization[]} a list of all active visualization instances
+     */
+    getVisualizationInstances(){
+        let visualizations = [];
+        this.map.forEach(value => {
+            if(value.enabled)
+                visualizations.push(value.instance);
+        })
+        return visualizations;
+    }
+
 }
 
 /**

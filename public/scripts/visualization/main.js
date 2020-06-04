@@ -26,7 +26,8 @@ let topbar = null;
 let registry = null;
 
 function resizeBoxes() {
-    console.log("Box Size Changed");
+    for(let visualization of registry.getVisualizationInstances())
+        visualization.onResize();
 }
 
 // initialize default visualizations

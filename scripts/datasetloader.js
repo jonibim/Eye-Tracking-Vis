@@ -11,7 +11,7 @@ const dataFileName = 'data.json';
 const imagesFolderName = 'images/';
 
 // Handle dataset datasets
-async function parseData(files, response) {
+async function handleDatasetUpload(files, name, response) {
     console.log('parsedataset.js - Parsing uploaded dataset...');
 
     // get the file as a string
@@ -22,34 +22,40 @@ async function parseData(files, response) {
     try {
         data = csvToJson(data);
     } catch (e) {
-        response.status(400).send({'status': 400, 'message': 'The uploaded dataset is not properly formatted. ' + e.err});
+        response.status(400).send({
+            'status': 400,
+            'message': 'The uploaded dataset is not properly formatted. ' + e.err
+        });
         console.log('parsedataset.js - Failed to parse uploaded dataset');
         return;
     }
 
     // check for required fields
-    if(!data[0].Timestamp || !data[0].StimuliName || !data[0].FixationIndex || !data[0].FixationDuration || !data[0].MappedFixationPointX || !data[0].MappedFixationPointY || !data[0].user || !data[0].description){
-        response.status(400).send({'status': 400, 'message': 'The uploaded dataset is missing one of the following fields, \'Timestamp\', \'StimuliName\', \'FixationIndex\', \'FixationDuration\', \'MappedFixationPointX\', \'MappedFixationPointY\', \'user\', \'description\'.'});
+    if (!data[0].Timestamp || !data[0].StimuliName || !data[0].FixationIndex || !data[0].FixationDuration || !data[0].MappedFixationPointX || !data[0].MappedFixationPointY || !data[0].user || !data[0].description) {
+        response.status(400).send({
+            'status': 400,
+            'message': 'The uploaded dataset is missing one of the following fields, \'Timestamp\', \'StimuliName\', \'FixationIndex\', \'FixationDuration\', \'MappedFixationPointX\', \'MappedFixationPointY\', \'user\', \'description\'.'
+        });
         console.log('parsedataset.js - The uploaded dataset is missing fields');
         return;
     }
 
     // get a list of the images mentioned in the data
     const images = [];
-    for(let entry of data)
+    for (let entry of data)
         if (!images.includes(entry.StimuliName))
             images.push(entry.StimuliName)
 
     // check if all images are there
-    if(images.length && !files.images){
+    if (images.length && !files.images) {
         response.status(400).send({'status': 400, 'message': 'Images for the dataset must be included.'});
         console.log('parsedataset.js - No images found for the uploaded dataset');
         return;
     }
-    if(files.images.name)
+    if (files.images.name)
         files.images = [files.images]
-    loop: for(let image of images){
-        for(let entry of files.images){
+    loop: for (let image of images) {
+        for (let entry of files.images) {
             if (entry.name === image)
                 continue loop;
         }
@@ -64,14 +70,19 @@ async function parseData(files, response) {
 
     // try to write the data and images to the uploads folder
     try {
-        // write the dataset
+        // create folder
         fileSystem.mkdirSync(uploadsFolder + id);
+
+        // write info file
+        fileSystem.writeFileSync(uploadsFolder + id + '/info.json', JSON.stringify({id: id, name: name}), 'utf-8');
+
+        // write the dataset
         let string = JSON.stringify(data, null, 1);
         fileSystem.writeFileSync(uploadsFolder + id + '/' + dataFileName, string, 'utf-8');
 
         // write the images
         fileSystem.mkdirSync(uploadsFolder + id + '/' + imagesFolderName);
-        for(let image of files.images)
+        for (let image of files.images)
             fileSystem.writeFileSync(uploadsFolder + id + '/' + imagesFolderName + image.name, image.data);
     } catch (e) {
         response.status(400).send({'status': 400, 'message': 'The uploaded dataset is not properly formatted.'});
@@ -85,25 +96,24 @@ async function parseData(files, response) {
     // send successful response
     response.status(200).send({'status': 200, 'message': 'Upload successful.', 'id': id});
 }
-  
-  
 
-// Handle dataset requests   TODO remove this because everything is now in the public folder
-function readData(id, response) {
-    console.log('parsedataset.js - Loading dataset for id \'' + id + '\'...');
 
-    const file = uploadsFolder + id + '/' + dataFileName;
+function getAllDatasets() {
+    let folders = fileSystem.readdirSync(uploadsFolder, {withFileTypes: true}).filter(file => file.isDirectory()).map(file => uploadsFolder + file.name);
+    folders.push(defaultFolder);
 
-    if (!fileSystem.existsSync(file)) {
-        response.status(400).send({'status': 400, 'message': 'Can\'t find dataset for id \'' + id + '\''});
-        console.log('parsedataset.js - Failed to find dataset for id \'' + id + '\'');
-        return;
+    let datasets = [];
+
+    for(let folder of folders){
+        if(!fileSystem.existsSync(folder + '/info.json'))
+            continue;
+
+        let info = JSON.parse(fileSystem.readFileSync(folder + '/info.json').toString('utf-8'));
+        datasets.push(info);
     }
 
-    response.status(200).send(fileSystem.readFileSync(file));
-
-    console.log('parsedataset.js - Send dataset with id \'' + id + '\'');
+    return datasets;
 }
 
 
-module.exports = {'parseData': parseData, 'readData': readData};
+module.exports = {'handleDatasetUpload': handleDatasetUpload, 'getAllDatasets': getAllDatasets};

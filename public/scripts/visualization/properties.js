@@ -15,10 +15,11 @@ class Properties {
         this.time = 0;
         this.aoi = new Map();
         this.zoomValue = undefined;
-        this.users = []
-        this.eventListeners = []
-        this.zoomListeners = [] //tbh i am thinking of making all these listeners  
-                                // in one Map however idk how i will distinguish between listenrs 
+        this.users = [];
+        // TODO this can probably be removed in favor of using onchange and checking for 'event.type === aoi'
+        // Currently this list only gets bigger, once a visualization is disabled the listener for that visualization remains in this list
+        // which can lead to errors since the visualization object it refers to will never be used again
+        this.eventListeners = [];
 
       
         this.onchange = new Map();

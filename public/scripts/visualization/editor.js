@@ -50,9 +50,9 @@ class Editor extends Visualization {
          */
         this.svgG = this.svg
             .call(this.zoom.on("zoom", () => {
-                this.svgG.attr("transform", d3.event.transform)
-                properties.zoomListeners.forEach(listener => listener(d3.event.transform))
-
+                this.svgG.attr("transform", d3.event.transform);
+                let visualization = registry.getVisualizationInstance('attentionmap');
+                if(visualization) visualization.syncZoom(d3.event.transform);
             }))
             .append("g");
 
@@ -214,10 +214,6 @@ class Editor extends Visualization {
 
             return result
         };
-
-        properties.zoomListeners.push((zoomCord) => this.syncZoom(zoomCord))
-
-        
     }
 
     syncZoom(zoomCord){

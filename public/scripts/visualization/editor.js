@@ -83,10 +83,9 @@ class Editor extends Visualization {
             }
         }, 100);
 
-        properties.onchange.set('editor', event => {
-            if(event.type === 'image')
-                this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
-        })
+        properties.setListener('editor', 'image', event =>
+            this.image.src = properties.image ? dataset.url + '/images/' + properties.image : ''
+        )
 
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;

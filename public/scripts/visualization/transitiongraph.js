@@ -71,11 +71,9 @@ class TransitionGraph extends Visualization {
         }, 100);
 
 
-        properties.onchange.set('transitiongraph', () => {
-            if (this.img.src)
-                if (this.img.src.match('([^\/]+$)')[0] === properties.image) return;
-            this.img.src = properties.image ? dataset.url + '/images/' + properties.image : '';
-        })
+        properties.setListener('transitiongraph', 'image', () =>
+            this.img.src = properties.image ? dataset.url + '/images/' + properties.image : ''
+        );
 
 
         if (properties.image)

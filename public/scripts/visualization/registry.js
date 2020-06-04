@@ -92,6 +92,15 @@ class Registry {
         this.map.forEach(value => value.disable());
     }
 
+    /**
+     * @param {string} tag - unique name of the visualization
+     * @return {Visualization | null}
+     */
+    getVisualizationInstance(tag){
+        let type = this.getVisualizationType(tag);
+        return type === null ? null : type.instance;
+    }
+
 }
 
 /**
@@ -132,7 +141,8 @@ class VisualizationType {
     disable() {
         this.instance.onRemoved();
         boxManager.removeBox(this.instance.box);
-        properties.onchange.delete(this.tag);
+        for(let event of properties.onchange.values())
+            event.delete(this.tag);
         this.instance = null;
         this.enabled = false;
     }

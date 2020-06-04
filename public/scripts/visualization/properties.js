@@ -5,7 +5,7 @@
  * @property {float[]} rgba - the color currently selected int the format [red[0,255],green[0,255],blue[0,255],alpha[0,1]]
  * @property {int} time - the time currently selected
  * @property {Map<string,AOI[]>} aoi - the areas of interest per image
- * @property {Map<string,function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]})|{type: 'aoi', aoi: AOI[]}>} onchange - property change listeners for all visualizations, registered by tag
+ * @property {Map<string,Map<string,function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]}|{type: 'aoi', aoi: AOI[]})>>} onchange - property change listeners for all visualizations, registered by tag
  */
 class Properties {
 
@@ -21,8 +21,10 @@ class Properties {
         // which can lead to errors since the visualization object it refers to will never be used again
         this.eventListeners = [];
 
-      
+        this.events = ['image','color','zoom','users','aoi'];
         this.onchange = new Map();
+        for(let event of this.events)
+            this.onchange.set(event, new Map());
     }
 
     /**
@@ -42,7 +44,7 @@ class Properties {
         if (this.image && !this.aoi.get(image))
             this.aoi.set(image,[]);
 
-        for (let listener of this.onchange.values())
+        for (let listener of this.onchange.get('image').values())
             listener({type: 'image', oldImage: oldImage, newImage: image});
     }
 
@@ -57,7 +59,7 @@ class Properties {
         //console.log('properties.js - Setting color to (' + rgba + ')');
 
         this.rgba = [...rgba];
-        for (let listener of this.onchange.values())
+        for (let listener of this.onchange.get('color').values())
             listener({type: 'color', color: rgba, red: rgba[0], green: rgba[1], blue: rgba[2], alpha: rgba[3]});
     }
 
@@ -81,7 +83,7 @@ class Properties {
 
         let oldZoom = this.zoomValue;
         this.zoomValue = zoomValue;
-        for (let listener of this.onchange.values())
+        for (let listener of this.onchange.get('zoom').values())
             listener({type: 'zoom', oldZoom: oldZoom, newZoom: zoomValue});
     }
 
@@ -105,7 +107,7 @@ class Properties {
         //console.log('properties.js - Setting users to ' + users.length + (users.length === 1 ? ' user' : ' users'));
 
         this.users = [...users];
-        for (let listener of this.onchange.values())
+        for (let listener of this.onchange.get('users').values())
             listener({type: 'users', users: users});
     }
 
@@ -121,6 +123,37 @@ class Properties {
      */
     getCurrentAOIsize() {
         return this.aoi.get(this.image).length;
+    }
+
+    /**
+     * Removes all AOIs for the selected image
+     */
+    removeCurrentAOIs(){
+        let aoi = [];
+        this.aoi.set(this.image, aoi);
+
+        for (let listener of this.onchange.get('aoi').values())
+            listener({type: 'aoi', aoi: aoi});
+    }
+
+    /**
+     * Sets the given listener to the given events
+     * @param {string} tag - the tag of the visualization adding the listener, same as for the registry
+     * @param {[]|'image'|'color'|'zoom'|'users'|'aoi'} events - the events to add the listener to
+     * @param {function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]}|{type: 'aoi', aoi: AOI[]})} listener
+     */
+    setListener(tag, events, listener){
+        if(typeof events === 'string')
+            events = [events];
+
+        for(let event of events){
+            if(!this.events.includes(event)){
+                console.error('There\'s no event called \'' + event + '\'');
+                continue;
+            }
+
+            this.onchange.get(event).set(tag, listener);
+        }
     }
 }
 
@@ -179,7 +212,7 @@ class AOI {
         }
 
         if(this.image === properties.image)
-            for (let listener of properties.onchange.values())
+            for (let listener of properties.onchange.get('aoi').values())
                 listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
     }
 
@@ -205,7 +238,7 @@ class AOI {
         properties.aoi.get(this.image).splice(index, 1);
 
         if(this.image === properties.image)
-            for (let listener of properties.onchange.values())
+            for (let listener of properties.onchange.get('aoi').values())
                 listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
     }
 

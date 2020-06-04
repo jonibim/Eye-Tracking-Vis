@@ -59,12 +59,8 @@ class AttentionMap extends Visualization {
             this.center();
         }
 
-        properties.onchange.set('attentionmap', event => {
-            if (event.type === 'image')
-                this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
-            if (event.type === 'color' || event.type === 'users' || event.type === 'aoi')
-                this.draw();
-        })
+        properties.setListener('attentionmap', 'image', () => this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '');
+        properties.setListener('attentionmap', ['color','users','aoi'], () => this.draw());
 
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;

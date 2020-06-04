@@ -141,7 +141,8 @@ class VisualizationType {
     disable() {
         this.instance.onRemoved();
         boxManager.removeBox(this.instance.box);
-        properties.onchange.delete(this.tag);
+        for(let event of properties.onchange.values())
+            event.delete(this.tag);
         this.instance = null;
         this.enabled = false;
     }

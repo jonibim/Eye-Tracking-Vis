@@ -39,20 +39,18 @@ class GazeStripe extends Visualization {
             }
         }, 100);
 
-        properties.onchange.set('gazestripe', () => {
-        	scale();	
-            if (this.img !== properties.image || this.zoomValue !== properties.zoomValue || this.users !== properties.users) {
-	            this.img = properties.image;
-	            this.users = properties.users;
-	            if (typeof properties.zoomValue !== 'undefined') {
-	            	this.zoomValue = properties.zoomValue;
-	            }
-            	if (drawing !== 1) {
-	            	drawing = 1;
-            		loadData(this.img, this.zoomValue);   
-        		}        	
-            }
- 	       })
+        properties.setListener('gazestripe', ['image','zoom','users'], () => {
+        	scale();
+			this.img = properties.image;
+			this.users = properties.users;
+			if (typeof properties.zoomValue !== 'undefined') {
+				this.zoomValue = properties.zoomValue;
+			}
+			if (drawing !== 1) {
+				drawing = 1;
+				loadData(this.img, this.zoomValue);
+			}
+        });
 
         function scale() {
         	

@@ -10,7 +10,7 @@ let usersRouter = require('./routes/users');
 let app = express();
 
 //default options
-app.use(fileUpload());
+app.use(fileUpload({}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -138,20 +138,18 @@ class EyeCloud extends Visualization {
          * Upon any change of the properties class, check what settings have changed
          * and apply the new settings to the visualization
          */
-        properties.onchange.set('eyecloud', event => {
-            //if (this.img !== properties.image) { // If the image has been changed
-            if (event.type === 'image') { // If the image has been changed
-                //this.img = properties.image;
-                if (!drawing) { // If we are not already drawing the eye cloud
-                    drawing = true;
-                    generateData(dataset.getImageData(properties.image));
-                    $('.toast').toast('close') // Close popups
-                    draw();
-                }
-            } else if (event.type === 'color') { // If the color setting has been changed
-                strokeColor = properties.getColorHex(); // set global color variable
-                setColor(properties.getColorHex());
+        properties.setListener('eyecloud', 'image', event => {
+            //this.img = properties.image;
+            if (!drawing) { // If we are not already drawing the eye cloud
+                drawing = true;
+                generateData(dataset.getImageData(properties.image));
+                $('.toast').toast('close') // Close popups
+                draw();
             }
+        });
+        properties.setListener('eyecloud', 'color', event => {
+            strokeColor = properties.getColorHex(); // set global color variable
+            setColor(properties.getColorHex());
         });
 
         /**

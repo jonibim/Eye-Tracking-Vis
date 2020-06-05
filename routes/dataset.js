@@ -20,7 +20,12 @@ router.post('/upload', function (req, res, next) {
 
 // handle request
 router.get('/available', function (req, res, next) {
-    let datasets = datasetloader.getAllDatasets();
+    let datasets;
+    try {
+        datasets = datasetloader.getAllDatasets();
+    } catch (error){
+        console.error(error);
+    }
 
     res.status(200).send(datasets);
 });

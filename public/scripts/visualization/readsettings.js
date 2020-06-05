@@ -7,7 +7,12 @@ let zoomValue;
 
 //- React on Dataset Selection Dropdown -//
 function selectDataset(value) {
-    window.href = '/visualization?id=' + value.substring(3)
+    if (value !== "") {
+        if (value !== datasetId) {
+            //console.log('/visualization?id=' + value)
+            window.location.href = '/visualization?id=' + value;
+        }
+    }
 }
 
 function applySettings() {

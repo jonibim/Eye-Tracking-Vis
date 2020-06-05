@@ -11,7 +11,6 @@ let settingHelpMap = {
 }
 
 //- Update Dataset Dropdown with default value -//
-let default_dataset = '';
 updateDatasets()
 
 //- Update Zoom Slider with default value -//
@@ -35,11 +34,11 @@ async function updateDatasets() {
         let datasets = JSON.parse(data);
     
         let values = [];
-        for (dataset of datasets) {
+        for (let dataset of datasets) {
             let datasetValues = {};
             datasetValues['name'] = dataset['name'];
-            datasetValues['value'] = "###" + dataset['id'];
-            datasetValues['selected'] = default_dataset === dataset['id'];
+            datasetValues['value'] = dataset['id'];
+            datasetValues['selected'] = datasetId === dataset['id'];
             values.push(datasetValues);
         }
         $('.dropdown.search.selection.dataset')
@@ -48,26 +47,26 @@ async function updateDatasets() {
                 selectOnKeydown: false,
                 forceSelection: false,
                 fullTextSearch: 'exact',
-                minCharacters: 3,
+                //-minCharacters: 3,-// Causes a strange bug, just ignore this :)
                 match: 'both',
                 onChange: function(value) {
                     selectDataset(value);
                 }
-            });   
+            }); 
     });
 }
 
 //- Display Help Toast Per Setting -//
 function settingHelp(setting) {
-    $('.toast')
+    $('.toast.settingHelp')
         .toast('close')
     $('body')
         .toast({
             showIcon: 'info',
             title: setting + ' setting',
-            displayTime: 0,
+            displayTime: 5000,
             message: settingHelpMap[setting],
-            class: 'info',
+            class: 'info settingHelp',
             position: 'top center',
             closeIcon: true
     });

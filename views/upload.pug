@@ -56,14 +56,11 @@ block content
                     div(class="field")
                         div(class="ui blue input")
                             input(type="text" name="name" required placeholder="Dataset Name" maxlength="30")
-                    div(class="field")
-                        label(for="dataset")
-                            div(class="ui basic blue button") Select dataset
-                                input(id="dataset" type="file" name="dataset" accept=".csv" required class="fileUpload")
-                    div(class="field" aria-required=true)
-                        label(for="images")
-                            div(class="ui basic blue button") Select images
-                                input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")
+                    div(class="inline field")
+                        label(for="dataset" class="ui basic blue button") Select dataset
+                            input(id="dataset" type="file" name="dataset" accept=".csv" required class="fileUpload")
+                        label(for="images" class="ui basic blue button") Select images
+                            input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")                        
                     input(type="submit" class="ui green submit button" value="Upload")
             //-  Placeholder Segment -//
             div(id="tempSection" class="ui placeholder secondary segment")

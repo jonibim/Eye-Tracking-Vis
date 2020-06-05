@@ -7,7 +7,7 @@ let zoomValue;
 
 //- React on Dataset Selection Dropdown -//
 function selectDataset(value) {
-    console.log(value);
+    window.href = '/visualization?id=' + value.substring(3)
 }
 
 function applySettings() {

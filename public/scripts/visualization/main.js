@@ -17,7 +17,9 @@ let properties = null;
 let datasetId = (() => {
     // get the url parameters
     let params = new URLSearchParams(window.location.search);
-    return params.has('id') && !!params.get('id').trim() ? params.get('id') : 'default';
+    let id = params.has('id') && !!params.get('id').trim() ? params.get('id') : localStorage.getItem('datasetId');
+    localStorage.setItem('datasetId',id);
+    return id;
 })();
 /**
  * @type {Dataset}

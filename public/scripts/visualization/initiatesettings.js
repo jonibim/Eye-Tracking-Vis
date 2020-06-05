@@ -10,21 +10,33 @@ let settingHelpMap = {
     'Zoom' : 'Modify the zoom level of the thumbnails in the Gaze Stripes'
 }
 
+//- Update Dataset Dropdown with default value -//
+let default_dataset = 'test3';
+updateDatasets()
+
+//- Update Zoom Slider with default value -//
+let defaultZoomValue = 50;
+readSlidersZoom(defaultZoomValue)
+
 //- Initialize State of RGBA sliders -//
 for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
 }
 
-updateDatasets()
-
-let defaultZoomValue = 50;
-readSlidersZoom(defaultZoomValue)
-
 //****************** Define Settings Functions ******************//
 
+//- Update the Dataset Dropdown Options -//
 function updateDatasets() {
-    //Loop through all datasets and store with correct format to values
-    $('.dropdown.search.selection.dataset').dropdown({values: [{name: 'Default', value: 'default', selected : true},{name: 'Custom', value: 'custom'}]})
+    let datasets = ['test', 'test2', 'test3']; //- Change this <------------------------
+    let values = [];
+    for (dataset of datasets) {
+        let datasetValues = {};
+        datasetValues['name'] = "Dataset: " + dataset;
+        datasetValues['value'] = "*~*"+dataset;
+        datasetValues['selected'] = default_dataset === dataset;
+        values.push(datasetValues)
+    }
+    $('.dropdown.search.selection.dataset').dropdown({values: values})
 }
 
 //- Display Help Toast Per Setting -//
@@ -76,7 +88,7 @@ $('.dropdown.search.selection.dataset')
         minCharacters: 3,
         match: 'both',
         onChange: function(value,text) {
-            selectDataset(value);
+            selectDataset(text.substring(9));
         }   
     });
 

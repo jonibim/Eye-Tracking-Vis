@@ -26,7 +26,7 @@
 .pusher {
     width: inherit;
     height: inherit;
-    overflow: hidden;
+    overflow: visible;
 
     display: flex;
     flex-flow: column;
@@ -37,6 +37,7 @@
     top: 0px;
     text-align: center;
     width:90%;
+    font-weight: 800;
 }
 
 .dropdown.dataset .filtered.text+label#dataset_icon{
@@ -119,4 +120,9 @@ a.label:hover{
     fill: #878787;
     z-index: 1;
 }
+
+.legend rect {
+    fill:white;
+    stroke:black;
+    opacity:0.8;}
   

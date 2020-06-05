@@ -16,12 +16,8 @@ class Properties {
         this.aoi = new Map();
         this.zoomValue = undefined;
         this.users = [];
-        // TODO
-        // Currently this list only gets bigger, once a visualization is disabled the listener for that visualization remains in this list
-        // which can lead to errors since the visualization object it refers to will never be used again
-        this.eventListeners = [];
 
-        this.events = ['image','color','zoom','users','aoi'];
+        this.events = ['image','color','zoom','users','aoi','sync','showUser','hideUser'];
         this.onchange = new Map();
         for(let event of this.events)
             this.onchange.set(event, new Map());
@@ -47,6 +43,7 @@ class Properties {
         for (let listener of this.onchange.get('image').values())
             listener({type: 'image', oldImage: oldImage, newImage: image});
     }
+
 
     /**
      * Sets the current color
@@ -104,11 +101,17 @@ class Properties {
                 return;
         }
 
-        //console.log('properties.js - Setting users to ' + users.length + (users.length === 1 ? ' user' : ' users'));
+        console.log('properties.js - Setting users to ' + users.length + (users.length === 1 ? ' user' : ' users'));
 
         this.users = [...users];
         for (let listener of this.onchange.get('users').values())
             listener({type: 'users', users: users});
+
+        
+        for (let listener of properties.onchange.get('sync').values())
+            listener()
+ 
+
     }
 
     /**
@@ -140,7 +143,11 @@ class Properties {
      * Sets the given listener to the given events
      * @param {string} tag - the tag of the visualization adding the listener, same as for the registry
      * @param {[]|'image'|'color'|'zoom'|'users'|'aoi'} events - the events to add the listener to
-     * @param {function({type: 'image', oldImage: string, newImage: string}|{type: 'color', color: number[], red: int, green: int, blue: int}|{type: 'zoom', oldZoom: number, newZoom: number}|{type: 'users', users: string[]}|{type: 'aoi', aoi: AOI[]})} listener
+     * @param {function({type: 'image', oldImage: string, newImage: string}|
+     * {type: 'color', color: number[], red: int, green: int, blue: int}|
+     * {type: 'zoom', oldZoom: number, newZoom: number}|
+     * {type: 'users', users: string[]}|
+     * {type: 'aoi', aoi: AOI[]})} listener
      */
     setListener(tag, events, listener){
         if(typeof events === 'string')

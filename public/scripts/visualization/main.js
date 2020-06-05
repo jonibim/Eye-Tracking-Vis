@@ -17,7 +17,7 @@ let properties = null;
 let datasetId = (() => {
     // get the url parameters
     let params = new URLSearchParams(window.location.search);
-    return params.has('id') && !!params.get('id').trim() ? params.get('id') : '';
+    return params.has('id') && !!params.get('id').trim() ? params.get('id') : 'default';
 })();
 /**
  * @type {Dataset}
@@ -71,7 +71,7 @@ window.onload = async () => {
     console.log('main.js - Requesting dataset...')
 
     // get dataset url for id or the default
-    const url = datasetId ? '/datasets/uploads/' + datasetId : '/datasets/default';
+    const url = datasetId && datasetId !== 'default' ? '/datasets/uploads/' + datasetId : '/datasets/default';
     const request = fetch(url + '/data.json', { method: 'GET' });
     await request.then(response => response.arrayBuffer()).then(buffer => {
         let decoder = new TextDecoder("utf8");

@@ -12,6 +12,10 @@ let boxManager = null;
  */
 let properties = null;
 /**
+ * @type {string}
+ */
+let datasetId;
+/**
  * @type {Dataset}
  */
 let dataset = null;
@@ -65,7 +69,8 @@ window.onload = async () => {
     // get the url parameters
     let params = new URLSearchParams(window.location.search);
     // get dataset url for id or the default
-    const url = params.has('id') && !!params.get('id').trim() ? '/datasets/uploads/' + params.get('id') : '/datasets/default';
+    datasetId = params.has('id') && !!params.get('id').trim() ? params.get('id') : '';
+    const url = datasetId ? '/datasets/uploads/' + datasetId : '/datasets/default';
     const request = fetch(url + '/data.json', { method: 'GET' });
     await request.then(response => response.arrayBuffer()).then(buffer => {
         let decoder = new TextDecoder("utf8");

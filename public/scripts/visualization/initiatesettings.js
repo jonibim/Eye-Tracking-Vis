@@ -11,7 +11,7 @@ let settingHelpMap = {
 }
 
 //- Update Dataset Dropdown with default value -//
-let default_dataset = 'test3';
+let default_dataset = '';
 updateDatasets()
 
 //- Update Zoom Slider with default value -//
@@ -26,17 +26,35 @@ for ([x, y] of Object.entries(RGBA)) {
 //****************** Define Settings Functions ******************//
 
 //- Update the Dataset Dropdown Options -//
-function updateDatasets() {
-    let datasets = ['test', 'test2', 'test3']; //- Change this <------------------------
-    let values = [];
-    for (dataset of datasets) {
-        let datasetValues = {};
-        datasetValues['name'] = "Dataset: " + dataset;
-        datasetValues['value'] = "*~*"+dataset;
-        datasetValues['selected'] = default_dataset === dataset;
-        values.push(datasetValues)
-    }
-    $('.dropdown.search.selection.dataset').dropdown({values: values})
+async function updateDatasets() {
+    const url = '/dataset/available';
+    const request = fetch(url, { method: 'GET' });
+    await request.then(response =>               response.arrayBuffer()).then(buffer => {
+        let decoder = new TextDecoder("utf8");
+        let data = decoder.decode(buffer);
+        let datasets = JSON.parse(data);
+    
+        let values = [];
+        for (dataset of datasets) {
+            let datasetValues = {};
+            datasetValues['name'] = dataset['name'];
+            datasetValues['value'] = "###" + dataset['id'];
+            datasetValues['selected'] = default_dataset === dataset['id'];
+            values.push(datasetValues);
+        }
+        $('.dropdown.search.selection.dataset')
+            .dropdown({
+                values: values,
+                selectOnKeydown: false,
+                forceSelection: false,
+                fullTextSearch: 'exact',
+                minCharacters: 3,
+                match: 'both',
+                onChange: function(value) {
+                    selectDataset(value);
+                }
+            });   
+    });
 }
 
 //- Display Help Toast Per Setting -//
@@ -78,19 +96,6 @@ function usersChanged() {
 }
 
 //****************** Set Element Behaviors/States ******************//
-
-//- Dataset Dropdown -//
-$('.dropdown.search.selection.dataset')
-    .dropdown({
-        selectOnKeydown: false,
-        forceSelection: false,
-        fullTextSearch: 'exact',
-        minCharacters: 3,
-        match: 'both',
-        onChange: function(value,text) {
-            selectDataset(text.substring(9));
-        }   
-    });
 
 //- Detect checkbox update -//
 $('input.settings')

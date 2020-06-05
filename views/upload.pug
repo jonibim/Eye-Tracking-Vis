@@ -59,11 +59,11 @@ block content
                     div(class="field")
                         label(for="dataset")
                             div(class="ui basic blue button") Select dataset
-                                input(id="dataset" type="file" name="dataset" accept=".csv" required style="width: inherit; height: inherit; left: initial; top: initial; opacity: 0; position: absolute; z-index: -1;")
+                                input(id="dataset" type="file" name="dataset" accept=".csv" required class="fileUpload")
                     div(class="field" aria-required=true)
                         label(for="images")
                             div(class="ui basic blue button") Select images
-                                input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required style="width: inherit; height: inherit; left: initial; top: initial; opacity: 0; position: absolute; z-index: -1;")
+                                input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")
                     input(type="submit" class="ui green submit button" value="Upload")
             //-  Placeholder Segment -//
             div(id="tempSection" class="ui placeholder secondary segment")

@@ -126,3 +126,13 @@ a.label:hover{
     stroke:black;
     opacity:0.8;}
   
+
+.fileUpload {
+    width: 0px !important;
+    height: 0px;
+    padding: 0px !important;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}

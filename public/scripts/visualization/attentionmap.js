@@ -27,7 +27,8 @@ class AttentionMap extends Visualization {
             .classed('smalldot ', true)
             .append('svg')
             .attr('width', this.width)
-            .attr('height', this.height);
+            .attr('height', this.height)
+            .on('contextmenu', d3.contextMenu(this.createMenu()));
 
         this.graphics = this.svg.append('g');
 
@@ -83,7 +84,7 @@ class AttentionMap extends Visualization {
             return;
 
         this.graphics.append('image')
-            .attr('href', this.image.src)
+            .attr('xlink:href', this.image.src)
             .attr('width', this.image.naturalWidth)
             .attr('height', this.image.naturalHeight);
 
@@ -149,6 +150,21 @@ class AttentionMap extends Visualization {
     maintainTransform(newWidth, newHeight) {
         let scale = d3.zoomTransform(this.svg.node()).k;
         this.svg.call(this.zoom.translateBy, (newWidth - this.width) / 2 / scale, (newHeight - this.height) / 2 / scale);
+    }
+
+    /**
+     * Creates the context menu
+     * @return {({title?: string, action?: function()} | {divider: boolean})[]}
+     */
+    createMenu(){
+        let menu = [];
+        menu.push({
+            title: 'Download as image',
+            action: () => {
+                downloadSVG(this.svg.node());
+            }
+        })
+        return menu;
     }
 
     onRemoved() {

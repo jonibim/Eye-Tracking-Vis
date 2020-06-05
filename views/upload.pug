@@ -59,9 +59,14 @@ block content
                     div(class="inline field")
                         label(for="dataset" class="ui basic blue button") Select dataset
                             input(id="dataset" type="file" name="dataset" accept=".csv" required class="fileUpload")
+                        div(class="ui large basic grey label filePreview dataset") No dataset selected yet
+                    div(class="inline field")
                         label(for="images" class="ui basic blue button") Select images
-                            input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")                        
+                            input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")
+                        div(class="ui large basic grey label filePreview images") No images selected yet 
+                        i(class="ui circular search icon blue inverted" onclick="previewImages()")
                     input(type="submit" class="ui green submit button" value="Upload")
+            
             //-  Placeholder Segment -//
             div(id="tempSection" class="ui placeholder secondary segment")
                 div(class="ui icon header")
@@ -77,7 +82,20 @@ block content
                     i(class="ui red exclamation icon")
                     p Failed to upload dataset!
                     p(id='failureMessage')
-            //SHOW UPLOADED FILES
+
+            div(class="ui preview modal")
+                div(class="ui icon circular red left floated button small" onclick="closeModal('preview')" style="margin:5px;")
+                    i(class="ui close icon") 
+                div(class="ui centered large header") Image Preview
+                div#imagePreviewContent(class="content" style="max-width:1000px;")
+                    div(class="ui header") No images were selected yet!
+
+            div(class="ui individualPreview modal")
+                div(class="ui icon circular red left floated button" onclick="closeModal('individualPreview')" style="margin:5px;")
+                    i(class="ui close icon") 
+                div#ImagePreviewText(class="ui centered large header") Image Preview
+                div(class="content" style="max-width:1000px;")
+                    img#imagePreview(class="ui centered big image")
 
 block post_scripts
     //- Set Active page to Upload in 'navigation' sidebar -//

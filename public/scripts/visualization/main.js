@@ -14,7 +14,11 @@ let properties = null;
 /**
  * @type {string}
  */
-let datasetId;
+let datasetId = (() => {
+    // get the url parameters
+    let params = new URLSearchParams(window.location.search);
+    return params.has('id') && !!params.get('id').trim() ? params.get('id') : '';
+})();
 /**
  * @type {Dataset}
  */
@@ -66,10 +70,7 @@ window.onload = async () => {
 
     console.log('main.js - Requesting dataset...')
 
-    // get the url parameters
-    let params = new URLSearchParams(window.location.search);
     // get dataset url for id or the default
-    datasetId = params.has('id') && !!params.get('id').trim() ? params.get('id') : '';
     const url = datasetId ? '/datasets/uploads/' + datasetId : '/datasets/default';
     const request = fetch(url + '/data.json', { method: 'GET' });
     await request.then(response => response.arrayBuffer()).then(buffer => {

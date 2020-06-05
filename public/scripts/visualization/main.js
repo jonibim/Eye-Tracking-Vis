@@ -65,7 +65,7 @@ window.onload = async () => {
     // get the url parameters
     let params = new URLSearchParams(window.location.search);
     // get dataset url for id or the default
-    const url = params.has('id') ? '/datasets/uploads/' + params.get('id') : '/datasets/default';
+    const url = params.has('id') && !!params.get('id').trim() ? '/datasets/uploads/' + params.get('id') : '/datasets/default';
     const request = fetch(url + '/data.json', { method: 'GET' });
     await request.then(response => response.arrayBuffer()).then(buffer => {
         let decoder = new TextDecoder("utf8");

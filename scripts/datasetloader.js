@@ -99,7 +99,8 @@ async function handleDatasetUpload(files, name, response) {
 
 
 function getAllDatasets() {
-    fileSystem.mkdirSync(uploadsFolder);
+    if(!fileSystem.existsSync(uploadsFolder))
+        fileSystem.mkdirSync(uploadsFolder);
     let folders = fileSystem.readdirSync(uploadsFolder, {withFileTypes: true}).filter(file => file.isDirectory()).map(file => uploadsFolder + file.name);
     folders.push(defaultFolder);
 

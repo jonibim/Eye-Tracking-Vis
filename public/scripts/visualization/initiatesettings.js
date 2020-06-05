@@ -63,7 +63,7 @@ function settingHelp(setting) {
     $('body')
         .toast({
             showIcon: 'info',
-            title: setting + ' setting',
+            title: setting + ' Setting',
             displayTime: 5000,
             message: settingHelpMap[setting],
             class: 'info settingHelp',

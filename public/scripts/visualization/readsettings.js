@@ -3,7 +3,6 @@ let visualizations = {};
 let users = [];
 let selected_users = [];
 let exec = null
-//let edit = false;
 let zoomValue;
 
 //- React on Dataset Selection Dropdown -//

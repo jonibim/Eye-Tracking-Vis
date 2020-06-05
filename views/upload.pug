@@ -36,19 +36,19 @@ block content
                             thead
                                 tr #[th] #[th Type] #[th Example]
                             tbody
-                                tr #[td Timestamp] #[td Number] #[td 462478]
-                                tr #[td StimuliName] #[td Filename] #[td 14b_Düsseldorf_S2.jpg]
-                                tr(class="disabled") #[td FixationIndex] #[td Number] #[td 1285]
-                                tr #[td FixationDuration] #[td Number] #[td 1149]
-                                tr #[td MappedFixationPointX] #[td Number] #[td 490]
-                                tr #[td MappedFixationPointY] #[td Number] #[td 378]
-                                tr #[td user] #[td 'p'Number] #[td p24]
-                                tr(class="disabled") #[td description] #[td "Color"/"Gray"] #[td gray]
+                                tr #[td(data-position="right center" data-tooltip="Time since start of experiment") Timestamp] #[td Number] #[td 462478]
+                                tr #[td(data-position="right center" data-tooltip="Filename of stimuli") StimuliName] #[td Filename] #[td 14b_Düsseldorf_S2.jpg]
+                                tr #[td(data-position="right center" data-tooltip="Fixation counter, not used, still required") FixationIndex] #[td(class="disabled") Number] #[td(class="disabled") 1285]
+                                tr #[td(data-position="right center" data-tooltip="Time of fixation at given point") FixationDuration] #[td Number] #[td 1149]
+                                tr #[td(data-position="right center" data-tooltip="X-value of fixation point") MappedFixationPointX] #[td Number] #[td 490]
+                                tr #[td(data-position="right center" data-tooltip="Y-value of fixation point") MappedFixationPointY] #[td Number] #[td 378]
+                                tr #[td(data-position="right center" data-tooltip="Participant id") user] #[td 'p'Number] #[td p24]
+                                tr #[td(data-position="right center" data-tooltip="Color or Gray, not used, still required") description] #[td(class="disabled") "Color"/"Gray"] #[td(class="disabled") gray]
                 div(class="ui styled accordion")
                     div(class="title") #[i(class="dropdown icon")] Image Format
                     div(class="content")
                         p Any of the following image extensions can be used: 
-                        div(class="ui bulleted list") #[div(class="item") .png] #[div(class="item") .jpg] #[div(class="item") .jpeg]
+                        div(class="ui horizontal celled list") #[div(class="item") .png] #[div(class="item") .jpg] #[div(class="item") .jpeg]
 
                 //-  Interactive form -//
                 p(class="ui small dividing header") Upload Form

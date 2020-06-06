@@ -67,6 +67,7 @@ class AttentionMap extends Visualization {
 
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;
+            
     }
 
     syncZoom(zoomCord){

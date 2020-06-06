@@ -3,7 +3,7 @@
  * @param {string} filename? - preferred name for the downloaded file
  * @return {HTMLImageElement}
  */
-async function downloadSVG(svg, filename = 'image'){
+async function downloadSVG(svg, filename = 'image') {
     await parseImages(svg);
     let xml = new XMLSerializer().serializeToString(svg);
     let url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(xml);
@@ -11,7 +11,7 @@ async function downloadSVG(svg, filename = 'image'){
     let image = new Image();
 
     image.onload = function () {
-        let canvas =  document.createElement('canvas');
+        let canvas = document.createElement('canvas');
         canvas.width = image.naturalWidth * 5;
         canvas.height = image.naturalHeight * 5;
         canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -34,22 +34,35 @@ async function downloadSVG(svg, filename = 'image'){
 /**
  * @param {SVGElement} svg
  */
-async function createSVGImage(svg){
+async function createSVGImage(svg) {
     await parseImages(svg);
 
     let xml = new XMLSerializer().serializeToString(svg);
     let url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(xml);
 
-    let image = new Image();
-    image.src = url;
-    return image;
+    //I followed this suggestion as in here 
+    // https://stackoverflow.com/questions/26635627/saving-images-from-url-using-jszip
+    
+    function urlToPromise(url) {
+        return new Promise(function (resolve, reject) {
+            JSZipUtils.getBinaryContent(url, function (err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+
+    return urlToPromise(url);
 }
 
 /**
  * @param {SVGElement} svg
  * @param {function(svg: SVGElement)} callback
  */
-async function parseImages(svg){
+async function parseImages(svg) {
     return new Promise((resolve, reject) => {
         let namespace = 'http://www.w3.org/1999/xlink';
 
@@ -81,7 +94,7 @@ async function parseImages(svg){
                 element.setAttributeNS(namespace, 'href', dataUrl);
 
                 left--;
-                if(left === 0)
+                if (left === 0)
                     resolve(svg);
             };
             request.onerror = () => parseImage(element);
@@ -96,13 +109,13 @@ async function parseImages(svg){
         for (let image of images) {
             let href = image.getAttributeNS(namespace, 'href');
 
-            if (href.indexOf('data:image') < 0){
-                if(href.indexOf('.svg') > 0)
+            if (href.indexOf('data:image') < 0) {
+                if (href.indexOf('.svg') > 0)
                     parseSvg(href, image);
                 else
                     parseImage(image);
             }
-            else{
+            else {
                 left--;
                 if (left === 0)
                     resolve(svg);

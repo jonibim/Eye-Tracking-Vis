@@ -249,12 +249,10 @@ class Editor extends Visualization {
         /**
          * Attach the image to the background of svg
          */
-        this.svgG.append('svg:image')
+        this.svgG.append('image')
             .attr('xlink:href', this.image.src)
-            .attr('x', this.left)
-            .attr('y', this.top)
-            .attr('width', this.naturalWidth)
-            .attr('height', this.naturalHeight)
+            .attr('width', this.image.naturalWidth)
+            .attr('height', this.image.naturalHeight);
 
         /**
          * The loop for displaying the dots and the paths

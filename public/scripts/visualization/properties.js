@@ -23,6 +23,8 @@ class Properties {
             this.onchange.set(event, new Map());
     }
 
+
+
     /**
      * Sets the currently selected image
      * @param {string} image
@@ -114,30 +116,6 @@ class Properties {
 
     }
 
-    /**
-     * @return {AOI[]} AOIs for the selected image
-     */
-    getCurrentAOI() {
-        return this.image ? this.aoi.get(this.image) : [];
-    }
-
-    /**
-     * @return {int} the number of AOIs for the selected image
-     */
-    getCurrentAOIsize() {
-        return this.aoi.get(this.image).length;
-    }
-
-    /**
-     * Removes all AOIs for the selected image
-     */
-    removeCurrentAOIs(){
-        let aoi = [];
-        this.aoi.set(this.image, aoi);
-
-        for (let listener of this.onchange.get('aoi').values())
-            listener({type: 'aoi', aoi: aoi});
-    }
 
     /**
      * Sets the given listener to the given events
@@ -162,12 +140,65 @@ class Properties {
             this.onchange.get(event).set(tag, listener);
         }
     }
+
+    /**
+     * @return {AOI[]} AOIs for the selected image
+     */
+    getCurrentAOI() {
+        return this.image ? this.aoi.get(this.image) : [];
+    }
+
+    /**
+     * @return {int} the number of AOIs for the selected image
+     */
+    getCurrentAOIsize() {
+        return this.aoi.get(this.image).length;
+    }
+
+    /**
+     * @return {[]} Selected users for the selected image
+     */
+    getCurrentUsers(){
+        return this.users
+    }
+
+    /**
+     * @return {number} The zoom value for the selected image
+     */
+    getCurrentZoom(){
+        return this.zoomValue
+    }
+
+    /**
+     * @return {float[]} The zoom value for the selected image
+     */
+    getCurrentColor(){
+        return this.rgba
+    }
+
+    /**
+     * @return {string} The selected image
+     */
+    getCurrentImage(){
+        return this.image
+    }
+
+    /**
+     * Removes all AOIs for the selected image
+     */
+    removeCurrentAOIs(){
+        let aoi = [];
+        this.aoi.set(this.image, aoi);
+
+        for (let listener of this.onchange.get('aoi').values())
+            listener({type: 'aoi', aoi: aoi});
+    }
 }
 
 /**
  * Stores the selected AOI
  * @property {string} image - the image the aoi is for
- * @property {String} id - the id for the aoi in that image
+ * @property {string} id - the id for the aoi in that image
  * @property {float} left - left side of the selected area
  * @property {float} top - top side of the selected area
  * @property {float} right - right side of the selected area
@@ -195,7 +226,7 @@ class AOI {
      * @param {float} top - top side of the selected area
      * @param {float} right - right side of the selected area
      * @param {float} bottom - bottom side of the selected area
-     * @param {String} id - used to idenitfy the created aoi unqieluely. 
+     * @param {string} id - used to idenitfy the created aoi unqieluely. 
      */
     setSelection(left, top, right, bottom, id) {
         if (!properties.image) { // an image must be selected first

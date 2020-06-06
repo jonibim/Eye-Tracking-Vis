@@ -12,8 +12,10 @@ function downloadSVG(svg, filename = 'image'){
 
         image.onload = function () {
             let canvas =  document.createElement('canvas');
+            canvas.width = image.naturalWidth * 5;
+            canvas.height = image.naturalHeight * 5;
             canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-            let data = canvas.toDataURL('image/png').replace("image/png", "image/octet-stream");
+            let data = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
 
             // create a button just to set the file name
             let button = document.createElement('a');
@@ -35,7 +37,7 @@ function downloadSVG(svg, filename = 'image'){
  * @param {function(svg: SVGElement)} callback
  */
 function parseImages(svg, callback){
-    let namespace = "http://www.w3.org/1999/xlink";
+    let namespace = 'http://www.w3.org/1999/xlink';
 
     // convert image to a dataURL
     let parseImage = (image) => {

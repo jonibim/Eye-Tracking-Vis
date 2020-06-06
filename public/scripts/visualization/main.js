@@ -72,14 +72,12 @@ window.onload = async () => {
 
     console.log('main.js - Requesting dataset...')
 
-    // get dataset url for id or the default
-    const url = datasetId && datasetId !== 'default' ? '/datasets/uploads/' + datasetId : '/datasets/default';
-    const request = fetch(url + '/data.json', { method: 'GET' });
-    await request.then(response => response.arrayBuffer()).then(buffer => {
-        let decoder = new TextDecoder("utf8");
-        let data = decoder.decode(buffer);
-        dataset.importData(data, url);
-    });
+    let result = await requestDataset(datasetId);
+    if(!result){
+        datasetId = 'default';
+        result = await requestDataset(datasetId);
+    }
+    dataset.importData(result.data, result.url);
 
     console.log('main.js - Dataset loaded')
 
@@ -88,4 +86,18 @@ window.onload = async () => {
     selectImage(dataset.images[0].image);
     applySettings();
     console.log('main.js - Settings Initialized')
+}
+
+/**
+ * Requests the dataset from the server
+ * @param {string} id
+ * @return {{data: string, url: string}}
+ */
+async function requestDataset(id){
+    // get dataset url for id or the default
+    const url = datasetId && datasetId !== 'default' ? '/datasets/uploads/' + datasetId : '/datasets/default';
+    const request = await fetch(url + '/data.json', { method: 'GET' });
+    if(request.status === 404)
+        return '';
+    return {data: new TextDecoder("utf8").decode(await request.arrayBuffer()), url: url};
 }

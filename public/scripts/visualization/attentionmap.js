@@ -161,7 +161,7 @@ class AttentionMap extends Visualization {
         menu.push({
             title: 'Download as image',
             action: () => {
-                downloadSVG(this.svg.node());
+                downloadSVG(this.svg.node(), 'Attention Map');
             }
         })
         return menu;

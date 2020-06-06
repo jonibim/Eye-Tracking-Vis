@@ -1,8 +1,9 @@
 /**
  * @param {SVGElement} svg
+ * @param {string} filename? - preferred name for the downloaded file
  * @return {HTMLImageElement}
  */
-function downloadSVG(svg){
+function downloadSVG(svg, filename = 'image'){
     parseImages(svg, () => {
         let xml = new XMLSerializer().serializeToString(svg);
         let url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(xml);
@@ -12,8 +13,17 @@ function downloadSVG(svg){
         image.onload = function () {
             let canvas =  document.createElement('canvas');
             canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-            // TODO somehow change the file name
-            window.location.href = canvas.toDataURL('image/png').replace("image/png", "image/octet-stream");
+            let data = canvas.toDataURL('image/png').replace("image/png", "image/octet-stream");
+
+            // create a button just to set the file name
+            let button = document.createElement('a');
+            button.style.display = 'none';
+            button.download = filename.endsWith('.png') ? filename : filename + '.png';
+            button.href = data;
+            // Firefox requires the button to be in the document
+            document.body.appendChild(button);
+            button.click();
+            document.body.removeChild(button);
         };
 
         image.src = url;

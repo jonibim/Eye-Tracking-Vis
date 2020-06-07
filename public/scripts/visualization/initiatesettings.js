@@ -5,7 +5,7 @@ let settingHelpMap = {
     'Visualizations': 'Select the visualizations/viewports to display',
     'Image': 'Select the image to display',
     'Users': 'Select the users to display',
-    'Color': 'Modify the color of the fixations on the Attention Map',
+    'Color': 'Modify the color of the fixations on the Attention Map and the main circle in the <br> Eye Cloud',
     'Editor': 'Instructs the navigation commands for the AOI editor',
     'Zoom': 'Modify the zoom level of the thumbnails in the Gaze Stripes'
 }
@@ -228,6 +228,21 @@ $('.ui.slider.zoom')
     });
 
 //- Save Configuration -//
+function saveSettingsImageWarning() {
+    $('.toast.ImageSaveWarning')
+        .toast('close')
+    $('body')
+        .toast({
+            showIcon: 'exclamation mark',
+            title: "Warning!",
+            displayTime: 0,
+            message: "This option makes the current settings available for other images. However, these settings may not work properly for images with different dimensions or users. It is best to use settings for images with the same properties (such as comparing a colored image with a gray image)",
+            class: 'error ImageSaveWarning',
+            position: 'top center',
+            closeIcon: true
+        });
+}
+
 
 $("#saveSettings").click(() => {
 

@@ -228,12 +228,7 @@ block sidebars
                         div(class="ui checkbox" id="imageCheck")
                             input(type="checkbox")
                             label Allow settings to be used on other images  
-                                    //-     TODO: Rick turn this into a popup
-                                            This option makes the current setting available for other images. 
-                                            However, these settings may not work propery for images which of a different size 
-                                            or with different users. It is best to use settings for images with the same property 
-                                            (such as comparing a colorful image with a greyscale image)"  
-                                    i(class='question circle icon')
+                                i(class='question circle icon' onclick="saveSettingsImageWarning()")
                                 
                 div(class='ui segment')
                     p(id='previewId') 

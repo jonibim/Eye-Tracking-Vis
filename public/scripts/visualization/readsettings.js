@@ -9,7 +9,6 @@ let zoomValue;
 function selectDataset(value) {
     if (value !== "") {
         if (value !== datasetId) {
-            //console.log('/visualization?id=' + value)
             window.location.href = '/visualization?id=' + value;
         }
     }
@@ -32,7 +31,13 @@ function checkboxChanged(id) {
     let state = document.getElementById(id).checked
     visualizations[id] = state;
     if (id === 'attentionmap') {
-        $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+        if (!$('#eyecloud:checked').length > 0) {
+            $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+        }
+    }  else if (id === 'eyecloud') {
+        if (!$('#attentionmap:checked').length > 0) {
+            $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+        }
     }  else if (id === 'editor') {
         $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
     }  else if (id === 'gazestripe') {

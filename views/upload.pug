@@ -64,9 +64,9 @@ block content
                         label(for="images" class="ui basic blue button") Select images
                             input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")
                         div(class="ui large basic grey label filePreview images") No images selected yet 
-                        i(class="ui circular search icon blue inverted" onclick="previewImages()")
                     input(type="submit" class="ui green submit button" value="Upload")
-            
+                    div(class="ui blue icon button" onclick="previewImages()") Preview Images 
+                        i(class="ui search icon")
             //-  Placeholder Segment -//
             div(id="tempSection" class="ui placeholder secondary segment")
                 div(class="ui icon header")

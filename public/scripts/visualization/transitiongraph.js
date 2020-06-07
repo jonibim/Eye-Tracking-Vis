@@ -148,11 +148,12 @@ class TransitionGraph extends Visualization {
                     .append('h2')
                     .attr('class', 'ui inverted icon header')
 
-
+                content.append('div').attr("style","height:"+ (this.box.title.clientHeight + 5) +"px")
                 content.append('i')
                     .attr('class', 'exclamation icon')
 
                 content.append('div').text('No AOIs.')
+                content.append('div').attr("style","font-size: 12px").text('Check the editor commands for adding AOIs')
                 return
             }
 

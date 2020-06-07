@@ -106,7 +106,7 @@ block sidebars
                 div(class="title")
                     i#usersLoadingIcon(class="ui users icon")
                     label Users:
-                div(class="ui form content")
+                div(class="ui form content" style={'z-index': '5'})
                     //- Dropdown selection menu -//
                     div(class="ui fluid search selection multiple dropdown user")
                         div(class="default text") Select users
@@ -186,11 +186,11 @@ block sidebars
             div(class="inline field small-padding")
                 div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted save icon")
-                div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
+                div(id="uploadSettings" class="ui green basic disabled circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted upload icon")
                 
 
-        div(class='ui modal')
+        div(class='ui modal' id='modalSave')
             div(class='header') Save settings
             div(class="content")
                 div(class='text' style='text-align:left')
@@ -235,7 +235,7 @@ block sidebars
                 button(class="ui green button" id="submitRequest")
                     i(class="i file code icon")
                     | Download JSON
-                button(class="ui blue button")
+                button(class="ui blue disabled button")
                     i(class="i share icon")
                     | Share via PasteBin
 

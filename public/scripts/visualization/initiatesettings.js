@@ -324,6 +324,20 @@ $("#snapCheck").checkbox({
 })
 
 $("#submitRequest").click(() => {
+    
+    var dimmer = d3.select('#modalSave')
+        .append('div')
+        .attr('id','settingsDimmer')
+        .attr('class','ui active dimmer')
+
+    var loader = dimmer.append('div')
+        .attr('id','settingsLoader')
+        .attr('class','ui indeterminate text loader')
+        .text('Exporting settings. This may take a while for the snapshots')
+
+    var errnoFlag = 0
+
+    try{
 
     var jsonExport = {}
 
@@ -349,6 +363,10 @@ $("#submitRequest").click(() => {
     //Eye Cloud is not working with this 
     // because of the way it is implemented
 
+    setTimeout(() => {
+        if(dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
+    }, 0);
+
     //Start creation of zip file
     if ($("#snapCheck").checkbox('is checked')) {
         var zip = new JSZip();
@@ -364,10 +382,10 @@ $("#submitRequest").click(() => {
         //Start to add files to the folder. The loop above does the same functionality
         // But i commented it out for debugging and i am using the lines below
 
-        folder.file('gazestripe.png', createSVGImage(registry.map.get('gazestripe').instance.svg.node()))
-        //folder.file('attentionmap.png', createSVGImage(registry.map.get('attentionmap').instance.svg.node()))
-        //folder.file('editor.png', createSVGImage(registry.map.get('editor').instance.svg.node()))
-        //folder.file('transitiongraph.png', createSVGImage(registry.map.get('transitiongraph').instance.svg.node()))
+        //folder.file('gazestripe.png', createSVGImage(registry.map.get('gazestripe').instance.svg.node()))
+        folder.file('attentionmap.png', createSVGImage(registry.map.get('attentionmap').instance.svg.node()))
+        folder.file('editor.png', createSVGImage(registry.map.get('editor').instance.svg.node()))
+        folder.file('transitiongraph.png', createSVGImage(registry.map.get('transitiongraph').instance.svg.node()))
 
         zip.generateAsync({ type: "blob" })
             .then(function (content) {
@@ -383,6 +401,41 @@ $("#submitRequest").click(() => {
         document.body.appendChild(prepareDownload);
         prepareDownload.click();
         prepareDownload.remove();
+    }
+    
+
+   
+
+    }
+    catch(err){
+
+        errorFlag = 1
+
+        d3.select('#settingsLoader').remove()
+
+        var content = d3.select('#settingsDimmer')
+            .append('div')
+            .attr('class', 'contnet')
+            .append('h2')
+            .attr('class', 'ui red icon header')
+
+        content.append('i')
+            .attr('class', 'exclamation circle icon')
+
+        content.append('div')
+            .text('An error occured')
+        content.append('div')
+            .attr('style','font-size: 16px; color:white')
+            .text('Error Messaage: ' + err.message)
+            content.append('button')
+            .attr('class','ui red small button')
+            .text('ok')
+            .on('click', () => (
+                d3.select('#settingsDimmer').remove()
+            ))
+        console.log(err.stack)
+
+
     }
 
 });

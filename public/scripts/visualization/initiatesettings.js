@@ -383,9 +383,9 @@ $("#submitRequest").click(() => {
         // But i commented it out for debugging and i am using the lines below
 
         //folder.file('gazestripe.png', createSVGImage(registry.map.get('gazestripe').instance.svg.node()))
-        folder.file('attentionmap.png', createSVGImage(registry.map.get('attentionmap').instance.svg.node()))
-        folder.file('editor.png', createSVGImage(registry.map.get('editor').instance.svg.node()))
-        folder.file('transitiongraph.png', createSVGImage(registry.map.get('transitiongraph').instance.svg.node()))
+        folder.file('attentionmap.png', createSVGImageData(registry.map.get('attentionmap').instance.svg.node()))
+        folder.file('editor.png', createSVGImageData(registry.map.get('editor').instance.svg.node()))
+        folder.file('transitiongraph.png', createSVGImageData(registry.map.get('transitiongraph').instance.svg.node()))
 
         zip.generateAsync({ type: "blob" })
             .then(function (content) {

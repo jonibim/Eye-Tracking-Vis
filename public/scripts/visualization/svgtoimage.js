@@ -10,7 +10,7 @@ async function downloadSVG(svg, filename = 'image') {
 
     let image = new Image();
 
-    image.onload = function () {
+    image.onload = () => {
         let canvas = document.createElement('canvas');
         canvas.width = image.naturalWidth * 5;
         canvas.height = image.naturalHeight * 5;
@@ -33,29 +33,33 @@ async function downloadSVG(svg, filename = 'image') {
 
 /**
  * @param {SVGElement} svg
+ * @return {Promise|undefined}
  */
-async function createSVGImage(svg) {
+async function createSVGImageData(svg) {
     await parseImages(svg);
 
     let xml = new XMLSerializer().serializeToString(svg);
     let url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(xml);
 
-    //I followed this suggestion as in here 
+    //I followed this suggestion as in here
     // https://stackoverflow.com/questions/26635627/saving-images-from-url-using-jszip
-    
-    function urlToPromise(url) {
-        return new Promise(function (resolve, reject) {
-            JSZipUtils.getBinaryContent(url, function (err, data) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
-            });
-        });
-    }
 
-    return urlToPromise(url);
+    // return JSZipUtils.getBinaryContent(url);
+
+    return new Promise((resolve, reject) => {
+        let image = new Image();
+
+        image.onload = async () => {
+            let canvas = document.createElement('canvas');
+            canvas.width = image.naturalWidth * 5;
+            canvas.height = image.naturalHeight * 5;
+            canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+            let data = canvas.toDataURL('image/png');
+            resolve(await JSZipUtils.getBinaryContent(data));
+        };
+
+        image.src = url;
+    });
 }
 
 /**

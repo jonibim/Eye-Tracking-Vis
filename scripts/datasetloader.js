@@ -71,7 +71,7 @@ async function handleDatasetUpload(files, name, response) {
     // try to write the data and images to the uploads folder
     try {
         // create folder
-        fileSystem.mkdirSync(uploadsFolder + id);
+        fileSystem.mkdirSync(uploadsFolder + id, {recursive: true});
 
         // write info file
         fileSystem.writeFileSync(uploadsFolder + id + '/info.json', JSON.stringify({id: id, name: name}), 'utf-8');

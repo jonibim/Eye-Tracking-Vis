@@ -6,6 +6,8 @@ class EyeCloud extends Visualization {
     constructor(box) {
         super(box, 'Eye Cloud', 'eyecloud');
 
+        //this.image = new Image();
+        //this.users = [];
         this.zoom = d3.zoom();
 
         let width = box.inner.clientWidth; // Width of the box
@@ -138,21 +140,28 @@ class EyeCloud extends Visualization {
          * Upon any change of the properties class, check what settings have changed
          * and apply the new settings to the visualization
          */
-        properties.onchange.set('eyecloud', event => {
-            //if (this.img !== properties.image) { // If the image has been changed
-            if (event.type === 'image') { // If the image has been changed
-                //this.img = properties.image;
-                if (!drawing) { // If we are not already drawing the eye cloud
-                    drawing = true;
-                    generateData(dataset.getImageData(properties.image));
-                    $('.toast').toast('close') // Close popups
-                    draw();
-                }
-            } else if (event.type === 'color') { // If the color setting has been changed
-                strokeColor = properties.getColorHex(); // set global color variable
-                setColor(properties.getColorHex());
+        properties.setListener('eyecloud', 'image', event => {
+            //this.image = properties.image;
+            if (!drawing) { // If we are not already drawing the eye cloud
+                drawing = true;
+                generateData(dataset.getImageData(properties.image));
+                $('.toast').toast('close') // Close popups
+                draw();
             }
         });
+        properties.setListener('eyecloud', 'color', event => {
+            strokeColor = properties.getColorHex(); // set global color variable
+            setColor(properties.getColorHex());
+        });
+        properties.setListener('eyecloud', 'users', event => {
+            //this.users = properties.users;
+            if (!drawing) { // If we are not already drawing the eye cloud
+                drawing = true;
+                generateData(dataset.getImageData(properties.image));
+                $('.toast').toast('close') // Close popups
+                draw();
+            }
+        })
 
         /**
          * Workaround to draw visualization when turned off an on
@@ -180,12 +189,14 @@ class EyeCloud extends Visualization {
         function generateData(imageData) {
             allCoordinates = [];
             imageData.scanpaths.forEach(function (user) {
-                user.points.forEach(function (point) {
-                    allCoordinates.push({co_x: parseInt(point.x), co_y: parseInt(point.y)});
-                })
+                if (properties.users.includes(user.person)) { // For every selected user, get the coordinates
+                    user.points.forEach(function (point) {
+                        allCoordinates.push({co_x: parseInt(point.x), co_y: parseInt(point.y)});
+                    })
+                }
             });
 
-            //console.log(coordinates);
+            //console.log(allCoordinates);
 
             /**
              * Generate an array of 'density scores' for each coordinate

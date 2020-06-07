@@ -7,9 +7,14 @@ block styles
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
-    // d3.js
+    // d3.js & additional libraries
     script(src="https://d3js.org/d3.v5.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.0.1/math.js")
     script(src="scripts/additional-modules/d3-context-menu.js")
+    script(src="scripts/additional-modules/jszip.js")
+    script(src="scripts/additional-modules/FileSaver.js")
+    script(src="scripts/additional-modules/jszip-utils.js")
     // framework
     script(src='scripts/visualization/main.js')
     script(src='scripts/visualization/dataset.js')
@@ -19,6 +24,7 @@ block pre_scripts
     script(src='scripts/visualization/properties.js')
     script(src='scripts/visualization/styles.js')
     script(src='scripts/visualization/registry.js')
+    script(src='scripts/visualization/svgtoimage.js')
     // visualizations
     script(src='scripts/visualization/transitiongraph.js')
     script(src='scripts/visualization/eyecloud.js')
@@ -100,14 +106,13 @@ block sidebars
                 div(class="title")
                     i#usersLoadingIcon(class="ui users icon")
                     label Users:
-                div(class="ui form content")
+                div(class="ui form content" style={'z-index': '5'})
                     //- Dropdown selection menu -//
                     div(class="ui fluid search selection multiple dropdown user")
                         div(class="default text") Select users
                         i(class="ui dropdown icon")
                         div(class="menu")
                             //- Values are added in initiatesettings.js -//
-                            div(class="item") No users were found
                     div(class="ui add circular green basic button")
                         i(class="ui add fitted icon")
                     div(class="ui clear circular red basic button")
@@ -179,18 +184,74 @@ block sidebars
                     input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
                     label(for="auto_apply") Apply On Change
             div(class="inline field small-padding")
-                div(class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
+                div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted save icon")
-                div(class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
+                div(id="uploadSettings" class="ui green basic disabled circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted upload icon")
+                
+
+        div(class='ui modal' id='modalSave')
+            div(class='header') Save settings
+            div(class="content")
+                div(class='text' style='text-align:left')
+                    p(style="font-weight: bold;") Choose the desired data for export:
+                div(class='ui segments')
+                    #chooseContent(class="ui horizontal segments")
+                        div(style="min-width: 150px;display: flex;align-items: center;" class="ui left aligned large segment")
+                            div(class='ui list')
+                                div(class='item')
+                                    div(class="ui checkbox" id="usersCheck")
+                                        input(type="checkbox")
+                                        label Users
+                                div(class='item')
+                                    div(class="ui checkbox" id="aoiCheck")
+                                        input(type="checkbox")
+                                        label AOIs
+                                div(class='item')
+                                    div(class="ui checkbox" id="colorCheck")
+                                        input(type="checkbox")
+                                        label Color
+                                div(class='item')
+                                    div(class="ui checkbox" id="zoomCheck")
+                                        input(type="checkbox")
+                                        label Zoom Slider
+                                div(class='item')
+                                    div(class="ui checkbox" id="snapCheck")
+                                        input(type="checkbox")
+                                        label Snapshot
+                        div(class="ui segment")
+                            p Current Image
+                            img(id='previewImage' src="" class="ui large rounded centered fluid image")
+                            p(id='previewImageLabel')
+                    div(class="ui small segment")
+                        -var stringHelp = '<i class="icon person"><i>'
+                        div(class="ui checkbox" id="imageCheck")
+                            input(type="checkbox")
+                            label Allow settings to be used on other images  
+                                i(class='question circle icon' onclick="saveSettingsImageWarning()")
+                                
+                div(class='ui segment')
+                    p(id='previewId') 
+                button(class="ui green button" id="submitRequest")
+                    i(class="i file code icon")
+                    | Download JSON
+                button(class="ui blue disabled button")
+                    i(class="i share icon")
+                    | Share via PasteBin
+
+
+
 
 
 
 block header_content
     //- Topbar Centered Text -//
-    div(class="ui item")
-        div(class="ui center aligned container")
-            div#topbar(class="ui tiny header selectable")
+    div(class="ui item middle")
+        div(class="ui labeled icon search selection dropdown dataset")
+            input(class="search" name="dataset")
+            div(class="text")
+            label#dataset_icon(for="dataset")
+                i(class="file alternate outline icon" style="height:100%;")
     //-  Settings Sidebar Button -//
     div(class="ui item")
         div(class="ui right aligned container" style="margin-right:5px;")

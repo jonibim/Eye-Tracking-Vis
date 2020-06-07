@@ -50,13 +50,18 @@ class Editor extends Visualization {
          */
         this.svgG = this.svg
             .call(this.zoom.on("zoom", () => {
-                this.svgG.attr("transform", d3.event.transform)
-                properties.zoomListeners.forEach(listener => listener(d3.event.transform))
-
+                this.svgG.attr("transform", d3.event.transform);
+                let visualization = registry.getVisualizationInstance('attentionmap');
+                if (visualization) visualization.syncZoom(d3.event.transform);
             }))
             .append("g");
 
-        this.svgGdots = this.svgG.append('g');
+
+        /**
+         * The paths and the dots are saved in this graphic tag
+         */
+        this.svgGcomposition = this.svgG.append('g');
+
 
         /**
          * We filter the zoom function as it usually binds 
@@ -83,14 +88,27 @@ class Editor extends Visualization {
             }
         }, 100);
 
-        properties.onchange.set('editor', event => {
-            if(event.type === 'image')
-                this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
-        })
+        /**
+         * Listeners for setting new images
+         */
+        properties.setListener('editor', 'image', event =>
+            this.image.src = properties.image ? dataset.url + '/images/' + properties.image : ''
+        )
 
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;
 
+
+        /**
+         * Listeners for the show/hide users 
+         */
+        properties.setListener('editor', 'hideUser', (user) => this.hideUser(user))
+        properties.setListener('editor', 'showUser', (user) => this.showUser(user))
+
+
+        /**
+         * The menu part for clearing All AOIs
+         */
         this.clearAllAoiMenu = {
             title: 'Clear all AOIs',
             action: () => {
@@ -101,28 +119,8 @@ class Editor extends Visualization {
             }
         };
 
-        this.devOptions = [
-            {
-                divider: true
-            },
-            {
-                title: 'DevOptions',
-            },
-            {
-                title: 'Get Current AOIs from properties',
-                action: () => console.log(properties.getCurrentAOI())
-            },
-            {
-                title: 'Get AOIs count',
-                action: () => console.log(properties.getCurrentAOIsize())
-            },
-            {
-                title: 'Get Properties Image',
-                action: () => console.log(properties.image)
-            },
 
-        ];
-
+        /** Main Context menu */
         this.menu = [
             {
                 title: 'Enable Brush',
@@ -137,7 +135,6 @@ class Editor extends Visualization {
             },
             {
                 title: 'Fixation info',
-                //action: (elemt, d, i) => console.log('The data for this circle is: ' + d)
             },
             {
                 title: (d) => {
@@ -149,12 +146,12 @@ class Editor extends Visualization {
                     return 'Y-Coordinate ' + d.y;
                 }
             },
-            //...this.devOptions
 
         ];
 
 
-        this.menu2 = () => {
+        /** Dynamic menu which is created according to the positon of the mouse */
+        this.dynamicMenu = () => {
 
             let addAoiMenu = {
                 title: 'Add AOI',
@@ -166,10 +163,13 @@ class Editor extends Visualization {
 
             let result = [];
 
+            /** Save the object which is below mouse
+             * This is done in order to see if the mouse 
+             * is on top of the aois
+             */
             let x = event.clientX, y = event.clientY,
                 elementMouseIsOver = document.elementFromPoint(x, y);
             //console.log(elementMouseIsOver)
-
             if (this.brush) {
                 if (this.extent) {
                     this.bottom = this.extent[1][1] - this.extent[0][1]
@@ -196,7 +196,6 @@ class Editor extends Visualization {
                         divider: true
                     })
 
-                //console.log(elementMouseIsOver.classList)
                 if (elementMouseIsOver.classList.contains('ontop')) {
                     this.rectangle = elementMouseIsOver
                     result.push(
@@ -208,20 +207,21 @@ class Editor extends Visualization {
 
             }
 
-
             result.push(this.clearAllAoiMenu)
-            //result.push(...this.devOptions)
 
             return result
         };
 
-        properties.zoomListeners.push((zoomCord) => this.syncZoom(zoomCord))
 
-        
     }
 
-    syncZoom(zoomCord){
-        console.log('this')
+
+
+    /**
+     * 
+     * @param {d3.event.transform} zoomCord - The zoom coordinate provided by the d3 event 
+     */
+    syncZoom(zoomCord) {
         this.svgG.attr('transform', zoomCord)
     }
 
@@ -240,18 +240,19 @@ class Editor extends Visualization {
             return;
         }
 
+        /**
+         * Get the current data for the image
+         */
         const imageData = dataset.getImageData(properties.image);
         const scanPaths = imageData.getScanPaths();
 
         /**
          * Attach the image to the background of svg
          */
-        this.svgG.append('svg:image')
+        this.svgG.append('image')
             .attr('xlink:href', this.image.src)
-            .attr('x', this.left)
-            .attr('y', this.top)
-            .attr('width', this.naturalWidth)
-            .attr('height', this.naturalHeight)
+            .attr('width', this.image.naturalWidth)
+            .attr('height', this.image.naturalHeight);
 
         /**
          * The loop for displaying the dots and the paths
@@ -268,7 +269,10 @@ class Editor extends Visualization {
                     return d.y;
                 })
 
-            this.svgG.append("path")
+            this.svgGcomposition = this.svgG.append('g').attr('id', scanPath.person)
+
+            /** Draw paths */
+            this.svgGcomposition.append("path")
                 .attr("d", this.lineFunction(points))
                 .attr("class", "line")
                 .style("stroke-width", 6)
@@ -284,9 +288,8 @@ class Editor extends Visualization {
                         .transition().duration(250).style("stroke", "rgb(6,120,155)");
                 });
 
-            this.svgGdots = this.svgG.append('g')
-
-            this.svgGdots.selectAll("dot")
+            /** Draw dots */
+            this.svgGcomposition.selectAll("dot")
                 .data(points)
                 .enter().append("circle")
                 .attr("r", 20)
@@ -305,13 +308,16 @@ class Editor extends Visualization {
                 })
 
 
+
+
         });
 
-        this.previousAOIs = properties.getCurrentAOI()
-        console.log(this.previousAOIs)
+        /** Draw previous AOIs */
 
-        if(this.previousAOIs){
-            this.previousAOIs.forEach( aoi => {
+        this.previousAOIs = properties.getCurrentAOI()
+
+        if (this.previousAOIs) {
+            this.previousAOIs.forEach(aoi => {
                 var tempName = 'aoi' + aoi.id
                 this.drawAOI(aoi.id, tempName, aoi.right, aoi.bottom, aoi.left, aoi.top)
             })
@@ -325,11 +331,12 @@ class Editor extends Visualization {
 
     }
 
+
     /**
      * Identify the points under the region
-     * @param {The brush coordinates} brush_coords 
-     * @param {The data x-coordinate} cx 
-     * @param {The data y-coordinate} cy 
+     * @param {Float} brush_coords - The brush/selection coordinates
+     * @param {Float} cx - The data (point) y-coordinate 
+     * @param {Float} cy - The data (point) y-coordinate 
      */
     isBrushed(brush_coords, cx, cy) {
         let x0 = brush_coords[0][0],
@@ -338,6 +345,10 @@ class Editor extends Visualization {
             y1 = brush_coords[1][1];
         return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; //Return TRUE or alse
     }
+
+    /**
+     * Clear Brush when disabled
+     */
 
     clearBrush() {
 
@@ -356,7 +367,7 @@ class Editor extends Visualization {
     }
 
     /**
-     * Maintaining the brush tool
+     * Start the brush tool
      */
     startBrush() {
 
@@ -384,14 +395,13 @@ class Editor extends Visualization {
                         //console.log(this.svgG.append('g').selectAll("dot"))
                     }
                 }))
-
-        //this.svgG.select('.selection').on('contextmenu', d3.contextMenu(this.menu));
-        //this.svgG.selectAll('circle').on('contextmenu', d3.contextMenu(this.menu));
-        this.svgG.on('contextmenu', d3.contextMenu(this.menu2));
+        this.svgG.on('contextmenu', d3.contextMenu(this.dynamicMenu));
         this.svgG.selectAll('circle').on('contextmenu', d3.contextMenu(this.menu));
-        //console.log(this.brush)
     }
 
+    /**
+     * Add aoi on the screen
+     */ 
     addAoi() {
 
         this.currentAOI = properties.getCurrentAOI()
@@ -401,16 +411,22 @@ class Editor extends Visualization {
         this.trackAOI = this.currentAOI.slice(-1)[0]
         console.log(this.trackAOI)
 
-        if (this.trackAOI){
+        /**
+         * Check if this is the first aoi to be created 
+         */
+        if (this.trackAOI) {
             this.newName = 'aoi' + (this.trackAOI.id + 1)
             this.newId = this.trackAOI.id + 1
-        } else{
+        } else {
             this.newName = 'aoi1'
             this.newId = 1
         }
 
         this.aoiObject = new AOI(properties.image)
 
+        /**
+         * The selection coordinates from the brush 
+         */
         this.topSelection = this.extent[0][1]
         this.leftSelection = this.extent[0][0]
         this.bottomSelection = this.extent[1][1]
@@ -418,13 +434,20 @@ class Editor extends Visualization {
         this.heightSelection = this.bottomSelection - this.topSelection
         this.widthSelection = this.rightSelection - this.leftSelection
 
+        /**
+         * Start to draw the AOI on top of the image
+         */
         this.drawAOI(this.newId, this.newName, this.widthSelection, this.heightSelection, this.leftSelection, this.topSelection)
-        
+
+        /**
+         * Mark all the dots under the AOI
+         */
         this.svgG.selectAll("circle").classed("underAoi", (d) => {
             return this.isBrushed(this.extent, (d.x), (d.y))
         })
 
         //console.log(this.currentAOI)
+
         if (!this.currentAOI) {
             this.tempArray = [this.aoiObject]
             properties.aoi.set(properties.image, this.tempArray)
@@ -437,47 +460,50 @@ class Editor extends Visualization {
     }
 
 
-    drawAOI (id, name, widthSelection, heightSelection, leftSelection, topSelection) {
+    drawAOI(id, name, widthSelection, heightSelection, leftSelection, topSelection) {
 
-        this.rect = this.svgGdots.append('g').attr('id', id).classed('aoi', true)
-        .classed(name, true)
+        this.rect = this.svgG.append('g').attr('id', id).classed('aoi', true)
+            .classed(name, true)
+
+        this.svgG.selectAll(".handle,.overlay,.selection").raise()
+
 
         this.rect.append('rect')
-        .classed('aoi', true)
-        .classed(name, true)
-        .attr('width', widthSelection)
-        .attr('height', heightSelection)
-        .attr('x', leftSelection)
-        .attr('y', topSelection)
-        .attr('opacity', 0.5)
-        .attr('fill', '#878787')
-        .attr('z-index', 1)
-        .on('mouseover', function () {
-            d3.select(this)
-                .classed('ontop', true)
-                .transition().duration(250).style('fill', '#0f2fff');
+            .classed('aoi', true)
+            .classed(name, true)
+            .attr('width', widthSelection)
+            .attr('height', heightSelection)
+            .attr('x', leftSelection)
+            .attr('y', topSelection)
+            .attr('opacity', 0.5)
+            .attr('fill', '#878787')
+            .attr('z-index', 1)
+            .on('mouseover', function () {
+                d3.select(this)
+                    .classed('ontop', true)
+                    .transition().duration(250).style('fill', '#0f2fff');
 
-        })
-        .on('mouseout', function () {
-            d3.select(this)
-                .classed('ontop', false)
-                .transition().duration(250).style('fill', '#878787');
-        })
-        
-        
+            })
+            .on('mouseout', function () {
+                d3.select(this)
+                    .classed('ontop', false)
+                    .transition().duration(250).style('fill', '#878787');
+            })
+
+
         this.rect.append('text')
-        .attr('x', leftSelection + 5)
-        .attr('y', topSelection + 27)
-        //.attr('alignment-baseline','middle')
-        //.attr('text-anchor','middle')
-        .style('fill', 'white')
-        .attr('font-size', '30px')
-        .text(name.toUpperCase())
-        
+            .attr('x', leftSelection + 5)
+            .attr('y', topSelection + 27)
+            //.attr('alignment-baseline','middle')
+            //.attr('text-anchor','middle')
+            .style('fill', 'white')
+            .attr('font-size', '30px')
+            .text(name.toUpperCase())
+
     }
 
     deleteAOI(object) {
-        
+
         this.svgG.selectAll('.' + object.classList[1]).remove()
         console.log('selected object', object)
 
@@ -485,8 +511,8 @@ class Editor extends Visualization {
 
         this.currentAOI = properties.getCurrentAOI()
         this.currentAOI.forEach(aois => {
-            console.log('aoi'+aois.id, object.classList[1])
-            if ('aoi'+ aois.id !== object.classList[1]) {
+            console.log('aoi' + aois.id, object.classList[1])
+            if ('aoi' + aois.id !== object.classList[1]) {
                 this.newAOI.push(aois)
                 console.log('add')
                 console.log('The object ->>', aois.object)
@@ -496,9 +522,9 @@ class Editor extends Visualization {
         });
     }
 
-    sync(){
-        if (registry.map.get('transitiongraph').instance)
-            properties.eventListeners.forEach(listener => listener());
+    sync() {
+        for (let listener of properties.onchange.get('sync').values())
+            listener();
     }
 
     /**
@@ -528,6 +554,16 @@ class Editor extends Visualization {
     onRemoved() {
         if (this.resizeTimer)
             clearInterval(this.resizeTimer);
+
+        console.log('removed')
+    }
+
+    hideUser(user) {
+        this.svg.selectAll('#' + user).attr('visibility', 'hidden')
+    }
+
+    showUser(user) {
+        this.svg.selectAll('#' + user).attr('visibility', 'visible')
     }
 
 }

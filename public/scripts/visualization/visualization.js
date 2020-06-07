@@ -27,6 +27,11 @@ class Visualization {
     }
 
     /**
+     * Called when the box for this visualization gets resized
+     */
+    onResize(){};
+
+    /**
      * Called right before this visualization gets removed
      */
     onRemoved(){};

@@ -2,8 +2,17 @@ let selected_image = "";
 let visualizations = {};
 let users = [];
 let selected_users = [];
-//let edit = false;
+let exec = null
 let zoomValue;
+
+//- React on Dataset Selection Dropdown -//
+function selectDataset(value) {
+    if (value !== "") {
+        if (value !== datasetId) {
+            window.location.href = '/visualization?id=' + value;
+        }
+    }
+}
 
 function applySettings() {
     //- Apply visualization type changes -//
@@ -22,7 +31,13 @@ function checkboxChanged(id) {
     let state = document.getElementById(id).checked
     visualizations[id] = state;
     if (id === 'attentionmap') {
-        $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+        if (!$('#eyecloud:checked').length > 0) {
+            $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+        }
+    }  else if (id === 'eyecloud') {
+        if (!$('#attentionmap:checked').length > 0) {
+            $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
+        }
     }  else if (id === 'editor') {
         $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
     }  else if (id === 'gazestripe') {
@@ -65,17 +80,25 @@ function enableAllUsers() {
         $('.dropdown.search.selection.user')
             .dropdown('change values', userValues);
         setUserSelectionButtons();
+        exec=1
     }   
 }
 
 //- Add Single User -//
 function usersAdd(addedUser) {
+    var updateVisualization = properties.onchange.get('hideUser').get('editor')
+    if (exec && updateVisualization){
+        updateVisualization(addedUser)
+    }
     selected_users.push(addedUser);
     setUserSelectionButtons();
 }
 
 //- Remove Single User -//
 function usersRemove(removedUser) {
+    console.log('remove')
+    var updateVisualization = properties.onchange.get('hideUser').get('editor')
+    if (updateVisualization) updateVisualization(removedUser)
     for (user in selected_users) {
         if (selected_users[user] === removedUser) {
             selected_users.splice(user, 1);

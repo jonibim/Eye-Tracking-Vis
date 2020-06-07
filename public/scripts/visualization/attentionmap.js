@@ -27,15 +27,19 @@ class AttentionMap extends Visualization {
             .classed('smalldot ', true)
             .append('svg')
             .attr('width', this.width)
-            .attr('height', this.height);
+            .attr('height', this.height)
+            .on('contextmenu', d3.contextMenu(this.createMenu()));
 
         this.graphics = this.svg.append('g');
 
         this.zoom = d3.zoom();
         this.svg.call(
             this.zoom.on('zoom', () => {
-                this.graphics.attr('transform', d3.event.transform)
-                properties.zoomListeners.forEach(listener => listener(d3.event.transform))
+                this.graphics.attr('transform', d3.event.transform);
+                if(d3.event.transform.ignore)
+                    return;
+                let visualization = registry.getVisualizationInstance('editor');
+                if(visualization) visualization.syncZoom(d3.event.transform);
             })
         );
         this.hasBeenCentered = false;
@@ -58,21 +62,17 @@ class AttentionMap extends Visualization {
             this.center();
         }
 
-        properties.onchange.set('attentionmap', event => {
-            if (event.type === 'image')
-                this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
-            if (event.type === 'color' || event.type === 'users' || event.type === 'aoi')
-                this.draw();
-        })
+        properties.setListener('attentionmap', 'image', () => this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '');
+        properties.setListener('attentionmap', ['color','users','aoi'], () => this.draw());
 
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;
-
-        properties.zoomListeners.push((zoomCord) => this.syncZoom(zoomCord))
+            
     }
 
     syncZoom(zoomCord){
-        this.graphics.attr('transform', zoomCord)
+        zoomCord.ignore = true;
+        this.svg.call(this.zoom.transform, zoomCord);
     }
 
     /**
@@ -85,7 +85,7 @@ class AttentionMap extends Visualization {
             return;
 
         this.graphics.append('image')
-            .attr('href', this.image.src)
+            .attr('xlink:href', this.image.src)
             .attr('width', this.image.naturalWidth)
             .attr('height', this.image.naturalHeight);
 
@@ -151,6 +151,21 @@ class AttentionMap extends Visualization {
     maintainTransform(newWidth, newHeight) {
         let scale = d3.zoomTransform(this.svg.node()).k;
         this.svg.call(this.zoom.translateBy, (newWidth - this.width) / 2 / scale, (newHeight - this.height) / 2 / scale);
+    }
+
+    /**
+     * Creates the context menu
+     * @return {({title?: string, action?: function()} | {divider: boolean})[]}
+     */
+    createMenu(){
+        let menu = [];
+        menu.push({
+            title: 'Download as image',
+            action: () => {
+                downloadSVG(this.svg.node(), 'Attention Map');
+            }
+        })
+        return menu;
     }
 
     onRemoved() {

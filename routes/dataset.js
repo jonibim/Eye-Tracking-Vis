@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const parseDataset = require('../scripts/parsedataset');
+const datasetloader = require('../scripts/datasetloader');
 
 // handle upload
 router.post('/upload', function (req, res, next) {
+    if (!req.body.name || !req.body.name.trim())
+        return res.status(400).send({'status': 400, 'message': 'No valid name was entered.'});
     if (!req.files || !req.files.dataset)
         return res.status(400).send({'status': 400, 'message': 'No datasets were uploaded.'});
     if (req.files.length > 1)
@@ -13,21 +15,14 @@ router.post('/upload', function (req, res, next) {
         return res.status(400).send({'status': 400, 'message': 'The dataset file format must be csv.'});
 
     // Generate json-file from the uploaded csv-file
-    parseDataset.parseData(req.files, res);
+    datasetloader.handleDatasetUpload(req.files, req.body.name, res);
 });
 
 // handle request
-router.post('/request', function (req, res, next) {
-    let id = req.query.id;
+router.get('/available', function (req, res, next) {
+    let datasets = datasetloader.getAllDatasets();
 
-    if(!req.query || !req.query.id)
-        return res.status(400).send({'status': 400, 'message': 'Missing variable \'id\'.'});
-
-    if(id === 'default')
-
-
-    // Read data from the corresponding file in the uploads folder
-    parseDataset.readData(req.query.id, res);
+    res.status(200).send(datasets);
 });
 
 

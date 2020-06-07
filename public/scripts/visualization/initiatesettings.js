@@ -1,39 +1,75 @@
 //****************** Set default values ******************//
-let RGBA = {'r': 255, 'g': 0, 'b': 0, 'a': 1}
+let RGBA = { 'r': 255, 'g': 0, 'b': 0, 'a': 1 }
 
 let settingHelpMap = {
-    'Visualizations' : 'Select the visualizations/viewports to display',
-    'Image' : 'Select the image to display',
-    'Users' : 'Select the users to display',
-    'Color' : 'Modify the color of the fixations on the Attention Map',
-    'Editor' : 'Instructs the navigation commands for the AOI editor',
-    'Zoom' : 'Modify the zoom level of the thumbnails in the Gaze Stripes'
+    'Visualizations': 'Select the visualizations/viewports to display',
+    'Image': 'Select the image to display',
+    'Users': 'Select the users to display',
+    'Color': 'Modify the color of the fixations on the Attention Map and the main circle in the <br> Eye Cloud',
+    'Editor': 'Instructs the navigation commands for the AOI editor',
+    'Zoom': 'Modify the zoom level of the thumbnails in the Gaze Stripes'
 }
+
+//- Update Dataset Dropdown with default value -//
+updateDatasets()
+
+//- Update Zoom Slider with default value -//
+let defaultZoomValue = 50;
+readSlidersZoom(defaultZoomValue)
 
 //- Initialize State of RGBA sliders -//
 for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
 }
 
-let defaultZoomValue = 50;
-readSlidersZoom(defaultZoomValue)
-
 //****************** Define Settings Functions ******************//
 
+//- Update the Dataset Dropdown Options -//
+async function updateDatasets() {
+    const url = '/dataset/available';
+    const request = fetch(url, { method: 'GET' });
+    await request.then(response => response.arrayBuffer()).then(buffer => {
+        let decoder = new TextDecoder("utf8");
+        let data = decoder.decode(buffer);
+        let datasets = JSON.parse(data);
 
+        let values = [];
+        for (let dataset of datasets) {
+            let datasetValues = {};
+            datasetValues['name'] = dataset['name'];
+            datasetValues['value'] = dataset['id'];
+            datasetValues['selected'] = datasetId === dataset['id'];
+            values.push(datasetValues);
+        }
+        $('.dropdown.search.selection.dataset')
+            .dropdown({
+                values: values,
+                selectOnKeydown: false,
+                forceSelection: false,
+                fullTextSearch: 'exact',
+                //-minCharacters: 3,-// Causes a strange bug, just ignore this :)
+                match: 'both',
+                onChange: function (value) {
+                    selectDataset(value);
+                }
+            });
+    });
+}
+
+//- Display Help Toast Per Setting -//
 function settingHelp(setting) {
-    $('.toast')
+    $('.toast.settingHelp')
         .toast('close')
     $('body')
         .toast({
             showIcon: 'info',
-            title: setting + ' setting',
-            displayTime: 0,
+            title: setting + ' Setting',
+            displayTime: 5000,
             message: settingHelpMap[setting],
-            class: 'info',
+            class: 'info settingHelp',
             position: 'top center',
             closeIcon: true
-    });
+        });
 }
 
 //- Auto Apply Behavior -//
@@ -51,7 +87,7 @@ function usersChanged() {
     if (userTimer !== undefined) {
         clearTimeout(userTimer)
     }
-    userTimer = setTimeout(function() {
+    userTimer = setTimeout(function () {
         $('#usersLoadingIcon').removeClass()
         $('#usersLoadingIcon').addClass("ui users icon");
         settingChanged();
@@ -62,43 +98,44 @@ function usersChanged() {
 
 //- Detect checkbox update -//
 $('input.settings')
-    .click(function() {
+    .click(function () {
         checkboxChanged(this.id);
         settingChanged();
-    });    
+    });
 
 //- Image Dropdown -//
 $('.dropdown.search.selection.image')
     .dropdown({
         selectOnKeydown: false,
-        fullTextSearch: 'exact', 
+        forceSelection: false,
+        fullTextSearch: 'exact',
         match: 'both',
-        onChange: function(value,text) {
+        onChange: function (value, text) {
             selectImage(text);
             settingChanged();
         },
-        onShow: function() {
+        onShow: function () {
             $('#frame').dimmer('show');
         },
-        onHide: function() {
+        onHide: function () {
             $('#frame').dimmer('hide');
         }
     });
 
 //- Image Preview Source on Dropdown MouseOver and KeyDown (Arrow Up/Down or Page Up/Down) -//
 $('.image-selector')
-    .on('mouseenter', function(evt) {
+    .on('mouseenter', function (evt) {
         $('#preview-image').attr("src", dataset.url + "/images/" + $(this).text());
     });
 $('.dropdown.search.selection.image .menu')
-    .on('mouseleave', function(evt) {
+    .on('mouseleave', function (evt) {
         if ($('.image-selector.selected').length) {
             $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
         }
     });
-document.onkeydown = function(e) {
+document.onkeydown = function (e) {
     if ($('.dropdown.search.selection.image').hasClass('active')) {
-        setTimeout(function() {
+        setTimeout(function () {
             if ($('.image-selector.selected').length) {
                 $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
             }
@@ -107,24 +144,25 @@ document.onkeydown = function(e) {
 };
 
 //- Image Preview Dimmer Behavior -//
-$('#frame').dimmer({duration: 0});
+$('#frame').dimmer({ duration: 0 });
 
 //- User Dropdown -//
 $('.dropdown.search.selection.user')
     .dropdown({
         fullTextSearch: 'exact',
-        onAdd: function(addedValue, addedText) {
+        forceSelection: false,
+        onAdd: function (addedValue, addedText) {
             usersAdd(addedText);
             usersChanged();
         },
-        onRemove: function(removedValue, removedText) {
+        onRemove: function (removedValue, removedText) {
             usersRemove(removedText);
             usersChanged();
         },
         onLabelSelect: function (label) {
             let $label = $(label)
             $label.parent('.ui.multiple.dropdown')
-                    .dropdown('remove selected', $label.data('value'));
+                .dropdown('remove selected', $label.data('value'));
             if (label !== undefined) {
                 usersRemove(label.text);
                 usersChanged();
@@ -134,7 +172,7 @@ $('.dropdown.search.selection.user')
 
 //- Clear User Dropdown Button -//
 $('.clear.button')
-    .on('click', function() {
+    .on('click', function () {
         $('.dropdown.search.selection.user')
             .dropdown('clear');
         settingChanged();
@@ -142,20 +180,20 @@ $('.clear.button')
 
 //- Select All User Dropdown Button -//
 $('.add.button')
-    .on('click', function() {
+    .on('click', function () {
         enableAllUsers();
         settingChanged();
     });
 
 //- RGB Slider initialization -//
 $('.ui.slider.rgb')
-    .each(function() {
-        $('#'+this.id).slider({
+    .each(function () {
+        $('#' + this.id).slider({
             min: 0,
             max: 255,
             start: RGBA[this.id],
             step: 1,
-            onChange: function(value) {
+            onChange: function (value) {
                 readSlidersRGBA(this.id, value)
                 settingChanged()
             }
@@ -169,7 +207,7 @@ $('.alpha.ui.slider')
         max: 1,
         start: RGBA['a'],
         step: 0.01,
-        onChange: function(value) {
+        onChange: function (value) {
             readSlidersRGBA(this.id, value)
             settingChanged()
         }
@@ -183,8 +221,223 @@ $('.ui.slider.zoom')
         max: 200,
         start: defaultZoomValue,
         step: 1,
-        onChange: function(value) {
+        onChange: function (value) {
             readSlidersZoom(value)
             settingChanged()
         }
     });
+
+//- Save Configuration -//
+function saveSettingsImageWarning() {
+    $('.toast.ImageSaveWarning')
+        .toast('close')
+    $('body')
+        .toast({
+            showIcon: 'exclamation mark',
+            title: "Warning!",
+            displayTime: 0,
+            message: "This option makes the current settings available for other images. However, these settings may not work properly for images with different dimensions or users. It is best to use settings for images with the same properties (such as comparing a colored image with a gray image)",
+            class: 'error ImageSaveWarning',
+            position: 'top center',
+            closeIcon: true
+        });
+}
+
+
+$("#saveSettings").click(() => {
+
+    if ($("#snapCheck").checkbox('is checked')) {
+        $("#submitRequest").html(`<i class="i file code icon"></i> Download ZIP`)
+    }
+
+    checkButtons()
+
+    d3.select("#previewImage").attr("src", dataset.url + "/images/" + properties.getCurrentImage());
+    d3.select("#previewImageLabel").text(image)
+    if (datasetId !== 'default') {
+        d3.select("#previewId").html(
+            `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the dataset with id <br> <b> ${datasetId} </b>`)
+    } else {
+        d3.select("#previewId").html(
+            `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the <b> default </b> dataset`)
+    }
+    $('.ui.modal')
+        .modal('show');
+});
+
+function checkButtons() {
+    if ($("#snapCheck").checkbox('is unchecked') &&
+        $("#usersCheck").checkbox('is unchecked') &&
+        $("#aoiCheck").checkbox('is unchecked') &&
+        $("#colorCheck").checkbox('is unchecked') &&
+        $("#zoomCheck").checkbox('is unchecked')) {
+        $("#submitRequest").addClass("disabled")
+    }
+}
+
+$("#usersCheck").checkbox({
+    onChecked: function () {
+        $("#submitRequest").removeClass("disabled")
+    },
+    onChange: function () {
+        checkButtons()
+    }
+})
+
+$("#aoiCheck").checkbox({
+    onChecked: function () {
+        $("#submitRequest").removeClass("disabled")
+    },
+    onChange: function () {
+        checkButtons()
+    }
+})
+
+$("#colorCheck").checkbox({
+    onChecked: function () {
+        $("#submitRequest").removeClass("disabled")
+    },
+    onChange: function () {
+        checkButtons()
+    }
+})
+
+$("#zoomCheck").checkbox({
+    onChecked: function () {
+        $("#submitRequest").removeClass("disabled")
+    },
+    onChange: function () {
+        checkButtons()
+    }
+})
+
+$("#snapCheck").checkbox({
+    onUnchecked: function () {
+        $("#submitRequest").html(`<i class="i file code icon"></i> Download JSON`)
+        checkButtons()
+    },
+    onChecked: function () {
+        $("#submitRequest").html(`<i class="i file code icon"></i> Download ZIP`)
+        $("#submitRequest").removeClass("disabled")
+        checkButtons()
+    }
+})
+
+$("#submitRequest").click(() => {
+    
+    var dimmer = d3.select('#modalSave')
+        .append('div')
+        .attr('id','settingsDimmer')
+        .attr('class','ui active dimmer')
+
+    var loader = dimmer.append('div')
+        .attr('id','settingsLoader')
+        .attr('class','ui indeterminate text loader')
+        .text('Exporting settings. This may take a while for the snapshots')
+
+    var errnoFlag = 0
+
+    try{
+
+    var jsonExport = {}
+
+    if ($("#imageCheck").checkbox('is unchecked')) {
+        jsonExport.image = properties.getCurrentImage()
+    }
+    if ($("#usersCheck").checkbox('is checked')) {
+        jsonExport.user = properties.getCurrentUsers()
+    }
+
+    if ($("#aoiCheck").checkbox('is checked')) {
+        jsonExport.aoi = properties.getCurrentAOI()
+    }
+    if ($("#colorCheck").checkbox('is checked')) {
+        jsonExport.color = properties.getCurrentColor()
+    }
+    if ($("#zoomCheck").checkbox('is checked')) {
+        jsonExport.zoom = properties.getCurrentZoom()
+    }
+
+    var convertString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonExport))
+
+    //Eye Cloud is not working with this 
+    // because of the way it is implemented
+
+    setTimeout(() => {
+        if(dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
+    }, 0);
+
+    //Start creation of zip file
+    if ($("#snapCheck").checkbox('is checked')) {
+        var zip = new JSZip();
+        zip.file("settings.json", convertString);
+        var folder = zip.folder('images')
+
+        // registry.map.forEach(viz => {
+        //     console.log(viz.instance)
+        //     if (viz.instance.svg)
+        //         folder.file(viz.tag + '.png', createSVGImage(viz.instance.svg.node()))
+        // });
+
+        //Start to add files to the folder. The loop above does the same functionality
+        // But i commented it out for debugging and i am using the lines below
+
+        //folder.file('gazestripe.png', createSVGImage(registry.map.get('gazestripe').instance.svg.node()))
+        folder.file('attentionmap.png', createSVGImage(registry.map.get('attentionmap').instance.svg.node()))
+        folder.file('editor.png', createSVGImage(registry.map.get('editor').instance.svg.node()))
+        folder.file('transitiongraph.png', createSVGImage(registry.map.get('transitiongraph').instance.svg.node()))
+
+        zip.generateAsync({ type: "blob" })
+            .then(function (content) {
+                //Using FileSaver.js module
+                saveAs(content, "export.zip");
+            });
+    }
+    else {
+        var prepareDownload = document.createElement('a');
+        prepareDownload.setAttribute("href", convertString);
+        prepareDownload.setAttribute("download", "tesr.json");
+        prepareDownload.setAttribute("style", "display:none");
+        document.body.appendChild(prepareDownload);
+        prepareDownload.click();
+        prepareDownload.remove();
+    }
+    
+
+   
+
+    }
+    catch(err){
+
+        errorFlag = 1
+
+        d3.select('#settingsLoader').remove()
+
+        var content = d3.select('#settingsDimmer')
+            .append('div')
+            .attr('class', 'contnet')
+            .append('h2')
+            .attr('class', 'ui red icon header')
+
+        content.append('i')
+            .attr('class', 'exclamation circle icon')
+
+        content.append('div')
+            .text('An error occured')
+        content.append('div')
+            .attr('style','font-size: 16px; color:white')
+            .text('Error Messaage: ' + err.message)
+            content.append('button')
+            .attr('class','ui red small button')
+            .text('ok')
+            .on('click', () => (
+                d3.select('#settingsDimmer').remove()
+            ))
+        console.log(err.stack)
+
+
+    }
+
+});
+
+

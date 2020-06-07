@@ -92,6 +92,27 @@ class Registry {
         this.map.forEach(value => value.disable());
     }
 
+    /**
+     * @param {string} tag - unique name of the visualization
+     * @return {Visualization | null}
+     */
+    getVisualizationInstance(tag){
+        let type = this.getVisualizationType(tag);
+        return type === null ? null : type.instance;
+    }
+
+    /**
+     * @return {Visualization[]} a list of all active visualization instances
+     */
+    getVisualizationInstances(){
+        let visualizations = [];
+        this.map.forEach(value => {
+            if(value.enabled)
+                visualizations.push(value.instance);
+        })
+        return visualizations;
+    }
+
 }
 
 /**
@@ -120,7 +141,7 @@ class VisualizationType {
      * @param {int} column
      * @param {int} row
      */
-    enable(column = boxManager.rows >= 2 ? 1 : 0, row = 0) {
+    enable(column = boxManager.columns >= 1 && boxManager.boxes[0].length >= 2 ? 1 : 0, row = 0) {
         let box = boxManager.createBox(column, row);
         this.instance = this.supplier(box);
         this.enabled = true;
@@ -132,7 +153,8 @@ class VisualizationType {
     disable() {
         this.instance.onRemoved();
         boxManager.removeBox(this.instance.box);
-        properties.onchange.delete(this.tag);
+        for(let event of properties.onchange.values())
+            event.delete(this.tag);
         this.instance = null;
         this.enabled = false;
     }

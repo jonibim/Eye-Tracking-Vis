@@ -71,17 +71,15 @@ class TransitionGraph extends Visualization {
         }, 100);
 
 
-        properties.onchange.set('transitiongraph', () => {
-            if (this.img.src)
-                if (this.img.src.match('([^\/]+$)')[0] === properties.image) return;
-            this.img.src = properties.image ? dataset.url + '/images/' + properties.image : '';
-        })
+        properties.setListener('transitiongraph', 'image', () =>
+            this.img.src = properties.image ? dataset.url + '/images/' + properties.image : ''
+        );
 
 
         if (properties.image)
             this.img.src = dataset.url + '/images/' + properties.image;
 
-        properties.eventListeners.push(() => this.draw())
+        properties.setListener('transitiongraph', 'sync', () => this.draw())
 
     };
 
@@ -113,7 +111,7 @@ class TransitionGraph extends Visualization {
 
         try {
 
-           
+
             /**
              * Setting up the loader view
              */
@@ -123,6 +121,7 @@ class TransitionGraph extends Visualization {
              */
             //this.clearBrush()
             this.svgG.selectAll("*").remove()
+            this.svg.select(".legendOrdinal").remove()
 
             if (!properties.image) {
                 console.log("leaving transition===>")
@@ -149,11 +148,12 @@ class TransitionGraph extends Visualization {
                     .append('h2')
                     .attr('class', 'ui inverted icon header')
 
-
+                content.append('div').attr("style","height:"+ (this.box.title.clientHeight + 5) +"px")
                 content.append('i')
                     .attr('class', 'exclamation icon')
 
                 content.append('div').text('No AOIs.')
+                content.append('div').attr("style","font-size: 12px").text('Check the editor commands for adding AOIs')
                 return
             }
 
@@ -167,41 +167,54 @@ class TransitionGraph extends Visualization {
                 for (let j = 0; j < AOIs[i].points.length; j++) {
                     this.pointSource = AOIs[i].points[j]
                     this.pointPerson = this.pointSource.path.person
+                    if (!properties.users.includes(this.pointPerson)) continue
                     this.pointColor = this.pointSource.path.color
                     this.pointPath = imageData.getScanPaths(this.pointPerson, this.pointColor)[0];
                     this.nextPoint = this.pointPath.getNextPoint(this.pointSource.time)
                     for (let k = 0; k < this.dimension; k++) {
                         if (i === k) continue;
-                        if (AOIs[k].points.includes(this.nextPoint)) {
+                        if (AOIs[k].points.includes(this.nextPoint) && properties.users.includes(this.nextPoint.path.person)) {
+                            //console.log(this.nextPoint, this.pointSource)
                             this.matrix[i][k]++
                         }
                     }
                 }
             }
 
-            console.log('The Matrix', this.matrix)
+            //console.log('The Matrix', this.matrix)
             //console.log(this.matrix.flatMap((row, rowIndex) => row.map((e, colIndex) => { })))
 
-            let _nodes = []
-            let _links = []
+            let nodes = []
+            let links = []
 
             for (let i = 0; i < this.dimension; i++) {
+                //console.log(AOIs[i].id)
                 var AOIname = 'aoi' + AOIs[i].id
-                _nodes.push({ "id": AOIname })
+                nodes.push({"id": AOIname})
                 for (let j = 0; j < this.dimension; j++) {
                     if (this.matrix[i][j] !== 0) {
                         var AOIname2 = 'aoi' + AOIs[j].id
-                        _links.push({ 'source': AOIname, 'target': AOIname2 })
+                        links.push({ 'source': AOIname, 'target': AOIname2, "indexSource":i ,"indexTarget":j })
                     }
                 }
             }
 
+            let norm = math.norm(this.matrix, 1)
+            let normalized = math.add(0.5,(math.multiply(1/(norm/3), this.matrix)))
 
-            const links = _links.map(d => Object.create(d));
-            const nodes = _nodes.map(d => Object.create(d));
 
-            console.log('Links',links)
-            console.log('Nodes',nodes)
+
+            // const links = _links.map(d => {
+
+            //    var myObject = Object.create(d)
+            //    myObject.id = d.target;
+            //    return myObject
+
+            // })
+            // const nodes = _nodes.map(d => Object.create(d));
+
+            console.log('Links', links)
+            console.log('Nodes', nodes)
 
             var drag = simulation => {
 
@@ -234,8 +247,11 @@ class TransitionGraph extends Visualization {
                 .force("x", d3.forceX())
                 .force("y", d3.forceY());
 
-
             var color = d3.scaleOrdinal(nodes, d3.schemeCategory10)
+
+
+
+            console.log(color('aoi1'))
 
             // Per-type markers, as they don't inherit styles.
             this.svg.append("defs").selectAll("marker")
@@ -245,11 +261,9 @@ class TransitionGraph extends Visualization {
                 .attr("viewBox", "0 -5 10 10")
                 .attr("refX", 15)
                 .attr("refY", -0.5)
-                .attr("markerWidth", 6)
-                .attr("markerHeight", 6)
                 .attr("orient", "auto")
                 .append("path")
-                .attr("fill", color)
+                .attr("fill", 'black')
                 .attr("d", "M0,-5L10,0L0,5");
 
             const link = this.svgG
@@ -257,9 +271,9 @@ class TransitionGraph extends Visualization {
                 .data(links)
                 .join("path")
                 .attr("fill", "none")
-                .attr("stroke-width", 1.5)
-                .attr("stroke", d => color(d.target))
-                .attr("marker-end", "url(#end)");
+                .attr("stroke-width", d => normalized[d.indexSource][d.indexTarget])
+                .attr("stroke", d => color(d.source.id))
+                .attr("marker-end", "url(#end)")
 
             const node = this.svgG
                 .selectAll("g")
@@ -299,7 +313,24 @@ class TransitionGraph extends Visualization {
             `;
             }
 
-            
+            this.svg.append("g")
+            .attr("class", "legendOrdinal")
+            .attr("transform", "translate(20,20) scale(0.7)");
+
+            var legendOrdinal = d3.legendColor()
+                .shape("path", d3.symbol().type(d3.symbolTriangle).size(150)())
+                .shapePadding(10)
+                //use cellFilter to hide the "e" cell
+                .cellFilter(function(d){ 
+                    if (typeof d.label === 'string') 
+                        return d.label})
+                .scale(color);
+
+      
+            this.svg.select(".legendOrdinal")
+            .call(legendOrdinal);
+
+
 
             // if (dimmer.parentNode) dimmer.parentNode.removeChild(dimmer)
         }
@@ -319,29 +350,30 @@ class TransitionGraph extends Visualization {
                 .attr('class', 'exclamation circle icon')
 
             content.append('div').text(err.message)
+            console.log(err.stack)
 
         }
 
-        
+
     }
 
     onRemoved() {
-        if(this.timer)
+        if (this.timer)
             clearInterval(this.timer);
     }
 
-           /**
-     * Centers the attention map on the box
-     */
-    center(){
-        if(this.width === 0 || this.height === 0)
+    /**
+* Centers the attention map on the box
+*/
+    center() {
+        if (this.width === 0 || this.height === 0)
             return;
-        this.svg.call(this.zoom.translateTo, 100 , 0);
+        this.svg.call(this.zoom.translateTo, 100, 0);
     }
 
-        /**
-     * Fix the svg size
-     */
+    /**
+ * Fix the svg size
+ */
     redraw() {
 
         /**

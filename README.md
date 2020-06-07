@@ -9,21 +9,21 @@ In this project, we are required to build a multi-visualization web-based tool s
 
 We will represent the objectives needed to be fulfilled for the project. 
 
-- [ ] The visualization tool should show at least four different visual techniques on different aspects (time, space, tasks, subjects etc.)
-- [ ] The visualization tool should include brushing and linking data. As an example, if the user is moving the timeline or selecting a group in one view, the other corresponding views included in the tool must also be synced to these changes. This is called a **multi coordinated view**
-- [ ] At least one out of  [7 categories of interactions](#7-categories-of-interactions) should be implemented in the project.
-- [ ] The visualization tool should be a web-based tool 
+- [x] The visualization tool should show at least four different visual techniques on different aspects (time, space, tasks, subjects etc.)
+- [x] The visualization tool should include brushing and linking data. As an example, if the user is moving the timeline or selecting a group in one view, the other corresponding views included in the tool must also be synced to these changes. This is called a **multi coordinated view**
+- [x] At least one out of  [7 categories of interactions](#7-categories-of-interactions) should be implemented in the project.
+- [x] The visualization tool should be a web-based tool 
 
 Now we present some features that the final product must satisfy. Note that not all the features must be completed in order to consider the project as finished. The principle is that the more features are included with the final product, the better the end results are guaranteed to be (probably even winning prices). In the final program the user must be able to:
 
 - [ ] identify an anomaly on the data easily
 - [ ] identify group and clusters
 - [ ] identify patterns 
-- [ ] select groups, clusters or outliers
-- [ ] change color coding 
-- [ ] filter various factors (such as people, space and time)
-- [ ] see labels of objects by hovering the mouse on the object (aka tooltips)
-- [ ]  screenshot a certain kind of view with the addition that all parameters of the view/visualization are attached to the screenshot such that it can be rebuilt later (aka screenshot + snapshot)
+- [x] select groups, clusters or outliers
+- [x] change color coding 
+- [x] filter various factors (such as people, space and time)
+- [x] see labels of objects by hovering the mouse on the object (aka tooltips)
+- [x]  screenshot a certain kind of view with the addition that all parameters of the view/visualization are attached to the screenshot such that it can be rebuilt later (aka screenshot + snapshot)
 
 ## The dataset
 

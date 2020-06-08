@@ -48,6 +48,10 @@
     text-align: center;
 }
 
+.ui.segments.floating {
+    margin-top: 1rem;
+}
+
 .sidebar.visible.settings + .pusher {
   width: calc(100% - 260px);
 }

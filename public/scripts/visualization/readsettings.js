@@ -68,7 +68,9 @@ function updateUsers(image) {
 //- Enable All Possible Users -//
 function enableAllUsers() {
     users.sort((a, b) => {return Number(a.slice(1)) - Number(b.slice(1));});
-    if (users.length != selected_users.length) {
+    // This condition was blocking the visualiztions from updating its users
+    // As you can have the same amount of users but with different users labeling inside
+    //if (users.length != selected_users.length) {
         let userValues = [];
         for (let user in users) {
             let value = {};
@@ -81,12 +83,12 @@ function enableAllUsers() {
             .dropdown('change values', userValues);
         setUserSelectionButtons();
         exec=1
-    }   
+    //}   
 }
 
 //- Add Single User -//
 function usersAdd(addedUser) {
-    var updateVisualization = properties.onchange.get('hideUser').get('editor')
+    var updateVisualization = properties.onchange.get('showUser').get('editor')
     if (exec && updateVisualization){
         updateVisualization(addedUser)
     }
@@ -96,7 +98,6 @@ function usersAdd(addedUser) {
 
 //- Remove Single User -//
 function usersRemove(removedUser) {
-    console.log('remove')
     var updateVisualization = properties.onchange.get('hideUser').get('editor')
     if (updateVisualization) updateVisualization(removedUser)
     for (user in selected_users) {

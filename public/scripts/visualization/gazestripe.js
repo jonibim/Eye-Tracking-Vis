@@ -60,12 +60,13 @@ class GazeStripe extends Visualization {
 
         this.resetView();
 
-        const imageData = dataset.getImageData(properties.image);
-
-        this.graphics.selectAll('*').remove();
 
         if (!properties.image)
             return;
+
+        const imageData = dataset.getImageData(properties.image);
+
+        this.graphics.selectAll('*').remove();
 
         let usersx = {};
         let usersy = {};

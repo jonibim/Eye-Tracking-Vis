@@ -15,6 +15,7 @@ block pre_scripts
     script(src="scripts/additional-modules/jszip.js")
     script(src="scripts/additional-modules/FileSaver.js")
     script(src="scripts/additional-modules/jszip-utils.js")
+    script(src="scripts/additional-modules/cycle.js")
     // framework
     script(src='scripts/visualization/main.js')
     script(src='scripts/visualization/dataset.js')
@@ -190,7 +191,7 @@ block sidebars
                     i(class="ui fitted upload icon")
                 
 
-        div(class='ui modal' id='modalSave')
+        div(class='ui modal save' id='modalSave')
             div(class='header') Save settings
             div(class="content")
                 div(class='text' style='text-align:left')
@@ -238,6 +239,15 @@ block sidebars
                 button(class="ui blue disabled button")
                     i(class="i share icon")
                     | Share via PasteBin
+
+
+        div(class='ui modal upload' id='modalUpload')
+            div(class='header') Upload settings
+            div(class="content")
+                
+
+    
+        
 
 
 

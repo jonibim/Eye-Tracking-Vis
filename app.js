@@ -20,7 +20,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'),{ dotfiles: 'allow' }));
+//app.use("/.well-known/acme-challenge", express.static("letsencrypt/.well-known/acme-challenge"));
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -44,6 +46,13 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.get('*', function(req, res) {  
+  res.redirect('https://' + req.headers.host + req.url);
+
+  // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
+  // res.redirect('https://example.com' + req.url);
+})
 
 
 module.exports = app;

@@ -4,11 +4,12 @@
 
 class EyeCloud extends Visualization {
     constructor(box) {
-        super(box, 'Eye Cloud', 'eyecloud');
+        super(box, 'Eye Cloud', 'eyecloudviz');
 
-        //this.image = new Image();
-        //this.users = [];
+        this.svg; // Holds the svg-object of the visualization
         this.zoom = d3.zoom();
+        this.zoom.scaleExtent([0.1,5]); // Sets limit of the zoom's scale
+        //this.zoom.translateExtent(); // Sets limit of the zoom's translate
 
         let width = box.inner.clientWidth; // Width of the box
         let height = box.inner.clientHeight; // Height of box
@@ -29,19 +30,21 @@ class EyeCloud extends Visualization {
 
         let clickedObject; // Holds the object that is being right clicked
 
+        let thisClass = this; // To allow for a call to this class inside nested functions
+
         let infoMenuItem = {
             title: 'Show info',
             action: function() {
-                getInfo(clickedObject);
                 console.log('eyecloud.js - Showing info...');
+                getInfo(clickedObject);
             }
         };
 
         let disableMenuItem = {
             title: 'Disable circle',
             action: function () {
-                disableCircle(clickedObject);
                 console.log('eyecloud.js - Disabling circle...');
+                disableCircle(clickedObject);
             }
         };
 
@@ -49,8 +52,8 @@ class EyeCloud extends Visualization {
             {
                 title: 'Enable all circles',
                 action: function () {
-                    enableCircles();
                     console.log('eyecloud.js - Enabling all circles...');
+                    enableCircles();
                 }
             },
             {
@@ -59,20 +62,28 @@ class EyeCloud extends Visualization {
             {
                 title: 'Center visualization',
                 action: function () {
-                    // This code fits the eye cloud by height
-                    let bWidth = box.inner.clientWidth / 4;
-                    let bHeight = box.inner.clientHeight / 4;
-                    d3.select('#cloud_group')
-                        .attr('transform', 'translate(' + bWidth + ',' + bHeight + ') scale(0.5)');
-                    console.log('eyecloud.js - Centering visualization...');
+                    console.log('eyecloud.js - Centering visualization...')
+                    thisClass.center();
                 }
             },
             {
                 title: 'Save image',
-                disabled: true, // Disabled for now...
                 action: function () {
-                    saveImage();
                     console.log('eyecloud.js - Saving image...');
+                    // Display a popup for 7.5 seconds to let the user know, saving takes some time
+                    $('.toast') // Close previous toast
+                        .toast('close')
+                    $('body')
+                        .toast({
+                            showIcon: 'info',
+                            title: 'Saving Image',
+                            displayTime: 7500,
+                            message: 'The eye cloud is being saved as an image. This may take some time.',
+                            class: 'info',
+                            position: 'top center',
+                            closeIcon: false
+                        });
+                    downloadSVG(d3.select('#cloud_svg').node(), 'eyecloud');
                 }
             }
         ];
@@ -130,22 +141,32 @@ class EyeCloud extends Visualization {
             .append('defs')
             .attr('id', 'pattern_defs');
 
-        /*
-        // Sets default zoom on load (does not work properly)
-        svg.call(this.zoom.scaleTo, 0.5);
-        svg.call(this.zoom.translateTo, 3 * (width / 4), 2 * (height / 4));
-         */
-
         /**
          * Upon any change of the properties class, check what settings have changed
          * and apply the new settings to the visualization
          */
         properties.setListener('eyecloud', 'image', event => {
             //this.image = properties.image;
+            toggleDimmer(false); // Turn dimmer off
             if (!drawing) { // If we are not already drawing the eye cloud
                 drawing = true;
                 generateData(dataset.getImageData(properties.image));
-                $('.toast').toast('close') // Close popups
+                $('.eyecloud_info').toast('close') // Close popups
+                draw();
+            }
+        });
+        properties.setListener('eyecloud', 'users', event => {
+            //this.users = properties.users;
+            if (properties.users.length <= 0) { // If no users are selected
+                toggleDimmer(true); // Turn dimmer on
+            } else {
+                toggleDimmer(false); // Turn dimmer off
+            }
+
+            if (!drawing) { // If we are not already drawing the eye cloud
+                drawing = true;
+                generateData(dataset.getImageData(properties.image));
+                $('.eyecloud_info').toast('close') // Close popups
                 draw();
             }
         });
@@ -153,15 +174,6 @@ class EyeCloud extends Visualization {
             strokeColor = properties.getColorHex(); // set global color variable
             setColor(properties.getColorHex());
         });
-        properties.setListener('eyecloud', 'users', event => {
-            //this.users = properties.users;
-            if (!drawing) { // If we are not already drawing the eye cloud
-                drawing = true;
-                generateData(dataset.getImageData(properties.image));
-                $('.toast').toast('close') // Close popups
-                draw();
-            }
-        })
 
         /**
          * Workaround to draw visualization when turned off an on
@@ -178,7 +190,7 @@ class EyeCloud extends Visualization {
             if (width !== box.inner.clientWidth || height !== box.inner.clientHeight) {
                 width = box.inner.clientWidth;
                 height = box.inner.clientHeight;
-                console.log("eyecloud.js - Size: " + box.inner.clientHeight, box.inner.clientWidth);
+                //console.log("eyecloud.js - Size: " + box.inner.clientHeight, box.inner.clientWidth);
                 resize();
             }
         }, 100);
@@ -248,7 +260,7 @@ class EyeCloud extends Visualization {
                 densities.push(densityScores[i].density);
             }
 
-            //console.log(newCoordinates);
+            //console.log(coordinates);
             //console.log(densities);
 
             // Set the radius scale depending on the maximum and minimum density
@@ -264,12 +276,6 @@ class EyeCloud extends Visualization {
             d3.select('#cloud_group').selectAll('circle').remove(); // Remove already existing circles
             d3.select('#pattern_defs').selectAll('pattern').remove(); // Remove already existing patterns
 
-            /*
-            let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
-            let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
-            let radiusScale = d3.scaleSqrt().domain([densityMin, densityMax]).range([minRadius, maxRadius]);
-             */
-
             /**
              * For every element in coordinates create a circle with the necessary attributes
              */
@@ -279,7 +285,6 @@ class EyeCloud extends Visualization {
             let circles = svg.selectAll('.artist')
                 .data(coordinates)
                 .enter().append('circle')
-                //.attr('class', 'artist')
                 .attr('id', function () {
                     circleCount++;
                     return 'circle_' + circleCount;
@@ -348,6 +353,10 @@ class EyeCloud extends Visualization {
             simulation.nodes(coordinates)
                 .on('tick', update);
 
+            simulation.onload = () => {
+                console.log('Loaded!');
+            }
+
             /**
              * Automatically update the location of each circle
              */
@@ -361,7 +370,45 @@ class EyeCloud extends Visualization {
                     })
             }
 
+            thisClass.svg = d3.select('#cloud_svg'); // Update the svg property of the visualization
+            thisClass.setScale(); // Set the default scale after drawing the eye cloud
             drawing = false; // Reset drawing variable
+        }
+
+        /**
+         * Toggle a dimmer that covers the inner box with the appropriate Fomantic-UI icons
+         */
+        function toggleDimmer(onof) {
+            if (onof) { // Turn dimmer on
+                let box = document.getElementById('eyecloudviz');
+                let dimmer = document.createElement('div');
+                dimmer.classList.add('ui', 'active', 'dimmer');
+                dimmer.setAttribute("style", "z-index:10")
+                dimmer.id = 'eyecloud_dimmer';
+                box.appendChild(dimmer);
+
+                let content = d3.select(dimmer)
+                    .append('div')
+                    .attr('class', 'content')
+                    .append('h2')
+                    .attr('class', 'ui inverted icon header');
+
+                let i_class = content.append('i')
+                    .attr('class', 'icons');
+
+                i_class.append('i')
+                    .attr('class', 'big users icon');
+                i_class.append('i')
+                    .attr('class', 'huge grey dont icon');
+
+                content.append('br'); // Prevents overlapping of the huge icon
+                content.append('br'); // Prevents overlapping of the huge icon
+                content.append('div').text('No users selected.');
+            } else { // Turn dimmer off
+                if (!! document.getElementById('eyecloud_dimmer')) {
+                    document.getElementById('eyecloud_dimmer').remove(); // Remove the dimmer, if it exists
+                }
+            }
         }
 
         /**
@@ -390,15 +437,15 @@ class EyeCloud extends Visualization {
          * Displays an informative popup with Fomantic-UI that contains a message
          */
         function infoPopup(message) {
-            $('.toast') // Close previous toast
+            $('.eyecloud_info') // Close previous toast
                 .toast('close')
             $('body')
                 .toast({
                     showIcon: 'info',
-                    title: 'Eye Cloud info',
+                    title: 'Eye Cloud Info',
                     displayTime: 0,
                     message: message,
-                    class: 'info',
+                    class: 'info eyecloud_info',
                     position: 'bottom left',
                     closeIcon: true
                 });
@@ -423,30 +470,6 @@ class EyeCloud extends Visualization {
             draw(); // Redraw
         }
 
-        // Work in progress...
-        // Requires html2canvas.js
-        function saveImage() {
-            let element = document.querySelector("#cloud_svg");
-            html2canvas(element).then(function (canvas) {
-                let imageURL = canvas.toDataURL();
-                let image = new Image();
-                image.src = imageURL;
-
-                // IE/Edge Support (PNG only)
-                if (window.navigator.msSaveBlob) {
-                    window.navigator.msSaveBlob(canvas.msToBlob(), 'eyecloud-screenshot.png');
-                } else {
-                    const a = document.createElement('a');
-
-                    document.body.appendChild(a); // For FireFox support
-                    a.href = imageURL;
-                    a.download = 'eyecloud-screenshot.png';
-                    a.click();
-                    document.body.removeChild(a);
-                }
-            });
-        }
-        
         /**
          * Resize the SVG-element
          */
@@ -455,5 +478,48 @@ class EyeCloud extends Visualization {
                 .attr('width', width)
                 .attr('height', height)
         }
+    }
+
+    /**
+     * Centers the eye cloud on the box by making computations for a scale of 1
+     */
+    center() {
+        let svg = d3.select('#cloud_svg');
+
+        let svgWidth = svg.attr('width');
+        let svgHeight = svg.attr('height');
+
+        svg.call(this.zoom.scaleTo, 1); // First, set scale to 1
+
+        let cloudWidth = document.getElementById('cloud_group').getBoundingClientRect().width;
+        let cloudHeight = document.getElementById('cloud_group').getBoundingClientRect().height;
+        //console.log(cloudWidth);
+        //console.log(cloudHeight);
+
+        let scale = svgHeight / (cloudHeight + 50); // Compute new scale for dimensions at scale = 1
+        svg.call(this.zoom.scaleTo, scale); // Set scale
+        svg.call(this.zoom.translateTo, svgWidth / 2, svgHeight / 2); // Center the eye cloud
+
+        /*
+        let scale;
+            if (svgHeight < svgWidth) {
+                scale = svgHeight / (cloudHeight + 50);
+            } else {
+                scale = svgWidth / (cloudWidth + 50);
+            }
+         */
+    }
+
+    /**
+     * Set the scale of the zoom to 0.5 after drawing the eye cloud
+     */
+    setScale() {
+        let svg = d3.select('#cloud_svg');
+
+        let svgWidth = svg.attr('width');
+        let svgHeight = svg.attr('height');
+
+        svg.call(this.zoom.scaleTo, 0.5);
+        svg.call(this.zoom.translateTo, svgWidth / 2, svgHeight / 2); // Center the eye cloud
     }
 }

@@ -10,20 +10,22 @@ class GazeStripe extends Visualization {
 
         this.frameWidth = this.box.inner.clientWidth;
         this.frameHeight = this.box.inner.clientHeight;
+        this.opacity = 1;       
 
         this.svg = d3.select(this.box.inner)
             .classed('smalldot ', true)
             .append('svg')
             .attr('width', this.frameWidth)
-            .attr('height', this.frameHeight)
+            .attr('height', this.frameHeight);
 
         this.graphics = this.svg.append('g');
+        this.userSelection = this.svg.append('g').style('opacity', 0)
 
         this.zoom = d3.zoom();
         this.zoom.filter(() => (d3.event.type === 'mousedown' && d3.event.button === 1) || (d3.event.type === 'wheel' && d3.event.button === 0));
         this.svg.call(
             this.zoom.on('zoom', () => {
-                this.graphics.attr('transform', d3.event.transform);
+                this.opacity == 1 ? this.graphics.attr('transform', d3.event.transform) : this.userSelection.attr('transform', d3.event.transform);
             })
         );
 
@@ -51,10 +53,12 @@ class GazeStripe extends Visualization {
             if (this.frameWidth !== this.box.inner.clientWidth || this.frameHeight !== this.box.inner.clientHeight) {
                 this.scale();
             }
-        }, 1000);
+        }, 100);
     }
 
     draw() {
+
+        this.resetView();
 
         const imageData = dataset.getImageData(properties.image);
 
@@ -104,8 +108,8 @@ class GazeStripe extends Visualization {
         for (const key of Object.keys(usersx)) {
             let divisor = usersx[key].length / shortestPath;
             let timestamp = [0];
-            let imgLine = this.graphics.append('g').attr('id', 'gazestripeg');
-            let timeLine = this.graphics.append('g').attr('id', 'gazestripeg');
+            let imgLine = this.graphics.append('g')
+            let timeLine = this.graphics.append('g')
 
             imgLine.append('svg').attr('y', counter*(Number(imgHeight) + Number(textHeight)) + Number(textHeight)).attr('width', width).attr('height', imgHeight).attr('preserveAspectRatio', 'xMaxYMax meet').attr('viewBox', ('-' + fontsize1 + ' -' + (Number(fontsize2) * 2).toString() + ' ' + width + ' ' + width).toString()).append("text").text(key).attr('font-size', fontsize1);
             timeLine.append('svg').attr('y', counter*(Number(imgHeight) + Number(textHeight)) + Number(imgHeight)).attr('width', width).attr('height', textHeight).attr('viewBox', '0 -' + fontsize2 + ' ' + width + ' ' + textHeight).append("text").text('Time (ms)').attr('font-size', fontsize2);
@@ -139,6 +143,64 @@ class GazeStripe extends Visualization {
                     .attr('font-size', fontsize2);
             }
             counter += 1;
+        
+            imgLine.on('click', () => {
+                this.scale();
+                let oldOpacity = this.opacity
+                if (this.opacity == 0) {
+                    this.opacity = 1;
+                } else {
+                    this.opacity = 0;
+                }
+
+                let runNumber = 0;
+                this.graphics.style('opacity', this.opacity);
+                this.userSelection.style('opacity', oldOpacity);
+                this.userSelection.append('image')
+                    .attr('xlink:href', this.image.src)
+                    .attr('width', this.image.naturalWidth)
+                    .attr('height', this.image.naturalHeight);
+
+                for (var i = 0; i < shortestPath; i++) {
+
+                    let x = usersx[key][Math.round(divisor * i)] - zoomValue / 2;
+                    let y = usersy[key][Math.round(divisor * i)] - zoomValue / 2;
+                    this.userSelection.append('rect')
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('width', zoomValue)
+                        .attr('height', zoomValue)
+                        .attr('fill', 'rgba(0,0,0,0)')
+                        .attr('stroke', properties.getColorHex())
+                        .attr('stroke-width', '6')
+                        .attr('stroke-dasharray', '10,5')
+                        .attr('stroke-linecap', 'butt')
+                        .style('opacity', 0)
+                        .transition()
+                        .duration(1000)
+                        .style('opacity', 1)
+                        .delay(i*1000)
+                        .transition()
+                        .duration(1000)
+                        .style('opacity', 0)
+                        .delay(3000)
+
+                    runNumber += 1;
+                    this.userSelection
+                        .append('text')
+                        .attr('x', x + (zoomValue / 2))
+                        .attr('y', y + (zoomValue / 2) + 6)
+                        .text(runNumber)
+                        .attr('font-size', zoomValue / 2)
+                        .style('text-anchor', 'middle');
+                }                
+
+                this.userSelection.on('click', () => {
+                    if (this.opacity == 0) {
+                        this.resetView();
+                    }
+                });
+            });
         }
     }
 
@@ -152,5 +214,13 @@ class GazeStripe extends Visualization {
         .attr('height', this.frameHeight) // Full screen.attr('transform', "translate(0 ,0)");
         .attr('transform', "translate(0 ,0)");
         this.draw();
+    }
+
+    resetView() {
+
+        this.opacity = 1;
+        this.opacity = 1;
+        this.graphics.style('opacity', this.opacity);
+        this.userSelection.selectAll('*').remove();
     }
 }

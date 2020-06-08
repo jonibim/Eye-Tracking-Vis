@@ -253,7 +253,7 @@ $("#saveSettings").click(() => {
     checkButtons()
 
     d3.select("#previewImage").attr("src", dataset.url + "/images/" + properties.getCurrentImage());
-    d3.select("#previewImageLabel").text(image)
+    d3.select("#previewImageLabel").text(properties.getCurrentImage())
     if (datasetId !== 'default') {
         d3.select("#previewId").html(
             `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the dataset with id <br> <b> ${datasetId} </b>`)
@@ -261,7 +261,7 @@ $("#saveSettings").click(() => {
         d3.select("#previewId").html(
             `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the <b> default </b> dataset`)
     }
-    $('.ui.modal')
+    $('#modalSave')
         .modal('show');
 });
 
@@ -348,8 +348,8 @@ $("#submitRequest").click(() => {
         jsonExport.user = properties.getCurrentUsers()
     }
 
-    if ($("#aoiCheck").checkbox('is checked')) {
-        jsonExport.aoi = properties.getCurrentAOI()
+    if ($("#aoiCheck").checkbox('is checked') && properties.getCurrentAOISize !== 0) {
+        jsonExport.aoi = JSON.decycle(properties.getCurrentAOI())
     }
     if ($("#colorCheck").checkbox('is checked')) {
         jsonExport.color = properties.getCurrentColor()
@@ -363,9 +363,11 @@ $("#submitRequest").click(() => {
     //Eye Cloud is not working with this 
     // because of the way it is implemented
 
+    if ($("#snapCheck").checkbox('is unchecked')) {
     setTimeout(() => {
         if(dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
     }, 0);
+    }
 
     //Start creation of zip file
     if ($("#snapCheck").checkbox('is checked')) {
@@ -373,24 +375,19 @@ $("#submitRequest").click(() => {
         zip.file("settings.json", convertString);
         var folder = zip.folder('images')
 
-        // registry.map.forEach(viz => {
-        //     console.log(viz.instance)
-        //     if (viz.instance.svg)
-        //         folder.file(viz.tag + '.png', createSVGImage(viz.instance.svg.node()))
-        // });
-
-        //Start to add files to the folder. The loop above does the same functionality
-        // But i commented it out for debugging and i am using the lines below
-
-        //folder.file('gazestripe.png', createSVGImage(registry.map.get('gazestripe').instance.svg.node()))
-        folder.file('attentionmap.png', createSVGImage(registry.map.get('attentionmap').instance.svg.node()))
-        folder.file('editor.png', createSVGImage(registry.map.get('editor').instance.svg.node()))
-        folder.file('transitiongraph.png', createSVGImage(registry.map.get('transitiongraph').instance.svg.node()))
+        registry.map.forEach(viz => {
+            console.log(viz.instance)
+            if (viz.instance.svg)
+                folder.file(viz.tag + '.png', createSVGImageData(viz.instance.svg.node()))
+        });
 
         zip.generateAsync({ type: "blob" })
             .then(function (content) {
+                setTimeout(() => {
                 //Using FileSaver.js module
                 saveAs(content, "export.zip");
+                    if(dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
+                }, 0);
             });
     }
     else {

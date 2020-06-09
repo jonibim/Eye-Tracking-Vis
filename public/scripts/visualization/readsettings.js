@@ -15,7 +15,7 @@ function selectDataset(value) {
 
 function applySettings() {
     //- Apply visualization type changes -//
-    for ([key, value] of Object.entries(visualizations)) {value ? registry.enable(key) : registry.disable(key);}
+    for ([key, value] of Object.entries(visualizations)) { value ? registry.enable(key) : registry.disable(key); }
     //- Reset visualization type changes -//
     visualizations = {};
 
@@ -33,13 +33,13 @@ function checkboxChanged(id) {
         if (!$('#eyecloud:checked').length > 0) {
             $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
         }
-    }  else if (id === 'eyecloud') {
+    } else if (id === 'eyecloud') {
         if (!$('#attentionmap:checked').length > 0) {
             $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
         }
-    }  else if (id === 'editor') {
+    } else if (id === 'editor') {
         $(".accordion.editorsettings").accordion(state ? "open" : "close", 0);
-    }  else if (id === 'gazestripe') {
+    } else if (id === 'gazestripe') {
         $(".accordion.zoomsettings").accordion(state ? "open" : "close", 0);
     }
     resizeBoxes()
@@ -54,7 +54,7 @@ function selectImage(image) {
 //- Update User Dropdown -//
 function updateUsers(image) {
     users = [];
-    if(image) {
+    if (image) {
         let imageData = dataset.getImageData(image);
         for (let path of imageData.scanpaths) {
             users.push(path.person);
@@ -83,23 +83,22 @@ function enableAllUsers() {
 //- Modify Active Users -//
 function modifyUsers(usersImport) {
     selected_users = []
+    let rejected_users = []
     //Remove all the users
     $('.dropdown.search.selection.user')
-        .dropdown('clear');
-    settingChanged();
-    let rejected_users = []
-    console.log(users)
+        .dropdown('clear'); 
+
     for (var i=0; i < usersImport.length; i++) {
         console.log(usersImport[i])
         if(users.includes(usersImport[i])){
-               usersAdd(usersImport[i])
-               usersChanged()
+               selected_users.push(usersImport[i])
         }
         else{
             rejected_users.push(usersImport[i])
         }
     }
 
+    properties.setUsers(selected_users)
     $('.dropdown.search.selection.user').dropdown('set selected', selected_users)
 }
 
@@ -137,23 +136,23 @@ function setUserSelectionButtons() {
 
 //- RGBA Sliders handler
 function readSlidersRGBA(id, value) {
-	RGBA[id] = value;
+    RGBA[id] = value;
     switch (id) {
         case 'r':
-            $('.r-color-preview').css({"background-color":'rgba(' + RGBA[id] + ',' + 0 + ',' + 0 + ',' + 1 + ')'});
+            $('.r-color-preview').css({ "background-color": 'rgba(' + RGBA[id] + ',' + 0 + ',' + 0 + ',' + 1 + ')' });
             break;
         case 'g':
-            $('.g-color-preview').css({"background-color":'rgba(' + 0 + ',' + RGBA[id] + ',' + 0 + ',' + 1 + ')'});
+            $('.g-color-preview').css({ "background-color": 'rgba(' + 0 + ',' + RGBA[id] + ',' + 0 + ',' + 1 + ')' });
             break;
         case 'b':
-            $('.b-color-preview').css({"background-color":'rgba(' + 0 + ',' + 0 + ',' + RGBA[id] + ',' + 1 + ')'});
+            $('.b-color-preview').css({ "background-color": 'rgba(' + 0 + ',' + 0 + ',' + RGBA[id] + ',' + 1 + ')' });
             break;
         case 'a':
-            $('.a-color-preview').css({"background-color":'rgba(' + 0 + ',' + 0 + ',' + 0 + ',' + RGBA[id] + ')'});
+            $('.a-color-preview').css({ "background-color": 'rgba(' + 0 + ',' + 0 + ',' + 0 + ',' + RGBA[id] + ')' });
             break;
     }
-    $('.color-preview').css({"background-color":'rgba(' + Object.values(RGBA) +')'})
-    if (Object.values(RGBA)[3] < 0.2 || Object.values(RGBA).slice(0,3).reduce(function sum(total, num) {return total + num;}, 0) > 500) {
+    $('.color-preview').css({ "background-color": 'rgba(' + Object.values(RGBA) + ')' })
+    if (Object.values(RGBA)[3] < 0.2 || Object.values(RGBA).slice(0, 3).reduce(function sum(total, num) { return total + num; }, 0) > 500) {
         $('.color-preview').removeClass("inverted");
     } else {
         $('.color-preview').addClass("inverted");
@@ -168,6 +167,6 @@ function readSlidersZoom(value) {
 
 //- Show Help Icons on Hover -//
 $('.item.setting')
-            .hover(function() {
-                $(this).find('.settinghelp').toggleClass("hidden");
-            });
+    .hover(function () {
+        $(this).find('.settinghelp').toggleClass("hidden");
+    });

@@ -4,6 +4,7 @@ block styles
     link(rel='stylesheet' href="/css/visualization.css")
     link(rel='stylesheet' href="/css/patterns.css")
     link(rel='stylesheet' href="/css/d3-context-menu.css")
+    link(rel='stylesheet' href="/css/style.css")
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
@@ -154,7 +155,7 @@ block sidebars
                 div(class="title")
                     i(class="ui pencil alternate icon")
                     label Editor Commands:
-                div(class="ui form content")
+                div(class="ui form content" style="text-align: left")
                     p  
                     |  Use middle click to move the image around
                     |  <br>  <br>
@@ -187,11 +188,11 @@ block sidebars
             div(class="inline field small-padding")
                 div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted save icon")
-                div(id="uploadSettings" class="ui green basic disabled circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
+                div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted upload icon")
                 
 
-        div(class='ui modal save' id='modalSave')
+        div(class='ui small modal' id='modalSave')
             div(class='header') Save settings
             div(class="content")
                 div(class='text' style='text-align:left')
@@ -225,7 +226,6 @@ block sidebars
                             img(id='previewImage' src="" class="ui large rounded centered fluid image")
                             p(id='previewImageLabel')
                     div(class="ui small segment")
-                        -var stringHelp = '<i class="icon person"><i>'
                         div(class="ui checkbox" id="imageCheck")
                             input(type="checkbox")
                             label Allow settings to be used on other images  
@@ -241,12 +241,50 @@ block sidebars
                     | Share via PasteBin
 
 
-        div(class='ui modal upload' id='modalUpload')
+        div(class='ui small modal' id='modalUpload')
             div(class='header') Upload settings
             div(class="content")
-                
-
-    
+                //- button(class='ui toggle blue button' id='togglePreview')
+                //-     i(class="bolt icon")
+                //-     #textLabel(style='display: inline;')
+                //-         | Quick apply
+                p(style="font-weight: bold;text-align:left") Drag and drop the settings file or open the file explorer by clicking on the button inside the box. The settings will be applied automatically. 
+                div(class="ui placeholder segment" id='drop-area')
+                    div(class="ui icon header")
+                        div(class="ui grid" style="display: block;")
+                            div(class="two wide column")
+                                i(class="i file code outline icon")
+                            div(class="two wide column")
+                                i(class="i file archive outline icon")
+                        |    Upload JSON object or the ZIP file
+                    input(type="file" id="fileElem" class="realupload" accept=".zip,.json" onchange="handleFiles(this.files)")
+                    label(class="ui button" for="fileElem") Select file
+                //- div(class="ui placeholder segment" id="previewContent")
+                //-     div(class="ui two column stackable center aligned grid")
+                //-         div(class="ui vertical divider") To
+                //-         div(class="middle aligned row")
+                //-         div(class="column" id='currentSettings')
+                //-             p Current Settings
+                //-         div(class="column" id='newSettings')
+                //-             p New Settings
+                div(class="ui styled accordion" id='consoleLog')
+                    div(class="title")
+                        i(class="terminal icon")
+                        |     Console log
+                    div(class="content" id="consoleLogContent")
+                        p
+                        #result Waiting for output...
+                div 
+                    br
+                //- button(class="ui disabled green button" id="submitDownload")
+                //-     i(class="i check icon")
+                //-     | Confirm   
+                //- button(class="ui disabled red button" id="resetDownload")
+                //-     i(class="i undo alternate icon")
+                //-     | Reset
+                button(class="ui button" id="clearLog") 
+                    i(class="trash alternate outline icon")
+                    | Clear Console
         
 
 

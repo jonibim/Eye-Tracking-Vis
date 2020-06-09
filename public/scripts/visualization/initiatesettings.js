@@ -324,87 +324,88 @@ $("#snapCheck").checkbox({
 })
 
 $("#submitRequest").click(() => {
-    
+
     var dimmer = d3.select('#modalSave')
         .append('div')
-        .attr('id','settingsDimmer')
-        .attr('class','ui active dimmer')
+        .attr('id', 'settingsDimmer')
+        .attr('class', 'ui active dimmer')
 
     var loader = dimmer.append('div')
-        .attr('id','settingsLoader')
-        .attr('class','ui indeterminate text loader')
+        .attr('id', 'settingsLoader')
+        .attr('class', 'ui indeterminate text loader')
         .text('Exporting settings. This may take a while for the snapshots')
 
     var errnoFlag = 0
 
-    try{
+    try {
 
-    var jsonExport = {}
+        var jsonExport = {}
 
-    if ($("#imageCheck").checkbox('is unchecked')) {
-        jsonExport.image = properties.getCurrentImage()
-    }
-    if ($("#usersCheck").checkbox('is checked')) {
-        jsonExport.user = properties.getCurrentUsers()
-    }
+        jsonExport.id = datasetId
 
-    if ($("#aoiCheck").checkbox('is checked') && properties.getCurrentAOISize !== 0) {
-        jsonExport.aoi = JSON.decycle(properties.getCurrentAOI())
-    }
-    if ($("#colorCheck").checkbox('is checked')) {
-        jsonExport.color = properties.getCurrentColor()
-    }
-    if ($("#zoomCheck").checkbox('is checked')) {
-        jsonExport.zoom = properties.getCurrentZoom()
-    }
+        if ($("#imageCheck").checkbox('is unchecked')) {
+            jsonExport.image = properties.getCurrentImage()
+        }
+        if ($("#usersCheck").checkbox('is checked')) {
+            jsonExport.user = properties.getCurrentUsers()
+        }
 
-    var convertString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonExport))
+        if ($("#aoiCheck").checkbox('is checked') && properties.getCurrentAOISize !== 0) {
+            jsonExport.aoi = JSON.decycle(properties.getCurrentAOI())
+        }
+        if ($("#colorCheck").checkbox('is checked')) {
+            jsonExport.color = properties.getCurrentColor()
+        }
+        if ($("#zoomCheck").checkbox('is checked')) {
+            jsonExport.zoom = properties.getCurrentZoom()
+        }
 
-    //Eye Cloud is not working with this 
-    // because of the way it is implemented
+        var convertString = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonExport))
 
-    if ($("#snapCheck").checkbox('is unchecked')) {
-    setTimeout(() => {
-        if(dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
-    }, 0);
-    }
+        //Eye Cloud is not working with this 
+        // because of the way it is implemented
 
-    //Start creation of zip file
-    if ($("#snapCheck").checkbox('is checked')) {
-        var zip = new JSZip();
-        zip.file("settings.json", convertString);
-        var folder = zip.folder('images')
+        if ($("#snapCheck").checkbox('is unchecked')) {
+            setTimeout(() => {
+                if (dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
+            }, 0);
+        }
 
-        registry.map.forEach(viz => {
-            console.log(viz.instance)
-            if (viz.instance.svg)
-                folder.file(viz.tag + '.png', createSVGImageData(viz.instance.svg.node()))
-        });
+        //Start creation of zip file
+        if ($("#snapCheck").checkbox('is checked')) {
+            var zip = new JSZip();
+            zip.file("settings.json", JSON.stringify(jsonExport));
+            var folder = zip.folder('images')
 
-        zip.generateAsync({ type: "blob" })
-            .then(function (content) {
-                setTimeout(() => {
-                //Using FileSaver.js module
-                saveAs(content, "export.zip");
-                    if(dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
-                }, 0);
+            registry.map.forEach(viz => {
+                if (viz.instance)
+                    folder.file(viz.tag + '.png', createSVGImageData(viz.instance.svg.node()))
             });
-    }
-    else {
-        var prepareDownload = document.createElement('a');
-        prepareDownload.setAttribute("href", convertString);
-        prepareDownload.setAttribute("download", "tesr.json");
-        prepareDownload.setAttribute("style", "display:none");
-        document.body.appendChild(prepareDownload);
-        prepareDownload.click();
-        prepareDownload.remove();
-    }
-    
 
-   
+            zip.generateAsync({ type: "blob" })
+                .then(function (content) {
+                    setTimeout(() => {
+                        //Using FileSaver.js module
+                        saveAs(content, "export.zip");
+                        if (dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
+                    }, 0);
+                });
+        }
+        else {
+            var prepareDownload = document.createElement('a');
+            prepareDownload.setAttribute("href", convertString);
+            prepareDownload.setAttribute("download", "settings.json");
+            prepareDownload.setAttribute("style", "display:none");
+            document.body.appendChild(prepareDownload);
+            prepareDownload.click();
+            prepareDownload.remove();
+        }
+
+
+
 
     }
-    catch(err){
+    catch (err) {
 
         errorFlag = 1
 
@@ -422,10 +423,10 @@ $("#submitRequest").click(() => {
         content.append('div')
             .text('An error occured')
         content.append('div')
-            .attr('style','font-size: 16px; color:white')
+            .attr('style', 'font-size: 16px; color:white')
             .text('Error Messaage: ' + err.message)
-            content.append('button')
-            .attr('class','ui red small button')
+        content.append('button')
+            .attr('class', 'ui red small button')
             .text('ok')
             .on('click', () => (
                 d3.select('#settingsDimmer').remove()
@@ -437,4 +438,391 @@ $("#submitRequest").click(() => {
 
 });
 
+//- Upload Configuration -//
 
+let dropArea = document.getElementById('drop-area')
+
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false)
+    })
+
+function preventDefaults(e) {
+    e.preventDefault()
+    e.stopPropagation()
+}
+
+;['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlight, false)
+})
+
+    ;['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false)
+    })
+
+function highlight(e) {
+    dropArea.classList.add('highlight')
+}
+
+function unhighlight(e) {
+    dropArea.classList.remove('highlight')
+}
+
+dropArea.addEventListener('drop', handleDrop, false)
+
+let $result = $("#result");
+
+function handleDrop(e) {
+    let dt = e.dataTransfer
+    let files = dt.files
+
+    handleFiles(files)
+}
+
+function handleFiles(files) {
+    if (files.length !== 1) {
+        fakelog("ERROR: You can't upload more than two files")
+        fakelog("=== END OF RUN ===")
+        showError()
+        return
+    }
+    ([...files]).forEach(handleFile)
+}
+
+function handleFile(f) {
+
+    d3.select('#drop-area').append('div')
+        .attr('id', 'dimmerLoader')
+        .attr('class', 'ui active dimmer')
+
+    d3.select('#dimmerLoader').append('div').attr('class','ui loader').attr('id','loader')
+
+    let jsonSetting
+
+    let $title = $("<h4>", {
+        text: f.name
+    });
+
+    var $fileContent = $("<ul>");
+    $result.append($title);
+    $result.append($fileContent);
+
+
+    if (f.type === 'application/zip') {
+        var dateBefore = new Date();
+        var count = 0
+        JSZip.loadAsync(f)
+            .then(function (zip) {
+                var dateAfter = new Date();
+                $title.append($("<span>", {
+                    "class": "small",
+                    text: " (loaded in " + (dateAfter - dateBefore) + "ms)"
+                }));
+
+
+                zip.forEach(function (relativePath, zipEntry) {  // 2) print entries
+                    var filenameOriginal = zipEntry.name
+                    var filenameRegEx = zipEntry.name
+                    if (zipEntry.name.match('[^/]+$'))
+                        filenameRegEx = zipEntry.name.match('[^/]+$')[0]
+                    if (filenameRegEx === 'settings.json') count++
+                    if (count > 1) {
+                        filenameOriginal = filenameOriginal + " <--- There is another setting file"
+                    }
+                    $fileContent.append($("<li>", {
+                        text: filenameOriginal
+                    }));
+
+                });
+
+
+                if (count === 1) {
+                    zip.files['settings.json'].async("string")
+                        .then(function (data) {
+                            try {
+                                jsonSetting = JSON.parse(data)
+                                fakelog("INFO: Found settings with the following attributes: <br>" + data)
+                                prepareJSON(jsonSetting)
+                            } catch (err) {
+                                fakelog('ERROR: Invalid JSON file')
+                                fakelog('ERROR :' + err.message)
+                                fakelog('==== END OF RUN ====')
+                                showError()
+                                return
+                            }
+                        });
+                } else if (count === 0) {
+                    fakelog('ERROR: There are no settings.json in the zip file')
+                    fakelog('==== END OF RUN ====')
+                    showError()
+                    return
+                } else {
+                    fakelog('ERROR: There is more than one settings.json in the zip')
+                    fakelog('==== END OF RUN ====')
+                    showError()
+                    return
+                }
+
+
+            }, function (e) {
+                fakelog("ERROR: Error reading " + f.name + ": " + e.message)
+                fakelog('==== END OF RUN ====')
+                showError()
+                return
+            });
+    } else if (f.type === 'application/json') {
+        var reader = new FileReader();
+        let result
+        reader.onload = (e) => {
+            jsonSetting = JSON.parse(e.target.result);
+            prepareJSON(jsonSetting)
+        }
+        reader.readAsText(f)
+    }
+    else {
+        fakelog("ERROR: Unsupported type" + f.type)
+        fakelog('==== END OF RUN ====')
+        showError()
+        return
+    }
+}
+
+function fakelog(inputText) {
+    $result.append($("<div>", {
+        html: inputText
+    }));
+}
+
+function prepareJSON(JSONobject) {
+
+
+    // $currentSettings = $("#currentSettings");
+    // $newSettings = $("#newSettings")
+
+    currentProps = {}
+    currentProps.id = datasetId
+    currentProps.image = properties.getCurrentImage()
+    currentProps.user = properties.getCurrentUsers()
+    currentProps.aoi = JSON.decycle(properties.getCurrentAOI())
+    currentProps.color = properties.getCurrentColor()
+    currentProps.zoom = properties.getCurrentZoom()
+
+    fakelog('Checking properties... <br>')
+    if (currentProps === JSONobject) {
+        //throwError
+        fakelog('ERROR: Uploaded object is the same as the current settings')
+        fakelog('==== END OF RUN ====')
+        showError()
+        return
+    }
+
+    fakelog('Checking dataset ID... <br>')
+    //Check for datasetID match
+    if (JSONobject.id) {
+        if (JSONobject.id !== datasetId) {
+            //throwError 
+            fakelog('ERROR: Dataset ID mismatch.')
+            fakelog('INFO: Current dataset id: ' + datasetId)
+            fakelog('INFO: Uploaded file dataset id: ' + JSONobject.id)
+            fakelog('==== END OF RUN ====')
+            showError()
+            return
+        }
+    } else {
+        fakelog('ERROR: No Dataset ID')
+        fakelog('==== END OF RUN ====')
+        showError()
+        return
+    }
+
+    fakelog('Checking image... <br>')
+    //Check for image restriction
+    if (JSONobject.image) {
+        if (JSONobject.image !== currentProps.image) {
+            //throwError
+            fakelog('ERROR: Image mismatch')
+            fakelog('INFO: Current image: ' + currentProps.image)
+            fakelog('INFO: Uploaded file image: ' + JSONobject.image)
+            fakelog('==== END OF RUN ====')
+            showError()
+            return
+        }
+    }
+
+    try {
+
+        //Update Color
+        fakelog('Quick apply... <br>')
+        if (JSONobject.color) {
+            fakelog('Setting colors...')
+            fakelog('Current colors:')
+            fakelog(currentProps.color)
+            fakelog('New colors:')
+            fakelog(JSONobject.color)
+            fakelog('<br>')
+
+            properties.setColor(JSONobject.color)
+            readSlidersRGBA('r', JSONobject.color[0])
+            $('r').slider('set value', JSONobject.color[0])
+            readSlidersRGBA('g', JSONobject.color[1])
+            $('g').slider('set value', JSONobject.color[1])
+            readSlidersRGBA('b', JSONobject.color[2])
+            $('b').slider('set value', JSONobject.color[2])
+        } else {
+            fakelog('Skipping color...')
+            fakelog('<br>')
+
+        }
+
+        //Update Zoom
+        fakelog('Setting zoom...')
+        if (JSONobject.zoom) {
+            fakelog('Current zoom:')
+            fakelog(currentProps.zoom)
+            fakelog('New zoom:')
+            fakelog(JSONobject.zoom)
+            fakelog('<br>')
+
+            $('.ui.slider.zoom').slider('set value', JSONobject.zoom)
+            readSlidersZoom(JSONobject.zoom)
+        } else {
+            fakelog('Skipping zoom...')
+            fakelog('<br>')
+
+        }
+
+
+
+        //Update Users
+        fakelog('Setting users...')
+        if (JSONobject.user) {
+            fakelog('Current users:')
+            fakelog(currentProps.user)
+            fakelog('New users:')
+            fakelog(JSONobject.user)
+            fakelog('<br>')
+
+            modifyUsers(JSONobject.user)
+        } else {
+            fakelog('Skipping users...')
+            fakelog('<br>')
+        }
+
+
+        //Update AOI
+        if (JSONobject.aoi) {
+            fakelog('Setting ' + JSONobject.aoi.length + ' aoi(s)')
+            updateAOI = properties.onchange.get('upload').get('editor')
+            JSONobject.aoi.forEach(aoi => {
+                fakelog('Adding aoi ' + aoi.id)
+                updateAOI(aoi.top, aoi.left, aoi.bottom, aoi.right)
+            })
+            fakelog('Syncing changes')
+            for (let listener of properties.onchange.get('sync').values())
+                listener();
+        } else {
+            fakelog('Skipping aois...')
+            fakelog('<br>')
+        }
+
+        fakelog('=== SUCCESS ===')
+        showSuccess()
+
+    } catch (err) {
+        fakelog("An error occured")
+        fakelog(err.message)
+        fakelog(err.stack)
+        showError()
+        return
+    }
+
+}
+
+function showSuccess() {
+
+    $('#loader').remove()
+
+    d3.select('#dimmerLoader').append('div')
+        .attr('class', 'content')
+        .attr('id', 'dimmerContent')
+
+    d3.select('#dimmerContent').append('h2')
+        .attr('class', 'ui green icon header')
+        .attr('id', 'dimmerText')
+
+    d3.select('#dimmerText').append('i')
+        .attr('class', 'check icon')
+
+    d3.select('#dimmerText').append('div').text('Upload Successful!')
+
+    d3.select('#dimmerContent').append('div').text('Click anywhere inside this box to close this message')
+
+    $('#dimmerLoader').click(() => {
+        $('#dimmerLoader').remove()
+    })
+
+
+}
+
+function showError() {
+
+    $('#loader').remove()
+
+    d3.select('#dimmerLoader').append('div')
+        .attr('class', 'content')
+        .attr('id', 'dimmerContent')
+
+    d3.select('#dimmerContent').append('h2')
+        .attr('class', 'ui red icon header')
+        .attr('id', 'dimmerText')
+
+    d3.select('#dimmerText').append('i')
+        .attr('class', 'times icon')
+
+    d3.select('#dimmerText').append('div').text('Upload Failed!')
+
+    d3.select('#dimmerContent').append('div').text('Check console for more information')
+
+    d3.select('#dimmerContent').append('div').text('Click anywhere inside this box to close this message')
+
+    $('#dimmerLoader').click(() => {
+        $('#dimmerLoader').remove()
+    })
+
+}
+
+$("#uploadSettings").click(() => {
+    // checkToggle()
+    $('#modalUpload')
+        .modal('show');
+
+});
+
+// $('#togglePreview').click(() => {
+//     $icon = $('#togglePreview').find('.icon')
+//     if ($icon.hasClass("pencil")) {
+//         $icon.removeClass("pencil ruler");
+//         $icon.addClass("bolt");
+//         $('#textLabel').text('Quick apply')
+//     } else {
+//         $icon.removeClass("bolt");
+//         $icon.addClass("pencil ruler");
+//         $('#textLabel').text('Preview mode')
+//     }
+//     checkToggle()
+// })
+
+// function checkToggle() {
+//     if ($('#togglePreview').find('.icon').hasClass("pencil")) {
+//         $('#previewContent').show()
+//         $('#submitDownload').show()
+//         $('#resetDownload').show()
+//     } else {
+//         $('#previewContent').hide()
+//         $('#submitDownload').hide()
+//         $('#resetDownload').hide()
+//     }
+// }
+
+$("#clearLog").click(() => {
+    $result.html('Log cleared')
+})

@@ -11,15 +11,15 @@ class Properties {
 
     constructor() {
         this.image = undefined;
-        this.rgba = [0,0,0,0];
+        this.rgba = [0, 0, 0, 0];
         this.time = 0;
         this.aoi = new Map();
         this.zoomValue = undefined;
         this.users = [];
 
-        this.events = ['image','color','zoom','users','aoi','sync'];
+        this.events = ['image', 'color', 'zoom', 'users', 'aoi', 'sync', 'upload'];
         this.onchange = new Map();
-        for(let event of this.events)
+        for (let event of this.events)
             this.onchange.set(event, new Map());
     }
 
@@ -40,10 +40,10 @@ class Properties {
 
         //console.log(this.aoi.get(image))
         if (this.image && !this.aoi.get(image))
-            this.aoi.set(image,[]);
+            this.aoi.set(image, []);
 
         for (let listener of this.onchange.get('image').values())
-            listener({type: 'image', oldImage: oldImage, newImage: image});
+            listener({ type: 'image', oldImage: oldImage, newImage: image });
     }
 
 
@@ -59,7 +59,7 @@ class Properties {
 
         this.rgba = [...rgba];
         for (let listener of this.onchange.get('color').values())
-            listener({type: 'color', color: rgba, red: rgba[0], green: rgba[1], blue: rgba[2], alpha: rgba[3]});
+            listener({ type: 'color', color: rgba, red: rgba[0], green: rgba[1], blue: rgba[2], alpha: rgba[3] });
     }
 
     /**
@@ -83,7 +83,7 @@ class Properties {
         let oldZoom = this.zoomValue;
         this.zoomValue = zoomValue;
         for (let listener of this.onchange.get('zoom').values())
-            listener({type: 'zoom', oldZoom: oldZoom, newZoom: zoomValue});
+            listener({ type: 'zoom', oldZoom: oldZoom, newZoom: zoomValue });
     }
 
     /**
@@ -91,15 +91,15 @@ class Properties {
      * @param {string[]} users
      */
     setUsers(users) {
-        if (this.users.length === users.length){
+        if (this.users.length === users.length) {
             let difference;
-            for(let element of users) {
+            for (let element of users) {
                 if (!this.users.includes(element)) {
                     difference = true;
                     break;
                 }
             }
-            if(!difference)
+            if (!difference)
                 return;
         }
 
@@ -107,12 +107,12 @@ class Properties {
 
         this.users = [...users];
         for (let listener of this.onchange.get('users').values())
-            listener({type: 'users', users: users});
+            listener({ type: 'users', users: users });
 
-        
+
         for (let listener of properties.onchange.get('sync').values())
             listener()
- 
+
 
     }
 
@@ -127,12 +127,12 @@ class Properties {
      * {type: 'users', users: string[]}|
      * {type: 'aoi', aoi: AOI[]})} listener
      */
-    setListener(tag, events, listener){
-        if(typeof events === 'string')
+    setListener(tag, events, listener) {
+        if (typeof events === 'string')
             events = [events];
 
-        for(let event of events){
-            if(!this.events.includes(event)){
+        for (let event of events) {
+            if (!this.events.includes(event)) {
                 console.error('There\'s no event called \'' + event + '\'');
                 continue;
             }
@@ -158,40 +158,40 @@ class Properties {
     /**
      * @return {[]} Selected users for the selected image
      */
-    getCurrentUsers(){
+    getCurrentUsers() {
         return this.users
     }
 
     /**
      * @return {number} The zoom value for the selected image
      */
-    getCurrentZoom(){
+    getCurrentZoom() {
         return this.zoomValue
     }
 
     /**
      * @return {float[]} The zoom value for the selected image
      */
-    getCurrentColor(){
+    getCurrentColor() {
         return this.rgba
     }
 
     /**
      * @return {string} The selected image
      */
-    getCurrentImage(){
+    getCurrentImage() {
         return this.image
     }
 
     /**
      * Removes all AOIs for the selected image
      */
-    removeCurrentAOIs(){
+    removeCurrentAOIs() {
         let aoi = [];
         this.aoi.set(this.image, aoi);
 
         for (let listener of this.onchange.get('aoi').values())
-            listener({type: 'aoi', aoi: aoi});
+            listener({ type: 'aoi', aoi: aoi });
     }
 }
 
@@ -249,17 +249,17 @@ class AOI {
             }
         }
 
-        if(this.image === properties.image)
+        if (this.image === properties.image)
             for (let listener of properties.onchange.get('aoi').values())
-                listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
+                listener({ type: 'aoi', aoi: properties.aoi.get(this.image) });
     }
 
     /**
      * @param {ScanPoint | [2]} point - the point to check, can be either a ScanPath or [x, y]
      * @return {boolean} whether the given point is inside this aoi
      */
-    includesPoint(point){
-        if(point instanceof ScanPoint)
+    includesPoint(point) {
+        if (point instanceof ScanPoint)
             return this.points.includes(point);
         return this.left <= point[0] && this.right >= point[0] && this.top <= point[1] && this.bottom >= point[1];
     }
@@ -270,16 +270,16 @@ class AOI {
     remove() {
         let index = properties.aoi.get(this.image).indexOf(this);
 
-        if(index < 0)
+        if (index < 0)
             return;
 
         properties.aoi.get(this.image).splice(index, 1);
 
-        if(this.image === properties.image)
+        if (this.image === properties.image)
             for (let listener of properties.onchange.get('aoi').values())
-                listener({type: 'aoi', aoi: properties.aoi.get(this.image)});
+                listener({ type: 'aoi', aoi: properties.aoi.get(this.image) });
     }
 
-    
+
 
 }

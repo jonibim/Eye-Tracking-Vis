@@ -103,6 +103,10 @@ class Editor extends Visualization {
             })
         })
 
+        properties.setListener('editor', 'upload', (top, left, bottom, right) => {
+            this.addAoi(top, left, bottom, right, false)
+        })
+
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;
 
@@ -156,7 +160,7 @@ class Editor extends Visualization {
             let addAoiMenu = {
                 title: 'Add AOI',
                 action: () => {
-                    this.addAoi();
+                    this.addAoi(this.extent[0][1], this.extent[0][0], this.extent[1][1], this.extent[1][0], true)
                     this.sync();
                 }
             };
@@ -269,7 +273,7 @@ class Editor extends Visualization {
                     return d.y;
                 })
 
-            this.svgGcomposition = this.svgG.append('g').attr('id', scanPath.person).classed('person',true)
+            this.svgGcomposition = this.svgG.append('g').attr('id', scanPath.person).classed('person', true)
 
             /** Draw paths */
             this.svgGcomposition.append("path")
@@ -401,8 +405,8 @@ class Editor extends Visualization {
 
     /**
      * Add aoi on the screen
-     */ 
-    addAoi() {
+     */
+    addAoi(topSelection, leftSelection, bottomSelection, rightSelection, markDots) {
 
         this.currentAOI = properties.getCurrentAOI()
 
@@ -427,24 +431,23 @@ class Editor extends Visualization {
         /**
          * The selection coordinates from the brush 
          */
-        this.topSelection = this.extent[0][1]
-        this.leftSelection = this.extent[0][0]
-        this.bottomSelection = this.extent[1][1]
-        this.rightSelection = this.extent[1][0]
-        this.heightSelection = this.bottomSelection - this.topSelection
-        this.widthSelection = this.rightSelection - this.leftSelection
+
+        this.heightSelection = bottomSelection - topSelection
+        this.widthSelection = rightSelection - leftSelection
 
         /**
          * Start to draw the AOI on top of the image
          */
-        this.drawAOI(this.newId, this.newName, this.widthSelection, this.heightSelection, this.leftSelection, this.topSelection)
+        this.drawAOI(this.newId, this.newName, this.widthSelection, this.heightSelection, leftSelection, topSelection)
 
         /**
          * Mark all the dots under the AOI
          */
-        this.svgG.selectAll("circle").classed("underAoi", (d) => {
-            return this.isBrushed(this.extent, (d.x), (d.y))
-        })
+        if (markDots) {
+            this.svgG.selectAll("circle").classed("underAoi", (d) => {
+                return this.isBrushed(this.extent, (d.x), (d.y))
+            })
+        }
 
         //console.log(this.currentAOI)
 
@@ -456,7 +459,7 @@ class Editor extends Visualization {
             properties.aoi.set(properties.image, this.currentAOI)
         }
 
-        this.aoiObject.setSelection(this.leftSelection, this.topSelection, this.rightSelection, this.bottomSelection, this.newId)
+        this.aoiObject.setSelection(leftSelection, topSelection, rightSelection, bottomSelection, this.newId)
     }
 
 
@@ -517,7 +520,7 @@ class Editor extends Visualization {
                 console.log('add')
                 console.log('The object ->>', aois.object)
             }
-            properties.aoi.set(properties.image, this.newAOI);
+
             this.sync();
         });
     }
@@ -554,17 +557,14 @@ class Editor extends Visualization {
     onRemoved() {
         if (this.resizeTimer)
             clearInterval(this.resizeTimer);
-
-        console.log('removed')
     }
 
     // hideUser(user) {
     //     this.svg.selectAll('#' + user).attr('visibility', 'hidden')
     // }
-    
+
 
     showUser(user) {
-        console.log(user)
         this.svg.selectAll('#' + user).attr('visibility', 'visible')
     }
 

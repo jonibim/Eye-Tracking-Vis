@@ -141,3 +141,32 @@ a.label:hover{
     left: 50%;
     z-index: -1;
 }
+
+
+.realupload {
+    display: none
+}
+
+#consoleLogContent{
+    background: #000000c4;
+    text-align: left;
+    overflow-y: scroll;
+    height:200px
+}
+
+#result{
+    color: lime;
+    font-family: monospace;
+}
+
+#drop-area{
+
+    transition: background-color 0.5s ease !important;
+}
+
+.highlight{
+    
+    background: #e5f2f7 !important;
+    border-color: rgba(0, 106, 219, 0.31) !important;
+
+}

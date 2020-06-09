@@ -95,16 +95,16 @@ class Editor extends Visualization {
             this.image.src = properties.image ? dataset.url + '/images/' + properties.image : ''
         )
 
+        properties.setListener('editor', 'users', () => {
+            this.svgG.selectAll('.person').attr('visibility', 'hidden')
+            this.users = properties.users;
+            this.users.forEach(user => {
+                this.showUser(user)
+            })
+        })
+
         if (properties.image)
             this.image.src = dataset.url + '/images/' + properties.image;
-
-
-        /**
-         * Listeners for the show/hide users 
-         */
-        properties.setListener('editor', 'hideUser', (user) => this.hideUser(user))
-        properties.setListener('editor', 'showUser', (user) => this.showUser(user))
-
 
         /**
          * The menu part for clearing All AOIs
@@ -269,7 +269,7 @@ class Editor extends Visualization {
                     return d.y;
                 })
 
-            this.svgGcomposition = this.svgG.append('g').attr('id', scanPath.person)
+            this.svgGcomposition = this.svgG.append('g').attr('id', scanPath.person).classed('person',true)
 
             /** Draw paths */
             this.svgGcomposition.append("path")
@@ -558,11 +558,13 @@ class Editor extends Visualization {
         console.log('removed')
     }
 
-    hideUser(user) {
-        this.svg.selectAll('#' + user).attr('visibility', 'hidden')
-    }
+    // hideUser(user) {
+    //     this.svg.selectAll('#' + user).attr('visibility', 'hidden')
+    // }
+    
 
     showUser(user) {
+        console.log(user)
         this.svg.selectAll('#' + user).attr('visibility', 'visible')
     }
 

@@ -2,7 +2,6 @@ let selected_image = "";
 let visualizations = {};
 let users = [];
 let selected_users = [];
-let exec = null
 let zoomValue;
 
 //- React on Dataset Selection Dropdown -//
@@ -67,39 +66,53 @@ function updateUsers(image) {
 
 //- Enable All Possible Users -//
 function enableAllUsers() {
-    users.sort((a, b) => {return Number(a.slice(1)) - Number(b.slice(1));});
-    // This condition was blocking the visualiztions from updating its users
-    // As you can have the same amount of users but with different users labeling inside
-    //if (users.length != selected_users.length) {
-        let userValues = [];
-        for (let user in users) {
-            let value = {};
-            value['name'] = users[user];
-            value['value'] = users[user];
-            value['selected'] = true;
-            userValues.push(value);
+    users.sort((a, b) => { return Number(a.slice(1)) - Number(b.slice(1)); });
+    let userValues = [];
+    for (let user in users) {
+        let value = {};
+        value['name'] = users[user];
+        value['value'] = users[user];
+        value['selected'] = true;
+        userValues.push(value);
+    }
+    $('.dropdown.search.selection.user')
+        .dropdown('change values', userValues);
+    setUserSelectionButtons();
+}
+
+//- Modify Active Users -//
+function modifyUsers(usersImport) {
+    selected_users = []
+    //Remove all the users
+    $('.dropdown.search.selection.user')
+        .dropdown('clear');
+    settingChanged();
+    let rejected_users = []
+    console.log(users)
+    for (var i=0; i < usersImport.length; i++) {
+        console.log(usersImport[i])
+        if(users.includes(usersImport[i])){
+               usersAdd(usersImport[i])
+               usersChanged()
         }
-        $('.dropdown.search.selection.user')
-            .dropdown('change values', userValues);
-        setUserSelectionButtons();
-        exec=1
-    //}   
+        else{
+            rejected_users.push(usersImport[i])
+        }
+    }
+
+    $('.dropdown.search.selection.user').dropdown('set selected', selected_users)
 }
 
 //- Add Single User -//
 function usersAdd(addedUser) {
-    var updateVisualization = properties.onchange.get('showUser').get('editor')
-    if (exec && updateVisualization){
-        updateVisualization(addedUser)
-    }
     selected_users.push(addedUser);
     setUserSelectionButtons();
 }
 
 //- Remove Single User -//
 function usersRemove(removedUser) {
-    var updateVisualization = properties.onchange.get('hideUser').get('editor')
-    if (updateVisualization) updateVisualization(removedUser)
+    //var updateVisualization = properties.onchange.get('hideUser').get('editor')
+   // if (updateVisualization) updateVisualization(removedUser)
     for (user in selected_users) {
         if (selected_users[user] === removedUser) {
             selected_users.splice(user, 1);

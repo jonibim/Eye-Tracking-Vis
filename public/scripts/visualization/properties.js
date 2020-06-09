@@ -17,7 +17,7 @@ class Properties {
         this.zoomValue = undefined;
         this.users = [];
 
-        this.events = ['image','color','zoom','users','aoi','sync','showUser','hideUser'];
+        this.events = ['image','color','zoom','users','aoi','sync'];
         this.onchange = new Map();
         for(let event of this.events)
             this.onchange.set(event, new Map());

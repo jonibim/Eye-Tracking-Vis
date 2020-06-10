@@ -497,6 +497,8 @@ function handleFiles(files) {
 
 function handleFile(f) {
 
+    $('#dimmerLoader').remove()
+
     d3.select('#drop-area').append('div')
         .attr('id', 'dimmerLoader')
         .attr('class', 'ui active dimmer')

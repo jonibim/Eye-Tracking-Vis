@@ -4,7 +4,6 @@ block styles
     link(rel='stylesheet' href="/css/visualization.css")
     link(rel='stylesheet' href="/css/patterns.css")
     link(rel='stylesheet' href="/css/d3-context-menu.css")
-    link(rel='stylesheet' href="/css/style.css")
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
@@ -238,7 +237,7 @@ block sidebars
                     | Download JSON
                 button(class="ui blue disabled button")
                     i(class="i share icon")
-                    | Share via PasteBin
+                    | Share via link
 
 
         div(class='ui small modal' id='modalUpload')
@@ -312,6 +311,10 @@ block content
                 div(class="ui image" style="max-height: 90% !important; max-width: 90% !important;")
                     img#preview-image(style="max-height: 90% !important;" src="/datasets/default/images/" + default_image)
             div#innerframe(class='inner-frame')
+                h2(class="ui icon header" id='cat')
+                    i(class="cat icon")
+                    |It's empty in here...
+
 
 block post_scripts
     //- Settings Sidebar behaviors -//

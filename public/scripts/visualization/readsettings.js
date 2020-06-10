@@ -28,7 +28,6 @@ function applySettings() {
 
 //- Cool easter egg -//
 function checkCat() {
-    console.log($('div.box').length)
     if ($('div.box').length) {
         $('#cat').css('display', 'none')
     } else {

@@ -45,7 +45,7 @@ function resizeBoxes() {
 // initialize default visualizations
 window.onload = async () => {
 
-    console.log("%cWelcome to ETViz project! 👁", "color:blue; font-size:30px");
+    console.log("%cWelcome to ETViz project! 👁", "color:cyan; font-size:30px");
     console.log("%cSome errors might appear in here, please report them at https://github.com/t0xicdream/Eye-Tracking-Vis", "color:red; font-size:12px");
 
     //console.log('main.js - Loading...');

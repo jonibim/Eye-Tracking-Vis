@@ -1,6 +1,11 @@
 /**
+ * @type {Map<any, any>}
+ */
+let urlDataMap = new Map();
+
+/**
  * @param {SVGElement} svg
- * @param {string} filename? - preferred name for the downloaded file
+ * @param {string} [filename] - preferred name for the downloaded file
  * @return {HTMLImageElement}
  */
 async function downloadSVG(svg, filename = 'image') {
@@ -41,12 +46,7 @@ async function createSVGImageData(svg) {
     let xml = new XMLSerializer().serializeToString(svg);
     let url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(xml);
 
-    //I followed this suggestion as in here
-    // https://stackoverflow.com/questions/26635627/saving-images-from-url-using-jszip
-
-    // return JSZipUtils.getBinaryContent(url);
-
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
         let image = new Image();
 
         image.onload = async () => {
@@ -64,69 +64,49 @@ async function createSVGImageData(svg) {
 
 /**
  * @param {SVGElement} svg
- * @param {function(svg: SVGElement)} callback
  */
 async function parseImages(svg) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let namespace = 'http://www.w3.org/1999/xlink';
 
         // convert image to a dataURL
-        let parseImage = (image) => {
-            let img = new Image();
+        let parseImage = async (url, image) => {
+            return new Promise((resolve1, reject1) => {
+                let handle = dataUrl => {
+                    image.setAttributeNS(namespace, 'href', dataUrl);
+                    resolve1();
+                };
 
-            img.onload = () => {
-                let canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                canvas.getContext('2d').drawImage(img, 0, 0);
-                image.setAttributeNS(namespace, 'href', canvas.toDataURL());
+                if(urlDataMap.has(url))
+                    handle(urlDataMap.get(url));
+                else {
+                    let img = new Image();
 
-                left--;
-                if (left === 0)
-                    resolve(svg);
-            };
+                    img.onload = () => {
+                        let canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                        let dataUrl = canvas.toDataURL();
 
-            img.src = image.getAttributeNS(namespace, 'href');
-        };
+                        urlDataMap.set(url, dataUrl);
+                        handle(dataUrl);
+                    };
 
-        // convert svg to a dataURL
-        let parseSvg = (url, element) => {
-            let request = new XMLHttpRequest();
-            request.onload = () => {
-                let response = request.responseText || request.response;
-                let dataUrl = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(response);
-                element.setAttributeNS(namespace, 'href', dataUrl);
-
-                left--;
-                if (left === 0)
-                    resolve(svg);
-            };
-            request.onerror = () => parseImage(element);
-            request.open('GET', url);
-            request.send();
+                    img.src = url;
+                }
+            })
         };
 
         let images = svg.querySelectorAll('image');
-        let left = images.length;
 
         // convert images which aren't in the correct format
         for (let image of images) {
             let href = image.getAttributeNS(namespace, 'href');
-
-            if (href.indexOf('data:image') < 0) {
-                if (href.indexOf('.svg') > 0)
-                    parseSvg(href, image);
-                else
-                    parseImage(image);
-            }
-            else {
-                left--;
-                if (left === 0)
-                    resolve(svg);
-            }
+            if (href.indexOf('data:image') < 0)
+                await parseImage(href, image);
         }
 
-        if (left === 0)
-            resolve(svg);
+        resolve(svg);
     })
 }

@@ -373,23 +373,24 @@ $("#submitRequest").click(() => {
 
         //Start creation of zip file
         if ($("#snapCheck").checkbox('is checked')) {
-            var zip = new JSZip();
-            zip.file("settings.json", JSON.stringify(jsonExport));
-            var folder = zip.folder('images')
+            (async () => {
+                var zip = new JSZip();
+                zip.file("settings.json", JSON.stringify(jsonExport));
+                var folder = zip.folder('images')
 
-            registry.map.forEach(viz => {
-                if (viz.instance)
-                    folder.file(viz.tag + '.png', createSVGImageData(viz.instance.svg.node()))
-            });
+                for (let viz of registry.map.values())
+                    if (viz.instance)
+                        folder.file(viz.tag + '.png', await createSVGImageData(viz.instance.svg.node()));
 
-            zip.generateAsync({ type: "blob" })
-                .then(function (content) {
-                    setTimeout(() => {
-                        //Using FileSaver.js module
-                        saveAs(content, "export.zip");
-                        if (dimmer && !errnoFlag) d3.select('#settingsDimmer').remove()
-                    }, 0);
-                });
+                zip.generateAsync({type: "blob"})
+                    .then(function (content) {
+                        setTimeout(() => {
+                            //Using FileSaver.js module
+                            saveAs(content, "export.zip");
+                            if (dimmer && !errnoFlag) d3.select('#settingsDimmer').remove();
+                        }, 0);
+                    });
+            })();
         }
         else {
             var prepareDownload = document.createElement('a');

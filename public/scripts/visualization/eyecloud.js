@@ -67,19 +67,19 @@ class EyeCloud extends Visualization {
                 }
             },
             {
-                title: 'Save image',
+                title: 'Download as image',
                 action: function () {
                     //console.log('eyecloud.js - Saving image...');
                     // Display a popup for 7.5 seconds to let the user know, saving takes some time
-                    $('.toast') // Close previous toast
+                    $('.settingHelp')  // Close previous toast
                         .toast('close')
                     $('body')
                         .toast({
                             showIcon: 'info',
-                            title: 'Saving Image',
+                            title: 'Downloading Image',
                             displayTime: 7500,
                             message: 'The eye cloud is being saved as an image. This may take some time.',
-                            class: 'info',
+                            class: 'warning',
                             position: 'top center',
                             closeIcon: false
                         });
@@ -403,7 +403,9 @@ class EyeCloud extends Visualization {
 
                 content.append('br'); // Prevents overlapping of the huge icon
                 content.append('br'); // Prevents overlapping of the huge icon
-                content.append('div').text('No users selected.');
+                content.append('div').text('No users selected');
+                content.append('div').attr("style","font-size: 12px")
+                    .text('Check the users setting in the settings tab for adding a user');
             } else { // Turn dimmer off
                 if (!! document.getElementById('eyecloud_dimmer')) {
                     document.getElementById('eyecloud_dimmer').remove(); // Remove the dimmer, if it exists
@@ -427,8 +429,19 @@ class EyeCloud extends Visualization {
             let y = object.co_y;
             let density = densities[object.index];
 
+            let densityVerb;
+            let pointOrPoints;
+            if (density === 1) { // If there is only one other point close, adjust the message to singular
+                densityVerb = 'is';
+                pointOrPoints = 'point';
+            } else {
+                densityVerb = 'are';
+                pointOrPoints = 'points';
+            }
+
             let message = 'This circle represents point (' + x + ', ' + y + ') on the image. ' +
-                'There are ' + density + ' other points in a range of ' + range + ' pixels to this point.';
+                'There ' + densityVerb + ' ' + density + ' other ' + pointOrPoints + ' in a range of ' +
+                range + ' pixels to this point.';
 
             infoPopup(message);
         }

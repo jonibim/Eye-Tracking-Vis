@@ -26,16 +26,17 @@ for ([x, y] of Object.entries(RGBA)) {
 
 function showEditorCommands() {
     openSettings();
-    $('.ui.accordion.editorsettings').accordion('open', 0)
+    $('.ui.accordion.editorsettings').accordion('open', 0);
     let editorCommands = document.getElementsByClassName('accordion editorsettings')[0];
     editorCommands.scrollIntoView(true);
 }
 
 function showUserSettings() {
     openSettings();
-    $('.ui.accordion.usersettings').accordion('open', 0)
+    $('.ui.accordion.usersettings').accordion('open', 0);
     let userSettings = document.getElementsByClassName('accordion usersettings')[0];
     userSettings.scrollIntoView(true);
+    $('.ui.dropdown.user').dropdown('show');
 }
 
 //- Update the Dataset Dropdown Options -//

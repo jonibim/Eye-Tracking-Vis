@@ -405,7 +405,7 @@ class EyeCloud extends Visualization {
                 content.append('br'); // Prevents overlapping of the huge icon
                 content.append('div').text('No users selected');
                 content.append('div').attr("style","font-size: 12px")
-                    .text('Check the users setting in the settings tab for adding a user');
+                    .html("<a onclick='showUserSettings()'>Check the users setting in the settings tab for adding a user<\a>");
             } else { // Turn dimmer off
                 if (!! document.getElementById('eyecloud_dimmer')) {
                     document.getElementById('eyecloud_dimmer').remove(); // Remove the dimmer, if it exists

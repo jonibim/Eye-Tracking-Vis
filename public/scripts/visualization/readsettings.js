@@ -23,6 +23,16 @@ function applySettings() {
     properties.setUsers(selected_users);
     properties.setColor(Object.values(RGBA));
     properties.setZoom(zoomValue);
+    checkCat()
+}
+
+//- Cool easter egg -//
+function checkCat() {
+    if ($('div.box').length) {
+        $('#cat').css('display', 'none')
+    } else {
+        $('#cat').css('display', '')
+    }
 }
 
 //- Read checkbox changes -//
@@ -86,14 +96,13 @@ function modifyUsers(usersImport) {
     let rejected_users = []
     //Remove all the users
     $('.dropdown.search.selection.user')
-        .dropdown('clear'); 
+        .dropdown('clear');
 
-    for (var i=0; i < usersImport.length; i++) {
-        console.log(usersImport[i])
-        if(users.includes(usersImport[i])){
-               selected_users.push(usersImport[i])
+    for (var i = 0; i < usersImport.length; i++) {
+        if (users.includes(usersImport[i])) {
+            selected_users.push(usersImport[i])
         }
-        else{
+        else {
             rejected_users.push(usersImport[i])
         }
     }
@@ -111,7 +120,7 @@ function usersAdd(addedUser) {
 //- Remove Single User -//
 function usersRemove(removedUser) {
     //var updateVisualization = properties.onchange.get('hideUser').get('editor')
-   // if (updateVisualization) updateVisualization(removedUser)
+    // if (updateVisualization) updateVisualization(removedUser)
     for (user in selected_users) {
         if (selected_users[user] === removedUser) {
             selected_users.splice(user, 1);

@@ -35,7 +35,7 @@ class EyeCloud extends Visualization {
         let infoMenuItem = {
             title: 'Show info',
             action: function() {
-                console.log('eyecloud.js - Showing info...');
+                //console.log('eyecloud.js - Showing info...');
                 getInfo(clickedObject);
             }
         };
@@ -43,7 +43,7 @@ class EyeCloud extends Visualization {
         let disableMenuItem = {
             title: 'Disable circle',
             action: function () {
-                console.log('eyecloud.js - Disabling circle...');
+                //console.log('eyecloud.js - Disabling circle...');
                 disableCircle(clickedObject);
             }
         };
@@ -52,7 +52,7 @@ class EyeCloud extends Visualization {
             {
                 title: 'Enable all circles',
                 action: function () {
-                    console.log('eyecloud.js - Enabling all circles...');
+                    //console.log('eyecloud.js - Enabling all circles...');
                     enableCircles();
                 }
             },
@@ -62,14 +62,14 @@ class EyeCloud extends Visualization {
             {
                 title: 'Center visualization',
                 action: function () {
-                    console.log('eyecloud.js - Centering visualization...')
+                    //console.log('eyecloud.js - Centering visualization...')
                     thisClass.center();
                 }
             },
             {
                 title: 'Save image',
                 action: function () {
-                    console.log('eyecloud.js - Saving image...');
+                    //console.log('eyecloud.js - Saving image...');
                     // Display a popup for 7.5 seconds to let the user know, saving takes some time
                     $('.toast') // Close previous toast
                         .toast('close')
@@ -354,7 +354,7 @@ class EyeCloud extends Visualization {
                 .on('tick', update);
 
             simulation.onload = () => {
-                console.log('Loaded!');
+                //console.log('Loaded!');
             }
 
             /**

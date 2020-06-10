@@ -103,7 +103,7 @@ class Properties {
                 return;
         }
 
-        console.log('properties.js - Setting users to ' + users.length + (users.length === 1 ? ' user' : ' users'));
+        //console.log('properties.js - Setting users to ' + users.length + (users.length === 1 ? ' user' : ' users'));
 
         this.users = [...users];
         for (let listener of this.onchange.get('users').values())

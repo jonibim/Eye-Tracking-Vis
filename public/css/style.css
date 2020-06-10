@@ -1,6 +1,6 @@
 #headbar {
     margin-bottom: 0px;
-    overflow:visible;
+    overflow: visible;
     z-index: 900;
 }
 
@@ -19,7 +19,7 @@
 .content {
     width: 100%;
     max-width: 500px;
-    margin:0 auto;
+    margin: 0 auto;
     text-align: center;
 }
 
@@ -27,20 +27,19 @@
     width: inherit;
     height: inherit;
     overflow: visible;
-
     display: flex;
     flex-flow: column;
 }
 
 .dropdown.dataset {
-    position:absolute;
+    position: absolute;
     top: 0px;
     text-align: center;
-    width:90%;
+    width: 90%;
     font-weight: 800;
 }
 
-.dropdown.dataset .filtered.text+label#dataset_icon{
+.dropdown.dataset .filtered.text+label#dataset_icon {
     visibility: hidden;
 }
 
@@ -52,16 +51,12 @@
     margin-top: 1rem;
 }
 
-.sidebar.visible.settings + .pusher {
-  width: calc(100% - 260px);
-}
-
-.sidebar.settings {
-  transition-duration: 0.2s;
+.sidebar.visible.settings+.pusher {
+    width: calc(100% - 260px);
 }
 
 body.pushable {
-   background-color: white;
+    background-color: white;
 }
 
 .left-align {
@@ -77,18 +72,18 @@ body.pushable {
 }
 
 .small-right-padding {
-    padding-right: 5px; 
+    padding-right: 5px;
 }
 
 .small-padding {
-    padding:3px;
+    padding:3px !important;
 }
 
 .vertical-centered {
     vertical-align: middle;
 }
 
-a.label:hover{
+a.label:hover {
     text-decoration: none;
 }
 
@@ -105,11 +100,11 @@ a.label:hover{
     stroke: black;
     stroke-width: 1px;
     fill: black !important;
-  }
+}
 
 .underAoi {
     opacity: 0.6 !important;
-    stroke: black; 
+    stroke: black;
     stroke-width: 1px;
     fill: blue !important;
 }
@@ -126,10 +121,10 @@ a.label:hover{
 }
 
 .legend rect {
-    fill:white;
-    stroke:black;
-    opacity:0.8;}
-  
+    fill: white;
+    stroke: black;
+    opacity: 0.8;
+}
 
 .fileUpload {
     width: 0px !important;
@@ -142,31 +137,35 @@ a.label:hover{
     z-index: -1;
 }
 
-
 .realupload {
     display: none
 }
 
-#consoleLogContent{
+#consoleLogContent {
     background: #000000c4;
     text-align: left;
     overflow-y: scroll;
-    height:200px
+    height: 200px
 }
 
-#result{
+#result {
     color: lime;
     font-family: monospace;
 }
 
-#drop-area{
-
+#drop-area {
     transition: background-color 0.5s ease !important;
 }
 
-.highlight{
-    
+.highlight {
     background: #e5f2f7 !important;
     border-color: rgba(0, 106, 219, 0.31) !important;
+}
 
+#cat {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0.4;
+    transform: translate(-50%, -50%);
 }

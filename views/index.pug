@@ -17,6 +17,7 @@ block header_content
 block content
     //-  Page Content -//
     div.content
+        img(class="ui large image centered" src="resources/logoETVIZnoQuote.svg" style="margin-top: 14px;") 
         //-  About Segment -//
         div(class="ui floating raised segments")
             div(class="ui segment")
@@ -48,7 +49,15 @@ block content
                 p(class="ui small dividing header") Custom Data
                 p Any user can upload their own dataset, allowing you to visualize your own data in this online visualization tool.
 
+    footer(class="ui vertical footer segment")
+        div(class="ui container")
+            h1(class="ui header") 
+            h1(class="ui header") 
+            h1(class="ui header") 
+
+
 block post_scripts
     //- Set Active page to Home in 'navigation' sidebar -//
     script.
         $('#index_nav').addClass('active');
+        $('.pusher').css('overflow', 'scroll')

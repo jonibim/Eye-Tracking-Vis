@@ -413,7 +413,7 @@ class Editor extends Visualization {
         //Track AOI - tracking the last aoi
         //If there isn't any aoi in the array then we create the first one
         this.trackAOI = this.currentAOI.slice(-1)[0]
-        console.log(this.trackAOI)
+        //console.log(this.trackAOI)
 
         /**
          * Check if this is the first aoi to be created 
@@ -508,17 +508,17 @@ class Editor extends Visualization {
     deleteAOI(object) {
 
         this.svgG.selectAll('.' + object.classList[1]).remove()
-        console.log('selected object', object)
+        //console.log('selected object', object)
 
         this.newAOI = []
 
         this.currentAOI = properties.getCurrentAOI()
         this.currentAOI.forEach(aois => {
-            console.log('aoi' + aois.id, object.classList[1])
+            //console.log('aoi' + aois.id, object.classList[1])
             if ('aoi' + aois.id !== object.classList[1]) {
                 this.newAOI.push(aois)
-                console.log('add')
-                console.log('The object ->>', aois.object)
+                //console.log('add')
+                //console.log('The object ->>', aois.object)
             }
 
             this.sync();

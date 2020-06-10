@@ -16,6 +16,7 @@ block header_content
 block content
     //-  Page Content -//
     div.content
+        img(class="ui large image centered" src="resources/logoETVIZ.svg" style="margin-top: 14px;") 
         //-  About Segment -//
         div(class="ui floating raised segments")
             div(class="ui segment")
@@ -45,8 +46,14 @@ block content
                 p(class="ui small dividing header") University of Technology Eindhoven
                 p This online tool was created by 5 Computer Science and Engineering students from the #[a(href="https://www.tue.nl/en/") University of Technology Eindhoven]. It was developed for the WebTech course, during the 4th quartile of academic year 2019-2020.
 
+    footer(class="ui vertical footer segment")
+        div(class="ui container")
+            h1(class="ui header") 
+            h1(class="ui header") 
+            h1(class="ui header") 
 
 block post_scripts
     //- Set Active page to About in 'navigation' sidebar -//
     script.
         $('#about_nav').addClass('active');
+        $('.pusher').css('overflow', 'scroll')

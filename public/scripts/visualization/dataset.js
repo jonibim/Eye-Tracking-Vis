@@ -19,7 +19,7 @@ class Dataset {
      * @param {string} url - url of the folder for the data
      */
     importData(data, url) {
-        console.log('dataset.js - Importing data...')
+        //console.log('dataset.js - Importing data...')
         this.url = url;
         this.images = [];
 

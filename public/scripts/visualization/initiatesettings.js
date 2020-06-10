@@ -31,6 +31,13 @@ function showEditorCommands() {
     editorCommands.scrollIntoView(true);
 }
 
+function showUserSettings() {
+    openSettings();
+    $('.ui.accordion.usersettings').accordion('open', 0)
+    let userSettings = document.getElementsByClassName('accordion usersettings')[0];
+    userSettings.scrollIntoView(true);
+}
+
 //- Update the Dataset Dropdown Options -//
 async function updateDatasets() {
     const url = '/dataset/available';

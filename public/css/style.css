@@ -56,10 +56,6 @@
   width: calc(100% - 260px);
 }
 
-.sidebar.settings {
-  transition-duration: 0.2s;
-}
-
 body.pushable {
    background-color: white;
 }
@@ -81,7 +77,7 @@ body.pushable {
 }
 
 .small-padding {
-    padding:3px;
+    padding:3px !important;
 }
 
 .vertical-centered {

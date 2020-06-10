@@ -24,6 +24,13 @@ for ([x, y] of Object.entries(RGBA)) {
 
 //****************** Define Settings Functions ******************//
 
+function showEditorCommands() {
+    openSettings();
+    $('.ui.accordion.editorsettings').accordion('open', 0)
+    let editorCommands = document.getElementsByClassName('accordion editorsettings')[0];
+    editorCommands.scrollIntoView(true);
+}
+
 //- Update the Dataset Dropdown Options -//
 async function updateDatasets() {
     const url = '/dataset/available';

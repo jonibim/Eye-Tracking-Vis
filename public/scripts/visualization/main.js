@@ -36,8 +36,10 @@ let topbar = null;
 let registry = null;
 
 function resizeBoxes() {
-    for(let visualization of registry.getVisualizationInstances())
-        visualization.onResize();
+    setTimeout(function () {
+        for(let visualization of registry.getVisualizationInstances())
+            visualization.onResize();
+    }, 200);
 }
 
 // initialize default visualizations

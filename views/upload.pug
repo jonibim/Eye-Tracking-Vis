@@ -20,7 +20,7 @@ block header_content
 block content
     //-  Page Content -//
     div.content
-        div(class="ui raised segments")
+        div(class="ui floating raised segments")
             //-  Primary Segment -//
             div(class="ui segment")
                 i(class="ui green inverted circular upload large icon")
@@ -96,8 +96,14 @@ block content
                 div#ImagePreviewText(class="ui centered large header") Image Preview
                 div(class="content" style="max-width:1000px;")
                     img#imagePreview(class="ui centered big image")
+    footer(class="ui vertical footer segment")
+        div(class="ui container")
+            h1(class="ui header") 
+            h1(class="ui header") 
+            h1(class="ui header")     
 
 block post_scripts
     //- Set Active page to Upload in 'navigation' sidebar -//
     script.
         $('#upload_nav').addClass('active');
+        $('.pusher').css('overflow', 'scroll')

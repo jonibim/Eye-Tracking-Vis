@@ -124,7 +124,7 @@ class TransitionGraph extends Visualization {
             this.svg.select(".legendOrdinal").remove()
 
             if (!properties.image) {
-                console.log("leaving transition===>")
+                //console.log("leaving transition===>")
                 return;
             }
 
@@ -153,7 +153,7 @@ class TransitionGraph extends Visualization {
                     .attr('class', 'exclamation icon')
 
                 content.append('div').text('No AOIs.')
-                content.append('div').attr("style","font-size: 12px").text('Check the editor commands for adding AOIs')
+                content.append('div').attr("style","font-size: 12px").html("<a onclick='showEditorCommands()'>Check the editor commands for adding AOIs<\a>")
                 return
             }
 
@@ -202,19 +202,8 @@ class TransitionGraph extends Visualization {
             let norm = math.norm(this.matrix, 1)
             let normalized = math.add(0.5,(math.multiply(1/(norm/3), this.matrix)))
 
-
-
-            // const links = _links.map(d => {
-
-            //    var myObject = Object.create(d)
-            //    myObject.id = d.target;
-            //    return myObject
-
-            // })
-            // const nodes = _nodes.map(d => Object.create(d));
-
-            console.log('Links', links)
-            console.log('Nodes', nodes)
+            //console.log('Links', links)
+            //console.log('Nodes', nodes)
 
             var drag = simulation => {
 
@@ -248,10 +237,6 @@ class TransitionGraph extends Visualization {
                 .force("y", d3.forceY());
 
             var color = d3.scaleOrdinal(nodes, d3.schemeCategory10)
-
-
-
-            console.log(color('aoi1'))
 
             // Per-type markers, as they don't inherit styles.
             this.svg.append("defs").selectAll("marker")

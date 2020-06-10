@@ -36,14 +36,19 @@ let topbar = null;
 let registry = null;
 
 function resizeBoxes() {
-    for(let visualization of registry.getVisualizationInstances())
-        visualization.onResize();
+    setTimeout(function () {
+        for(let visualization of registry.getVisualizationInstances())
+            visualization.onResize();
+    }, 200);
 }
 
 // initialize default visualizations
 window.onload = async () => {
 
-    console.log('main.js - Loading...');
+    console.log("%cWelcome to ETViz project! 👁", "color:cyan; font-size:30px");
+    console.log("%cSome errors might appear in here, please report them at https://github.com/t0xicdream/Eye-Tracking-Vis", "color:red; font-size:12px");
+
+    //console.log('main.js - Loading...');
 
     dataset = new Dataset();
     frame = document.getElementById('innerframe');
@@ -60,17 +65,17 @@ window.onload = async () => {
     registry.register('transitiongraph', box => new TransitionGraph(box));
 
 
-    console.log('main.js - Finished Loading')
+    //console.log('main.js - Finished Loading')
 
 
-    console.log('main.js - Enabling visualizations...')
+    //console.log('main.js - Enabling visualizations...')
     window.onresize = resizeBoxes;
     openSettings() // keep the settings opened in the start
     registry.enableAll();
-    console.log('main.js - Visualizations enabled')
+    //console.log('main.js - Visualizations enabled')
 
 
-    console.log('main.js - Requesting dataset...')
+    //console.log('main.js - Requesting dataset...')
 
     let result = await requestDataset(datasetId);
     if(!result){
@@ -79,13 +84,13 @@ window.onload = async () => {
     }
     dataset.importData(result.data, result.url);
 
-    console.log('main.js - Dataset loaded')
+    //console.log('main.js - Dataset loaded')
 
 
-    console.log('main.js - Initializing Settings...')
+    //console.log('main.js - Initializing Settings...')
     selectImage(dataset.images[0].image);
     applySettings();
-    console.log('main.js - Settings Initialized')
+    //console.log('main.js - Settings Initialized')
 }
 
 /**

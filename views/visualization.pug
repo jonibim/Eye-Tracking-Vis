@@ -141,10 +141,6 @@ block sidebars
                     div(class="ui inline fields" style="margin-bottom:0px;")
                         div(class="ui inverted label b-color-preview") B
                         div(class="ui slider rgb small-padding" id="b")
-                    //- Alpha Slider (Disabled for now) Remove from scripts if not used!-//
-                        div(class="ui inline fields")
-                            div(class="ui inverted label a-color-preview") A
-                            div(class="ui slider small-padding alpha" id="a") 
 
         //- Editor Mode -//
         div(class="item setting")
@@ -174,6 +170,36 @@ block sidebars
                     div(class="ui inline fields" style="margin-bottom:0px;")
                         div(class="ui basic label zoom-preview")
                         div(class="ui slider zoom small-padding")
+
+        //- Eye Cloud -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Eye Cloud')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion eyecloudsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui cloud icon")
+                    label Eye Cloud:
+                div(class="ui form content")
+                    //- Range Slider -//
+                    label Coordinate Range:
+                    div(class="ui inline fields")
+                        div(class="ui basic label pointrange-preview")
+                        div(class="ui slider eyecloudsliders pointrange small-padding")
+                    //- Minimum Radius Slider -//
+                    label Minimum Radius:
+                    div(class="ui inline fields")
+                        div(class="ui basic label minradius-preview")
+                        div(class="ui slider eyecloudsliders minradius small-padding")
+                    //- Maxmimum Radius Slider -//
+                    label Maximum Radius:
+                    div(class="ui inline fields")
+                        div(class="ui basic label maxradius-preview")
+                        div(class="ui slider eyecloudsliders maxradius small-padding")
+                    //- Maximum Circles Slider -//
+                    label Maximum Circles:
+                    div(class="ui inline fields" style="margin-bottom:0px;")
+                        div(class="ui basic label maxcircles-preview")
+                        div(class="ui slider eyecloudsliders maxcircles small-padding")
 
 
         //- Apply Settings & Auto Apply -//

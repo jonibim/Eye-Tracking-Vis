@@ -16,8 +16,9 @@ class Properties {
         this.aoi = new Map();
         this.zoomValue = undefined;
         this.users = [];
+        this.ecSliders = [];
 
-        this.events = ['image', 'color', 'zoom', 'users', 'aoi', 'sync', 'upload'];
+        this.events = ['image', 'color', 'zoom', 'users', 'aoi', 'sync', 'upload', 'ec'];
         this.onchange = new Map();
         for (let event of this.events)
             this.onchange.set(event, new Map());
@@ -116,7 +117,24 @@ class Properties {
 
     }
 
+    /**
+     * Sets the current eye cloud slider values
+     * @param {number} ecRange
+     * @param {number} ecMinRadius
+     * @param {number} ecMaxRadius
+     * @param {number} ecMaxCircles
+     */
+    setEyeCloudSettings(ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles) {
+        if (this.ecRange === ecRange && this.ecMinRadius === ecMinRadius && this.ecMaxRadius === ecMaxRadius && this.ecMaxCircles === ecMaxCircles)
+            return;
 
+        //console.log('properties.js - Setting ec sliders to', ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles);
+
+        let oldecSliders = [...this.ecSliders];
+        this.ecSliders = [ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles];
+        for (let listener of this.onchange.get('ec').values())
+            listener({ type: 'ec', oldecSliders: oldecSliders, newecSliders: ecSliders });
+    }
     /**
      * Sets the given listener to the given events
      * @param {string} tag - the tag of the visualization adding the listener, same as for the registry

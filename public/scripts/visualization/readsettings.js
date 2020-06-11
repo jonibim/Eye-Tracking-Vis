@@ -3,6 +3,7 @@ let visualizations = {};
 let users = [];
 let selected_users = [];
 let zoomValue;
+let ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles;
 
 //- React on Dataset Selection Dropdown -//
 function selectDataset(value) {
@@ -23,6 +24,7 @@ function applySettings() {
     properties.setUsers(selected_users);
     properties.setColor(Object.values(RGBA));
     properties.setZoom(zoomValue);
+    properties.setEyeCloudSettings(ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles);
     checkCat()
 }
 
@@ -44,6 +46,7 @@ function checkboxChanged(id) {
             $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
         }
     } else if (id === 'eyecloud') {
+        $(".accordion.eyecloudsettings").accordion(state ? "open" : "close", 0);
         if (!$('#attentionmap:checked').length > 0) {
             $(".accordion.colorsettings").accordion(state ? "open" : "close", 0);
         }
@@ -172,6 +175,25 @@ function readSlidersRGBA(id, value) {
 function readSlidersZoom(value) {
     zoomValue = value;
     $('.zoom-preview').text(value);
+}
+
+//- Eye Cloud Sliders -//
+function readEyeCloudSliders(uclass, value) {
+    switch (uclass) {
+        case 'pointrange':
+            ecRange = value
+            break
+        case 'minradius':
+            ecMinRadius = value
+            break
+        case 'maxradius':
+            ecMaxRadius = value
+            break
+        case 'maxcircles':
+            ecMaxCircles = value
+            break
+    }
+    $('.'+uclass+'-preview').text(value);
 }
 
 //- Show Help Icons on Hover -//

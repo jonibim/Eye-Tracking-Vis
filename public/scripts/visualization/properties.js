@@ -125,7 +125,7 @@ class Properties {
      * @param {number} ecMaxCircles
      */
     setEyeCloudSettings(ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles) {
-        if (this.ecRange === ecRange && this.ecMinRadius === ecMinRadius && this.ecMaxRadius === ecMaxRadius && this.ecMaxCircles === ecMaxCircles)
+        if (this.ecSliders[0] === ecRange && this.ecSliders[1] === ecMinRadius && this.ecSliders[2] === ecMaxRadius && this.ecSliders[3] === ecMaxCircles)
             return;
 
         //console.log('properties.js - Setting ec sliders to', ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles);

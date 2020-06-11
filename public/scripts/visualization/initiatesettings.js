@@ -247,13 +247,13 @@ $('.ui.slider.pointrange')
     });
 
 //- Radius Eye Cloud Slider -//
-$('.minradius-preview').text(100);
-readEyeCloudSliders("minradius", 100);
+$('.minradius-preview').text(10);
+readEyeCloudSliders("minradius", 10);
 $('.maxradius-preview').text(100);
 readEyeCloudSliders("maxradius", 100);
 $('.ui.slider.radius')
     .slider({
-        min: 50,
+        min: 10,
         max: 250,
         start: 10,
         end: 100,

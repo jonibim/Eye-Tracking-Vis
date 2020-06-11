@@ -132,15 +132,15 @@ block sidebars
                     //- Red Slider -//
                     div(class="ui inline fields")
                         div(class="ui inverted label r-color-preview") R
-                        div(class="ui slider rgb small-padding" id="r")
+                        div(class="ui teal slider rgb small-padding" id="r")
                     //- Green Slider -//
                     div(class="ui inline fields")
                         div(class="ui inverted label g-color-preview") G
-                        div(class="ui slider rgb small-padding" id="g")
+                        div(class="ui teal slider rgb small-padding" id="g")
                     //- Blue Slider -//
                     div(class="ui inline fields" style="margin-bottom:0px;")
                         div(class="ui inverted label b-color-preview") B
-                        div(class="ui slider rgb small-padding" id="b")
+                        div(class="ui teal slider rgb small-padding" id="b")
 
         //- Editor Mode -//
         div(class="item setting")
@@ -169,7 +169,7 @@ block sidebars
                 div(class="ui form content")
                     div(class="ui inline fields" style="margin-bottom:0px;")
                         div(class="ui basic label zoom-preview")
-                        div(class="ui slider zoom small-padding")
+                        div(class="ui teal slider zoom small-padding")
 
         //- Eye Cloud -//
         div(class="item setting")
@@ -182,24 +182,21 @@ block sidebars
                 div(class="ui form content")
                     //- Range Slider -//
                     label Coordinate Range:
-                    div(class="ui inline fields")
                         div(class="ui basic label pointrange-preview")
-                        div(class="ui slider eyecloudsliders pointrange small-padding")
-                    //- Minimum Radius Slider -//
-                    label Minimum Radius:
                     div(class="ui inline fields")
+                        div(class="ui teal slider eyecloudsliders pointrange small-padding")
+                    //- Radius Slider -//
+                    label Radius:
                         div(class="ui basic label minradius-preview")
-                        div(class="ui slider eyecloudsliders minradius small-padding")
-                    //- Maxmimum Radius Slider -//
-                    label Maximum Radius:
-                    div(class="ui inline fields")
+                        | -
                         div(class="ui basic label maxradius-preview")
-                        div(class="ui slider eyecloudsliders maxradius small-padding")
+                    div(class="ui inline fields")
+                        div(class="ui teal range slider eyecloudsliders radius small-padding")
                     //- Maximum Circles Slider -//
                     label Maximum Circles:
-                    div(class="ui inline fields" style="margin-bottom:0px;")
                         div(class="ui basic label maxcircles-preview")
-                        div(class="ui slider eyecloudsliders maxcircles small-padding")
+                    div(class="ui inline fields" style="margin-bottom:0px;")
+                        div(class="ui teal slider eyecloudsliders maxcircles small-padding")
 
 
         //- Apply Settings & Auto Apply -//

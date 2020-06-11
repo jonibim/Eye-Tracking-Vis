@@ -246,32 +246,21 @@ $('.ui.slider.pointrange')
         }
     });
 
-//- Minimum Radius Eye Cloud Slider -//
-$('.minradius-preview').text(10);
-readEyeCloudSliders("minradius", 10);
-$('.ui.slider.minradius')
-    .slider({
-        min: 10,
-        max: 50,
-        start: 10,
-        step: 1,
-        onChange: function (value) {
-            readEyeCloudSliders("minradius", value)
-            settingChanged()
-        }
-    });
-
-//- Maximum Radius Eye Cloud Slider -//
+//- Radius Eye Cloud Slider -//
+$('.minradius-preview').text(100);
+readEyeCloudSliders("minradius", 100);
 $('.maxradius-preview').text(100);
 readEyeCloudSliders("maxradius", 100);
-$('.ui.slider.maxradius')
+$('.ui.slider.radius')
     .slider({
         min: 50,
         max: 250,
-        start: 100,
+        start: 10,
+        end: 100,
         step: 1,
-        onChange: function (value) {
-            readEyeCloudSliders("maxradius", value)
+        onChange: function (value, min, max) {
+            readEyeCloudSliders("minradius", min)
+            readEyeCloudSliders("maxradius", max)
             settingChanged()
         }
     });

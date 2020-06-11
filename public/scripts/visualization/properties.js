@@ -202,6 +202,13 @@ class Properties {
     }
 
     /**
+     * @return {number[]} The current eye cloud slider values
+     */
+    getCurrentECSliders() {
+        return this.ecSliders
+    }
+
+    /**
      * Removes all AOIs for the selected image
      */
     removeCurrentAOIs() {

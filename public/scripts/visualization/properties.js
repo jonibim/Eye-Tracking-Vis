@@ -130,11 +130,11 @@ class Properties {
 
         //console.log('properties.js - Setting ec sliders to', ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles);
 
-        let oldecSliders = [...this.ecSliders];
         this.ecSliders = [ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles];
         for (let listener of this.onchange.get('ec').values())
-            listener({ type: 'ec', oldecSliders: oldecSliders, newecSliders: ecSliders });
+            listener({ type: 'ec', ecSliders: this.ecSliders });
     }
+
     /**
      * Sets the given listener to the given events
      * @param {string} tag - the tag of the visualization adding the listener, same as for the registry

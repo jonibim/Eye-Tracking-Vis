@@ -40,6 +40,20 @@ function showUserSettings() {
     $('.ui.dropdown.user').dropdown('show');
 }
 
+function showEyeCloudSettings() {
+    openSettings();
+    $('.ui.accordion.eyecloudsettings').accordion('open', 0);
+    let eyecloudsettings = document.getElementsByClassName('accordion eyecloudsettings')[0];
+    eyecloudsettings.scrollIntoView(true);
+}
+
+function showGazeStripeSettings() {
+    openSettings();
+    $('.ui.accordion.zoomsettings').accordion('open', 0);
+    let zoomsettings = document.getElementsByClassName('accordion zoomsettings')[0];
+    zoomsettings.scrollIntoView(true);
+}
+
 //- Update the Dataset Dropdown Options -//
 async function updateDatasets() {
     const url = '/dataset/available';

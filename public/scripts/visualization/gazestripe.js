@@ -11,13 +11,14 @@ class GazeStripe extends Visualization {
         this.frameWidth = this.box.inner.clientWidth;
         this.frameHeight = this.box.inner.clientHeight;
         this.opacity = 1;
+        this.init = 1;
         this.dimmerBoolean = false;       
 
         this.svg = d3.select(this.box.inner)
             .classed('smalldot ', true)
             .append('svg')
             .attr('width', this.frameWidth)
-            .attr('height', this.frameHeight);
+            .attr('height', this.frameHeight)
 
         this.graphics = this.svg.append('g');
         this.userSelection = this.svg.append('g').style('opacity', 0)
@@ -55,11 +56,37 @@ class GazeStripe extends Visualization {
                 this.scale();
             }
         }, 100);
+
+        if (this.init ==  1) {
+            this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
+            properties.users === 0 ? this.dimmerBoolean = true : this.dimmerBoolean = false;
+            this.dimmer();
+
+            this.draw();
+        }
+
+        this.menu = [
+            {
+                title: 'Download as image',
+                action: () => {
+                downloadSVG(this.svg.node(), 'Gaze Stripe');
+                }
+            },
+            {
+                title: 'Center visualization',
+                action: () => {
+                    this.svg.call(this.zoom.transform, d3.zoomIdentity.scale(1));
+                }
+            }
+        ];
+
+        this.svg.on('contextmenu', d3.contextMenu(this.menu));
     }
 
     draw() {
 
         this.resetView();
+        this.init = 0;
 
         if (!properties.image)
             return;
@@ -111,6 +138,7 @@ class GazeStripe extends Visualization {
             let timestamp = [0];
             let imgLine = this.graphics.append('g')
             let timeLine = this.graphics.append('g')
+            this.imgLine = imgLine;
 
             imgLine.append('svg').attr('y', counter*(Number(imgHeight) + Number(textHeight)) + Number(textHeight)).attr('width', width).attr('height', imgHeight).attr('preserveAspectRatio', 'xMaxYMax meet').attr('viewBox', ('-' + fontsize1 + ' -' + (Number(fontsize2) * 2).toString() + ' ' + width + ' ' + width).toString()).append("text").text(key).attr('font-size', fontsize1);
             timeLine.append('svg').attr('y', counter*(Number(imgHeight) + Number(textHeight)) + Number(imgHeight)).attr('width', width).attr('height', textHeight).attr('viewBox', '0 -' + fontsize2 + ' ' + width + ' ' + textHeight).append("text").text('Time (ms)').attr('font-size', fontsize2);

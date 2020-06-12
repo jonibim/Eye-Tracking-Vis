@@ -11,7 +11,7 @@ class EyeCloud extends Visualization {
         this.zoom.scaleExtent([0.1,5]); // Sets limit of the zoom's scale
 
         let width = box.inner.clientWidth; // Width of the box
-        let height = box.inner.clientHeight; // Height of box
+        let height = box.inner.clientHeight; // Height of the box
 
         let range = 150; // Default is 150.
         let minRadius = 10; // Default is 10.
@@ -569,6 +569,7 @@ class EyeCloud extends Visualization {
                 .attr('r', radiusScale(densities[clickedObject.index]))
                 .attr('stroke', properties.getColorHex())
                 .attr('stroke-width', 2)
+                .attr('stroke-dasharray', 5) // Dashed line
                 .attr('fill', 'none');
 
             // Create a rectangle that covers the entire svg-element. Its function is to capture any click on the box

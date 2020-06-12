@@ -42,6 +42,7 @@ class AttentionMap extends Visualization {
                 if(visualization) visualization.syncZoom(d3.event.transform);
             })
         );
+        this.zoom.filter(() => (d3.event.type === 'mousedown' && d3.event.button === 1) || (d3.event.type === 'wheel' && d3.event.button === 0));
         this.hasBeenCentered = false;
 
         this.resizeTimer = setInterval(() => {

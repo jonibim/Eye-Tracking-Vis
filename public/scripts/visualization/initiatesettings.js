@@ -7,7 +7,8 @@ let settingHelpMap = {
     'Users': 'Select the users to display',
     'Color': 'Modify the color of the fixations on the Attention Map and the main circle in the <br> Eye Cloud',
     'Editor': 'Instructs the navigation commands for the AOI editor',
-    'Zoom': 'Modify the zoom level of the thumbnails in the Gaze Stripes'
+    'Zoom': 'Modify the zoom level of the thumbnails in the Gaze Stripes',
+    'Eye Cloud': 'Range: How close all coordinates are allowed to be to each other. <br> This variable determines the size of the fixations displayed inside a circle of the eye cloud. <br> Minimum radius: The maximum radius of a circle. The other circles are in proportion to this value. <br> Maximum radius: The minimum radius of a circle. The other circles are in proportion to this value. <br> Maximum circles: The limit to the amount of circles that can be displayed. (Maximum is 100)'
 }
 
 //- Update Dataset Dropdown with default value -//
@@ -26,9 +27,31 @@ for ([x, y] of Object.entries(RGBA)) {
 
 function showEditorCommands() {
     openSettings();
-    $('.ui.accordion.editorsettings').accordion('open', 0)
+    $('.ui.accordion.editorsettings').accordion('open', 0);
     let editorCommands = document.getElementsByClassName('accordion editorsettings')[0];
     editorCommands.scrollIntoView(true);
+}
+
+function showUserSettings() {
+    openSettings();
+    $('.ui.accordion.usersettings').accordion('open', 0);
+    let userSettings = document.getElementsByClassName('accordion usersettings')[0];
+    userSettings.scrollIntoView(true);
+    $('.ui.dropdown.user').dropdown('show');
+}
+
+function showEyeCloudSettings() {
+    openSettings();
+    $('.ui.accordion.eyecloudsettings').accordion('open', 0);
+    let eyecloudsettings = document.getElementsByClassName('accordion eyecloudsettings')[0];
+    eyecloudsettings.scrollIntoView(true);
+}
+
+function showGazeStripeSettings() {
+    openSettings();
+    $('.ui.accordion.zoomsettings').accordion('open', 0);
+    let zoomsettings = document.getElementsByClassName('accordion zoomsettings')[0];
+    zoomsettings.scrollIntoView(true);
 }
 
 //- Update the Dataset Dropdown Options -//
@@ -75,7 +98,8 @@ function settingHelp(setting) {
             message: settingHelpMap[setting],
             class: 'info settingHelp',
             position: 'top center',
-            closeIcon: true
+            closeIcon: true,
+            compact: false
         });
 }
 
@@ -207,19 +231,6 @@ $('.ui.slider.rgb')
         });
     });
 
-//- Alpha Slider initialization -//
-$('.alpha.ui.slider')
-    .slider({
-        min: 0.1,
-        max: 1,
-        start: RGBA['a'],
-        step: 0.01,
-        onChange: function (value) {
-            readSlidersRGBA(this.id, value)
-            settingChanged()
-        }
-    });
-
 //- Zoom Level Slider -//
 $('.zoom-preview').text(defaultZoomValue);
 $('.ui.slider.zoom')
@@ -233,6 +244,56 @@ $('.ui.slider.zoom')
             settingChanged()
         }
     });
+
+//- Range Eye Cloud Slider -//
+$('.pointrange-preview').text(150);
+readEyeCloudSliders("pointrange", 150);
+$('.ui.slider.pointrange')
+    .slider({
+        min: 50,
+        max: 250,
+        start: 150,
+        step: 1,
+        onChange: function (value) {
+            readEyeCloudSliders("pointrange", value)
+            settingChanged()
+        }
+    });
+
+//- Radius Eye Cloud Slider -//
+$('.minradius-preview').text(10);
+readEyeCloudSliders("minradius", 10);
+$('.maxradius-preview').text(100);
+readEyeCloudSliders("maxradius", 100);
+$('.ui.slider.radius')
+    .slider({
+        min: 10,
+        max: 250,
+        start: 10,
+        end: 100,
+        step: 1,
+        onChange: function (value, min, max) {
+            readEyeCloudSliders("minradius", min)
+            readEyeCloudSliders("maxradius", max)
+            settingChanged()
+        }
+    });
+
+//- Maximum Circles Eye Cloud Slider -//
+$('.maxcircles-preview').text(100);
+readEyeCloudSliders("maxcircles", 100);
+$('.ui.slider.maxcircles')
+    .slider({
+        min: 1,
+        max: 100,
+        start: 100,
+        step: 1,
+        onChange: function (value) {
+            readEyeCloudSliders("maxcircles", value)
+            settingChanged()
+        }
+    });
+
 
 //- Save Configuration -//
 function saveSettingsImageWarning() {

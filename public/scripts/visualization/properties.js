@@ -16,8 +16,9 @@ class Properties {
         this.aoi = new Map();
         this.zoomValue = undefined;
         this.users = [];
+        this.ecSliders = [];
 
-        this.events = ['image', 'color', 'zoom', 'users', 'aoi', 'sync', 'upload'];
+        this.events = ['image', 'color', 'zoom', 'users', 'aoi', 'sync', 'upload', 'ec'];
         this.onchange = new Map();
         for (let event of this.events)
             this.onchange.set(event, new Map());
@@ -116,6 +117,23 @@ class Properties {
 
     }
 
+    /**
+     * Sets the current eye cloud slider values
+     * @param {number} ecRange
+     * @param {number} ecMinRadius
+     * @param {number} ecMaxRadius
+     * @param {number} ecMaxCircles
+     */
+    setEyeCloudSettings(ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles) {
+        if (this.ecSliders[0] === ecRange && this.ecSliders[1] === ecMinRadius && this.ecSliders[2] === ecMaxRadius && this.ecSliders[3] === ecMaxCircles)
+            return;
+
+        //console.log('properties.js - Setting ec sliders to', ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles);
+
+        this.ecSliders = [ecRange, ecMinRadius, ecMaxRadius, ecMaxCircles];
+        for (let listener of this.onchange.get('ec').values())
+            listener({ type: 'ec', ecSliders: this.ecSliders });
+    }
 
     /**
      * Sets the given listener to the given events
@@ -181,6 +199,13 @@ class Properties {
      */
     getCurrentImage() {
         return this.image
+    }
+
+    /**
+     * @return {number[]} The current eye cloud slider values
+     */
+    getCurrentECSliders() {
+        return this.ecSliders
     }
 
     /**

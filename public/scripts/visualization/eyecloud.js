@@ -9,14 +9,14 @@ class EyeCloud extends Visualization {
         this.svg; // Holds the svg-object of the visualization
         this.zoom = d3.zoom();
         this.zoom.scaleExtent([0.1,5]); // Sets limit of the zoom's scale
-        //this.zoom.translateExtent(); // Sets limit of the zoom's translate
 
         let width = box.inner.clientWidth; // Width of the box
         let height = box.inner.clientHeight; // Height of box
 
-        const range = 150;
-        const minRadius = 10;
-        const maxRadius = 100;
+        let range = 150; // Default is 150.
+        let minRadius = 10; // Default is 10.
+        let maxRadius = 100; // Default is 100.
+        let maxCircles = 100; // Default is 100.
 
         let strokeColor = 'red'; // color of the stroke of the most frequently viewed circle. Default color is red
         let radiusScale; // scale that determines the size of the radii
@@ -27,6 +27,7 @@ class EyeCloud extends Visualization {
         let densities = []; // the density of each coordinate in the coordinates array
 
         let drawing = false; // Boolean that is true when the eye cloud is being drawn
+        let areaZoomed = false; // Boolean that is true when the zoomed area is visible
 
         let clickedObject; // Holds the object that is being right clicked
 
@@ -37,6 +38,14 @@ class EyeCloud extends Visualization {
             action: function() {
                 //console.log('eyecloud.js - Showing info...');
                 getInfo(clickedObject);
+            }
+        };
+
+        let showAreaMenuItem = {
+            title: 'Show area on map',
+            action: function () {
+                console.log('Showing area on map...');
+                showArea();
             }
         };
 
@@ -67,19 +76,19 @@ class EyeCloud extends Visualization {
                 }
             },
             {
-                title: 'Save image',
+                title: 'Download as image',
                 action: function () {
                     //console.log('eyecloud.js - Saving image...');
                     // Display a popup for 7.5 seconds to let the user know, saving takes some time
-                    $('.toast') // Close previous toast
+                    $('.settingHelp')  // Close previous toast
                         .toast('close')
                     $('body')
                         .toast({
                             showIcon: 'info',
-                            title: 'Saving Image',
+                            title: 'Downloading Image',
                             displayTime: 7500,
                             message: 'The eye cloud is being saved as an image. This may take some time.',
-                            class: 'info',
+                            class: 'warning',
                             position: 'top center',
                             closeIcon: false
                         });
@@ -93,8 +102,10 @@ class EyeCloud extends Visualization {
 
             result.push(infoMenuItem);
             result[0].disabled = true;
-            result.push(disableMenuItem);
+            result.push(showAreaMenuItem);
             result[1].disabled = true;
+            result.push(disableMenuItem);
+            result[2].disabled = true;
 
             generalMenuItems.forEach(function (object) {
                 result.push(object);
@@ -108,8 +119,10 @@ class EyeCloud extends Visualization {
 
             result.push(infoMenuItem);
             result[0].disabled = false;
-            result.push(disableMenuItem);
+            result.push(showAreaMenuItem);
             result[1].disabled = false;
+            result.push(disableMenuItem);
+            result[2].disabled = false;
 
             generalMenuItems.forEach(function (object) {
                 result.push(object);
@@ -142,11 +155,18 @@ class EyeCloud extends Visualization {
             .attr('id', 'pattern_defs');
 
         /**
+         * Replace standard d3.zoom bindings with mouse wheel for zooming in and out
+         * and mouse wheel click for the Pan tool
+         */
+        this.zoom.filter(() =>
+            (d3.event.type === 'mousedown' && d3.event.button === 1) || (d3.event.type === 'wheel' && d3.event.button === 0));
+
+
+        /**
          * Upon any change of the properties class, check what settings have changed
          * and apply the new settings to the visualization
          */
         properties.setListener('eyecloud', 'image', event => {
-            //this.image = properties.image;
             toggleDimmer(false); // Turn dimmer off
             if (!drawing) { // If we are not already drawing the eye cloud
                 drawing = true;
@@ -156,7 +176,6 @@ class EyeCloud extends Visualization {
             }
         });
         properties.setListener('eyecloud', 'users', event => {
-            //this.users = properties.users;
             if (properties.users.length <= 0) { // If no users are selected
                 toggleDimmer(true); // Turn dimmer on
             } else {
@@ -173,6 +192,15 @@ class EyeCloud extends Visualization {
         properties.setListener('eyecloud', 'color', event => {
             strokeColor = properties.getColorHex(); // set global color variable
             setColor(properties.getColorHex());
+        });
+        properties.setListener('eyecloud', 'ec', event => {
+            let ecProperties = properties.getCurrentECSliders();
+            range = ecProperties[0];
+            minRadius = ecProperties[1];
+            maxRadius = ecProperties[2];
+            maxCircles = ecProperties[3];
+            generateData(dataset.getImageData(properties.image));
+            draw();
         });
 
         /**
@@ -244,20 +272,24 @@ class EyeCloud extends Visualization {
             coordinates = [];
             densities = [];
             for (let i = 0; i < densityScores.length; i++) {
-                for (let j = 0; j < allCoordinates.length; j++) {
-                    let xDistance = Math.pow(allCoordinates[j].co_x - allCoordinates[densityScores[i].c_index].co_x, 2);
-                    let yDistance = Math.pow(allCoordinates[j].co_y - allCoordinates[densityScores[i].c_index].co_y, 2);
-                    let distance = Math.sqrt(xDistance + yDistance);
-                    // If coordinate at j is inside of the radius of coordinate at i and not the same coordinate
-                    if (distance <= range && densityScores[i].c_index !== j) {
-                        // Remove the coordinate with the index that is in the range of the coordinate at i
-                        densityScores = densityScores.filter(function (e) {
-                            return e.c_index !== j;
-                        })
+                if (i < maxCircles) { // Check if amount of circles has been reached
+                    for (let j = 0; j < allCoordinates.length; j++) {
+                        let xDistance = Math.pow(allCoordinates[j].co_x - allCoordinates[densityScores[i].c_index].co_x, 2);
+                        let yDistance = Math.pow(allCoordinates[j].co_y - allCoordinates[densityScores[i].c_index].co_y, 2);
+                        let distance = Math.sqrt(xDistance + yDistance);
+                        // If coordinate at j is inside of the radius of coordinate at i and not the same coordinate
+                        if (distance <= range && densityScores[i].c_index !== j) {
+                            // Remove the coordinate with the index that is in the range of the coordinate at i
+                            densityScores = densityScores.filter(function (e) {
+                                return e.c_index !== j;
+                            })
+                        }
                     }
+                    coordinates.push(allCoordinates[densityScores[i].c_index]);
+                    densities.push(densityScores[i].density);
+                } else {
+                    break; // Break if the maximum amount of circles has been reached
                 }
-                coordinates.push(allCoordinates[densityScores[i].c_index]);
-                densities.push(densityScores[i].density);
             }
 
             //console.log(coordinates);
@@ -341,10 +373,23 @@ class EyeCloud extends Visualization {
              * Upon a right click, display a context menu
              * and, if necessary, register the id of the clicked element
              */
-            d3.select('#cloud_group').on('contextmenu', d3.contextMenu(circleMenu));
             d3.select('#cloud_svg').on('contextmenu', d3.contextMenu(menu));
+            d3.select('#cloud_group').on('contextmenu', d3.contextMenu(circleMenu));
             d3.select('#cloud_group').selectAll('circle').on('contextmenu', function (object) {
                 clickedObject = object;
+                //console.log(object);
+            });
+
+            d3.select('#cloud_group').selectAll('circle').on('click', function (object) {
+                clickedObject = object;
+                //console.log(object);
+            });
+            d3.select('#cloud_group').on('click', function () {
+                showArea();
+            });
+            // DISABLE CONTEXTMENU - WORK IN PROGRESS
+            d3.select('#area_group').on('contextmenu', function () {
+                console.log('Disabled');
             });
 
             /**
@@ -352,10 +397,6 @@ class EyeCloud extends Visualization {
              */
             simulation.nodes(coordinates)
                 .on('tick', update);
-
-            simulation.onload = () => {
-                //console.log('Loaded!');
-            }
 
             /**
              * Automatically update the location of each circle
@@ -371,7 +412,7 @@ class EyeCloud extends Visualization {
             }
 
             thisClass.svg = d3.select('#cloud_svg'); // Update the svg property of the visualization
-            thisClass.setScale(); // Set the default scale after drawing the eye cloud
+            thisClass.setDefaultScale(); // Set the default scale after drawing the eye cloud
             drawing = false; // Reset drawing variable
         }
 
@@ -403,7 +444,9 @@ class EyeCloud extends Visualization {
 
                 content.append('br'); // Prevents overlapping of the huge icon
                 content.append('br'); // Prevents overlapping of the huge icon
-                content.append('div').text('No users selected.');
+                content.append('div').text('No users selected');
+                content.append('div').attr("style","font-size: 12px")
+                    .html("<a onclick='showUserSettings()'>Check the users setting in the settings tab for adding a user<\a>");
             } else { // Turn dimmer off
                 if (!! document.getElementById('eyecloud_dimmer')) {
                     document.getElementById('eyecloud_dimmer').remove(); // Remove the dimmer, if it exists
@@ -412,11 +455,18 @@ class EyeCloud extends Visualization {
         }
 
         /**
-         * Set the stroke color of the largest circle
+         * Set the stroke color of the largest circle and the area circle, if it's visible
          */
         function setColor() {
             d3.select('#circle_0')
                 .attr('stroke', properties.getColorHex());
+
+            d3.select('#area_circle')
+                .attr('stroke', properties.getColorHex())
+            /*
+            d3.select('#area_point')
+                .attr('fill', properties.getColorHex())
+             */
         }
 
         /**
@@ -427,8 +477,19 @@ class EyeCloud extends Visualization {
             let y = object.co_y;
             let density = densities[object.index];
 
+            let densityVerb;
+            let pointOrPoints;
+            if (density === 1) { // If there is only one other point close, adjust the message to singular
+                densityVerb = 'is';
+                pointOrPoints = 'point';
+            } else {
+                densityVerb = 'are';
+                pointOrPoints = 'points';
+            }
+
             let message = 'This circle represents point (' + x + ', ' + y + ') on the image. ' +
-                'There are ' + density + ' other points in a range of ' + range + ' pixels to this point.';
+                'There ' + densityVerb + ' ' + density + ' other ' + pointOrPoints + ' in a range of ' +
+                range + ' pixels to this point.';
 
             infoPopup(message);
         }
@@ -449,6 +510,70 @@ class EyeCloud extends Visualization {
                     position: 'bottom left',
                     closeIcon: true
                 });
+        }
+
+        function showArea() {
+            d3.select('#cloud_group').style('visibility', 'hidden');
+
+            let areaZoom = new d3.zoom();
+            areaZoom.scaleExtent([0.1,5]); // Sets limit of the zoom's scale
+
+            areaZoom.filter(() =>
+                (d3.event.type === 'mousedown' && d3.event.button === 1) || (d3.event.type === 'wheel' && d3.event.button === 0));
+
+            let areaGroup = d3.select('#cloud_svg')
+                .append('g')
+                .attr('id', 'area_group')
+                .call(areaZoom.on('zoom', function () {
+                    areaGroup.attr('transform', d3.event.transform)
+                }));
+
+            areaGroup
+                .append('image')
+                .attr('id', 'map_area')
+                .attr('x', -clickedObject.co_x + (d3.select('#cloud_svg').attr('width') / 2))
+                .attr('y', -clickedObject.co_y + (d3.select('#cloud_svg').attr('height') / 2))
+                .attr('href', dataset.url + '/images/' + properties.image)
+
+            areaGroup
+                .append('circle')
+                .attr('id', 'area_circle')
+                .attr('cx', d3.select('#cloud_svg').attr('width') / 2)
+                .attr('cy', d3.select('#cloud_svg').attr('height') / 2)
+                .attr('r', range)
+                .attr('stroke', properties.getColorHex())
+                .attr('stroke-width', 3)
+                .attr('fill', 'none');
+
+            /*
+            d3.select('#area_group')
+                .append('circle')
+                .attr('id', 'area_point')
+                .attr('cx', d3.select('#cloud_svg').attr('width') / 2)
+                .attr('cy', d3.select('#cloud_svg').attr('height') / 2)
+                .attr('r', 5)
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1)
+                .attr('fill', properties.getColorHex());
+             */
+
+            areaGroup
+                .append('rect')
+                .attr('id', 'area_rect')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', d3.select('#cloud_svg').attr('width'))
+                .attr('height', d3.select('#cloud_svg').attr('height'))
+                .attr('stroke', 'none')
+                .attr('fill-opacity', 0); // Make the rectangle transparent
+
+            // Upon left click of the newly generated group, remove it
+            areaGroup.on('click', function () {
+                d3.select('#cloud_group').style('visibility', 'visible');
+                d3.select('#area_group').remove();
+            })
+
+            areaZoomed = true;
         }
 
         /**
@@ -513,7 +638,7 @@ class EyeCloud extends Visualization {
     /**
      * Set the scale of the zoom to 0.5 after drawing the eye cloud
      */
-    setScale() {
+    setDefaultScale() {
         let svg = d3.select('#cloud_svg');
 
         let svgWidth = svg.attr('width');

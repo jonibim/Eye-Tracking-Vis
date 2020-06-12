@@ -17,7 +17,7 @@ let properties = null;
 let datasetId = (() => {
     // get the url parameters
     let params = new URLSearchParams(window.location.search);
-    let id = params.has('id') && !!params.get('id').trim() ? params.get('id') : localStorage.getItem('datasetId');
+    let id = params.has('id') && !!params.get('id').trim() ? params.get('id') : (localStorage.getItem('datasetId') === null ? 'default' : localStorage.getItem('datasetId'));
     localStorage.setItem('datasetId',id);
     return id;
 })();
@@ -100,7 +100,7 @@ window.onload = async () => {
  */
 async function requestDataset(id){
     // get dataset url for id or the default
-    const url = datasetId && datasetId !== 'default' ? '/datasets/uploads/' + datasetId : '/datasets/default';
+    const url = datasetId === 'default' ? '/datasets/default' : '/datasets/uploads/' + datasetId;
     const request = await fetch(url + '/data.json', { method: 'GET' });
     if(request.status === 404)
         return '';

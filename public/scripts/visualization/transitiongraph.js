@@ -153,7 +153,7 @@ class TransitionGraph extends Visualization {
                     .attr('class', 'exclamation icon')
 
                 content.append('div').text('No AOIs.')
-                content.append('div').attr("style","font-size: 12px").html("<a onclick='showEditorCommands()'>Check the editor commands for adding AOIs<\a>")
+                content.append('div').attr("style","font-size: 12px").html("<a onclick='showEditorCommands()'>Check the editor commands for adding AOIs<\a>");
                 return
             }
 

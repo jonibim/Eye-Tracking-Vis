@@ -251,7 +251,6 @@ $('.ui.slider.zoom')
     });
 
 //- Range Eye Cloud Slider -//
-$('.pointrange-preview').val(150);
 readEyeCloudSliders("pointrange", 150);
 $('.ui.slider.pointrange')
     .slider({
@@ -266,9 +265,7 @@ $('.ui.slider.pointrange')
     });
 
 //- Radius Eye Cloud Slider -//
-$('.minradius-preview').val(10);
 readEyeCloudSliders("minradius", 10);
-$('.maxradius-preview').val(100);
 readEyeCloudSliders("maxradius", 100);
 $('.ui.slider.radius')
     .slider({
@@ -285,7 +282,6 @@ $('.ui.slider.radius')
     });
 
 //- Maximum Circles Eye Cloud Slider -//
-$('.maxcircles-preview').val(100);
 readEyeCloudSliders("maxcircles", 100);
 $('.ui.slider.maxcircles')
     .slider({

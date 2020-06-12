@@ -173,6 +173,8 @@ block sidebars
                             div(class="ui inline input")
                                 input(type="number" id="maxcircles" min="1" max="100" class="maxcircles-preview")
                     div(class="ui teal slider eyecloudsliders maxcircles small-padding")
+                    div(class="field" style="text-align:center;")
+                        div(class="ui basic button" onclick="resetSettings('EyeCloud')") Reset to Default
 
         //- Gaze Stripe -//
         div(class="item setting")
@@ -189,6 +191,8 @@ block sidebars
                             div(class="ui inline input")
                                 input(type="number" id="zoom" min="25" max="200" class="zoom-preview hide-spinner")
                     div(class="ui teal slider zoom small-padding")
+                    div(class="field" style="text-align:center;")
+                            div(class="ui basic button" onclick="resetSettings('GazeStripe')") Reset to Default
 
         //- Editor Mode -//
         div(class="item setting")

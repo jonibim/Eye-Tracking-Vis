@@ -216,3 +216,20 @@ $('.item.setting')
     .hover(function () {
         $(this).find('.settinghelp').toggleClass("hidden");
     });
+
+//-
+function resetSettings(setting) {
+    if (setting === "GazeStripe") {
+        readSlidersZoom(50);
+        setSlider('zoom', 50);
+    } else if (setting === "EyeCloud") {
+        readEyeCloudSliders("pointrange", 150);
+        setSlider('pointrange', 150);
+        readEyeCloudSliders("minradius", 10);
+        readEyeCloudSliders("maxradius", 100);
+        $('.slider.radius').slider('set rangeValue', 10, 100);
+        readEyeCloudSliders("maxcircles", 100);
+        setSlider('maxcircles', 100);
+    }
+    settingChanged();
+}

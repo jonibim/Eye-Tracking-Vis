@@ -74,7 +74,7 @@ block sidebars
                         div(class="field")
                             div(class="ui toggle checked checkbox")
                                 input(type="checkbox" id="editor" class="settings visualization_type" checked="")
-                                label(for="editor") Editor
+                                label(for="editor") AOI Editor
         //- Image Selection -//
         //- Default image setDefaultImageHere -//
         -var default_image = "01b_Antwerpen_S2.jpg"
@@ -141,10 +141,58 @@ block sidebars
                     div(class="ui inline fields" style="margin-bottom:0px;")
                         div(class="ui inverted label b-color-preview") B
                         div(class="ui teal slider rgb small-padding" id="b")
+        //- Eye Cloud -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Eye Cloud')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion eyecloudsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui cloud icon")
+                    label Eye Cloud:
+                div(class="ui form content" style="text-align:left;")
+                    //- Range Slider -//
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui ruler horizontal icon")
+                        label Point Range:
+                            div(class="ui inline input")
+                                input(type="number" id="pointrange" min="50" max="250" class="ui basic label pointrange-preview")
+                    div(class="ui teal slider eyecloudsliders pointrange small-padding")
+                    //- Radius Slider -//
+                    div(class="ui inline input")
+                        i(class="ui bullseye icon")
+                        label Radius:
+                            div(class="ui inline fields" style="margin-bottom:0px !important;")
+                                input(type="number" id="minradius" min="10" max="250" class="minradius-preview")
+                                | -
+                                input(type="number" id="maxradius" min="10" max="250" class="maxradius-preview")
+                    div(class="ui teal range slider eyecloudsliders radius small-padding")
+                    //- Maximum Circles Slider -//
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui hashtag icon")
+                        label Max Circles:
+                            div(class="ui inline input")
+                                input(type="number" id="maxcircles" min="1" max="100" class="maxcircles-preview")
+                    div(class="ui teal slider eyecloudsliders maxcircles small-padding")
+
+        //- Gaze Stripe -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Gaze Stripes')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion zoomsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i#gazestripeIcon(class="ui bars icon")
+                    label Gaze Stripes:
+                div(class="ui form content" style="text-align:left;")
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui search icon")
+                        label Zoom Level:
+                            div(class="ui inline input")
+                                input(type="number" id="zoom" min="25" max="200" class="zoom-preview hide-spinner")
+                    div(class="ui teal slider zoom small-padding")
 
         //- Editor Mode -//
         div(class="item setting")
-            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Editor')" style="margin-left:0px !important;")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('AOI Editor')" style="margin-left:0px !important;")
                 i(class="ui fitted question icon")
             div(class="ui styled accordion editorsettings" style="margin-top:0px !important;")
                 div(class="title")
@@ -157,51 +205,6 @@ block sidebars
                     |  In brush mode, you can create AOI by holding left click button
                     |  <br>  <br>
                     |  Use the context menu by pressing right click to switch between brush mode and view mode 
-
-        //- Gaze Stripe -//
-        div(class="item setting")
-            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Zoom')" style="margin-left:0px !important;")
-                i(class="ui fitted question icon")
-            div(class="ui styled accordion zoomsettings" style="margin-top:0px !important;")
-                div(class="title")
-                    i(class="ui bars icon")
-                    label Gaze Stripe:
-                div(class="ui form content" style="text-align:left;")
-                    i(class="ui search icon")
-                    label Zoom Level:
-                        div(class="ui basic label zoom-preview")
-                    div(class="ui inline fields" style="margin-bottom:0px;")
-                        div(class="ui teal slider zoom small-padding")
-
-        //- Eye Cloud -//
-        div(class="item setting")
-            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Eye Cloud')" style="margin-left:0px !important;")
-                i(class="ui fitted question icon")
-            div(class="ui styled accordion eyecloudsettings" style="margin-top:0px !important;")
-                div(class="title")
-                    i(class="ui cloud icon")
-                    label Eye Cloud:
-                div(class="ui form content" style="text-align:left;")
-                    //- Range Slider -//
-                    i(class="ui ruler horizontal icon")
-                    label Coordinate Range:
-                        div(class="ui basic label pointrange-preview")
-                    div(class="ui inline fields")
-                        div(class="ui teal slider eyecloudsliders pointrange small-padding")
-                    //- Radius Slider -//
-                    i(class="ui bullseye icon")
-                    label Radius:
-                        div(class="ui basic label minradius-preview")
-                        | -
-                        div(class="ui basic label maxradius-preview")
-                    div(class="ui inline fields")
-                        div(class="ui teal range slider eyecloudsliders radius small-padding")
-                    //- Maximum Circles Slider -//
-                    i(class="ui hashtag icon")
-                    label Maximum Circles:
-                        div(class="ui basic label maxcircles-preview")
-                    div(class="ui inline fields" style="margin-bottom:0px;")
-                        div(class="ui teal slider eyecloudsliders maxcircles small-padding")
 
 
         //- Apply Settings & Auto Apply -//

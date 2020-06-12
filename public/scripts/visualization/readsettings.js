@@ -174,7 +174,7 @@ function readSlidersRGBA(id, value) {
 //- Zoom Lever Slider -//
 function readSlidersZoom(value) {
     zoomValue = value;
-    $('.zoom-preview').text(value);
+    $('.zoom-preview').val(value);
 }
 
 //- Eye Cloud Sliders -//
@@ -193,8 +193,23 @@ function readEyeCloudSliders(uclass, value) {
             ecMaxCircles = value
             break
     }
-    $('.'+uclass+'-preview').text(value);
+    $('.'+uclass+'-preview').val(value);
 }
+
+//- Read Slider Label Inputs -//
+$("input").change(function(){
+    if (this.id === 'minradius') {
+        let to = $('.slider.radius').slider('get thumbValue', 'second');
+        if (this.value <= to) $('.slider.radius').slider('set rangeValue', this.value, to);
+        else $('.slider.radius').slider('set rangeValue', to, to);
+    } else if (this.id === 'maxradius') {
+        let from = $('.slider.radius').slider('get thumbValue', 'first');
+        if (this.value >= from) $('.slider.radius').slider('set rangeValue', from, this.value);
+        else $('.slider.radius').slider('set rangeValue', from, from);
+    } else {
+        setSlider(this.id, this.value);
+    }
+});
 
 //- Show Help Icons on Hover -//
 $('.item.setting')

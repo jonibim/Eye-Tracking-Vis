@@ -6,8 +6,8 @@ let settingHelpMap = {
     'Image': 'Select the image to display',
     'Users': 'Select the users to display',
     'Color': 'Modify the color of the fixations on the Attention Map and the main circle in the <br> Eye Cloud',
-    'Editor': 'Instructs the navigation commands for the AOI editor',
-    'Zoom': 'Modify the zoom level of the thumbnails in the Gaze Stripes',
+    'AOI Editor': 'Instructs the navigation commands for the AOI editor',
+    'Gaze Stripes': 'Modify the zoom level of the thumbnails in the Gaze Stripes',
     'Eye Cloud': 'Range: How close all coordinates are allowed to be to each other. <br> This variable determines the size of the fixations displayed inside a circle of the eye cloud. <br> Minimum radius: The maximum radius of a circle. The other circles are in proportion to this value. <br> Maximum radius: The minimum radius of a circle. The other circles are in proportion to this value. <br> Maximum circles: The limit to the amount of circles that can be displayed. (Maximum is 100)'
 }
 
@@ -93,7 +93,7 @@ function settingHelp(setting) {
     $('body')
         .toast({
             showIcon: 'info',
-            title: setting + ' Setting',
+            title: setting + ' Setting(s)',
             displayTime: 5000,
             message: settingHelpMap[setting],
             class: 'info settingHelp',
@@ -123,6 +123,11 @@ function usersChanged() {
         $('#usersLoadingIcon').addClass("ui users icon");
         settingChanged();
     }, 500);
+}
+
+//- Set Value of Slider -//
+function setSlider(uclass, value) {
+    $('.slider.'+uclass).slider('set value', value);
 }
 
 //****************** Set Element Behaviors/States ******************//
@@ -232,7 +237,7 @@ $('.ui.slider.rgb')
     });
 
 //- Zoom Level Slider -//
-$('.zoom-preview').text(defaultZoomValue);
+$('.zoom-preview').val(defaultZoomValue);
 $('.ui.slider.zoom')
     .slider({
         min: 25,
@@ -246,7 +251,7 @@ $('.ui.slider.zoom')
     });
 
 //- Range Eye Cloud Slider -//
-$('.pointrange-preview').text(150);
+$('.pointrange-preview').val(150);
 readEyeCloudSliders("pointrange", 150);
 $('.ui.slider.pointrange')
     .slider({
@@ -261,9 +266,9 @@ $('.ui.slider.pointrange')
     });
 
 //- Radius Eye Cloud Slider -//
-$('.minradius-preview').text(10);
+$('.minradius-preview').val(10);
 readEyeCloudSliders("minradius", 10);
-$('.maxradius-preview').text(100);
+$('.maxradius-preview').val(100);
 readEyeCloudSliders("maxradius", 100);
 $('.ui.slider.radius')
     .slider({
@@ -280,7 +285,7 @@ $('.ui.slider.radius')
     });
 
 //- Maximum Circles Eye Cloud Slider -//
-$('.maxcircles-preview').text(100);
+$('.maxcircles-preview').val(100);
 readEyeCloudSliders("maxcircles", 100);
 $('.ui.slider.maxcircles')
     .slider({

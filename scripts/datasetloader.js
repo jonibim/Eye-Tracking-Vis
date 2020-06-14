@@ -1,7 +1,11 @@
 const {v4: uuid} = require('uuid');
 
-const csvToJson = require('./csvtojson.js');
 const fileSystem = require('fs');
+const csvToJson = require('./csvtojson');
+const getDirSize = require('./getdirsize');
+const removeDir = require('./removedir');
+
+const uploadsSizeLimit = 1 * 1024 * 1024 * 1024; // 10 GB
 
 const datasetsFolder = __dirname + '/../public/datasets/';
 const defaultFolder = datasetsFolder + 'default/';
@@ -10,9 +14,15 @@ const uploadsFolder = datasetsFolder + 'uploads/';
 const dataFileName = 'data.json';
 const imagesFolderName = 'images/';
 
-// Handle dataset datasets
+/**
+ * Handle dataset datasets
+ * @param files - the uploaded files
+ * @param {string} name - name of the dataset
+ * @param response - the http response
+ * @return {Promise<void>}
+ */
 async function handleDatasetUpload(files, name, response) {
-    console.log('parsedataset.js - Parsing uploaded dataset...');
+    console.log('datasetloader.js - Parsing uploaded dataset...');
 
     // get the file as a string
     let data = files.dataset.data.toString('utf8');
@@ -26,7 +36,7 @@ async function handleDatasetUpload(files, name, response) {
             'status': 400,
             'message': 'The uploaded dataset is not properly formatted. ' + e.err
         });
-        console.log('parsedataset.js - Failed to parse uploaded dataset');
+        console.log('datasetloader.js - Failed to parse uploaded dataset');
         return;
     }
 
@@ -36,7 +46,7 @@ async function handleDatasetUpload(files, name, response) {
             'status': 400,
             'message': 'The uploaded dataset is missing one of the following fields, \'Timestamp\', \'StimuliName\', \'FixationIndex\', \'FixationDuration\', \'MappedFixationPointX\', \'MappedFixationPointY\', \'user\', \'description\'.'
         });
-        console.log('parsedataset.js - The uploaded dataset is missing fields');
+        console.log('datasetloader.js - The uploaded dataset is missing fields');
         return;
     }
 
@@ -49,7 +59,7 @@ async function handleDatasetUpload(files, name, response) {
     // check if all images are there
     if (images.length && !files.images) {
         response.status(400).send({'status': 400, 'message': 'Images for the dataset must be included.'});
-        console.log('parsedataset.js - No images found for the uploaded dataset');
+        console.log('datasetloader.js - No images found for the uploaded dataset');
         return;
     }
     if (files.images.name)
@@ -61,7 +71,7 @@ async function handleDatasetUpload(files, name, response) {
         }
 
         response.status(400).send({'status': 400, 'message': 'Missing dataset image \'' + image + '\'.'});
-        console.log('parsedataset.js - Missing image for the uploaded dataset');
+        console.log('datasetloader.js - Missing image for the uploaded dataset');
         return;
     }
 
@@ -74,7 +84,7 @@ async function handleDatasetUpload(files, name, response) {
         fileSystem.mkdirSync(uploadsFolder + id);
 
         // write info file
-        fileSystem.writeFileSync(uploadsFolder + id + '/info.json', JSON.stringify({id: id, name: name}), 'utf-8');
+        fileSystem.writeFileSync(uploadsFolder + id + '/info.json', JSON.stringify({id: id, name: name, date: Date.now()}), 'utf-8');
 
         // write the dataset
         let string = JSON.stringify(data, null, 1);
@@ -86,18 +96,23 @@ async function handleDatasetUpload(files, name, response) {
             fileSystem.writeFileSync(uploadsFolder + id + '/' + imagesFolderName + image.name, image.data);
     } catch (e) {
         response.status(400).send({'status': 400, 'message': 'The uploaded dataset is not properly formatted.'});
-        console.error('parsedataset.js - Failed to write file to disk');
+        console.error('datasetloader.js - Failed to write file to disk');
         console.log(e);
         return;
     }
 
-    console.log('parsedataset.js - Uploaded dataset has been saved with id \'' + id + '\'');
+    console.log('datasetloader.js - Uploaded dataset has been saved with id \'' + id + '\'');
 
     // send successful response
     response.status(200).send({'status': 200, 'message': 'Upload successful.', 'id': id});
+
+    setTimeout(ensureDiskSpace, 0);
 }
 
 
+/**
+ * @return {{id: string, name: string, [date]: number}[]} info for all the datasets
+ */
 function getAllDatasets() {
     if(!fileSystem.existsSync(uploadsFolder))
         fileSystem.mkdirSync(uploadsFolder);
@@ -118,4 +133,66 @@ function getAllDatasets() {
 }
 
 
-module.exports = {'handleDatasetUpload': handleDatasetUpload, 'getAllDatasets': getAllDatasets};
+/**
+ * Updates the last requested date in the datasets info file
+ * @param {string} id - id of the dataset
+ * @param response - the http response
+ */
+function updateDate(id, response){
+    if(!fileSystem.existsSync(uploadsFolder + id))
+        return response.status(400).send({'status': 400, 'message': 'There is no dataset with id \'' + id + '\'.'});
+
+    if(!fileSystem.existsSync(uploadsFolder + id + '/info.json')) {
+        console.error('Dataset with id \'' + id + '\' is missing an \'info.json\' file');
+        return response.status(500).send({'status': 500, 'message': 'Dataset with id \'' + id + '\' is missing an \'info.json\' file.'});
+    }
+
+    let info = JSON.parse(fileSystem.readFileSync(uploadsFolder + id + '/info.json').toString('utf-8'));
+    info.date = Date.now();
+
+    try {
+        fileSystem.writeFileSync(uploadsFolder + id + '/info.json', JSON.stringify(info), 'utf-8');
+    } catch (e) {
+        response.status(500).send({'status': 500, 'message': 'Error writing file to disk.'});
+        console.error('datasetloader.js - Failed to write file to disk');
+        console.log(e);
+        return;
+    }
+
+    response.status(200).send({'status': 200, 'message': 'The date for \'' + id + '\' has been updated.'});
+}
+
+
+/**
+ * Makes sure the uploaded datasets don't exceed the set disk space limit. If they do, the longest not used datasets will be removed.
+ */
+async function ensureDiskSpace(){
+    let size = await getDirSize(uploadsFolder);
+
+    if(size <= uploadsSizeLimit){
+        console.log('datasetloader.js - Uploads folder size is at ' + (size < 1024 ? size + ' bytes' : size < Math.pow(1024, 2) ? (size / 1024) + ' KB' : size < Math.pow(1024, 3) ? (size / Math.pow(1024, 2)) + ' MB' :  (size / Math.pow(1024, 3)) + ' GB'));
+        return;
+    }
+
+    let datasets = getAllDatasets();
+    // sort the datasets by date
+    datasets = datasets.filter(dataset => !!dataset.date).sort(((a, b) => a.date < b.date ? -1 : a.date === b.date ? 0 : 1));
+
+    let removed = [];
+
+    for(let dataset of datasets){
+        size -= await getDirSize(uploadsFolder + dataset.id);
+        removed.push(dataset);
+
+        if(size <= uploadsSizeLimit)
+            break;
+    }
+
+    console.log('datasetloader.js - Uploads folder size exceeds its limits, removing ' + removed.length + (removed.length === 1 ? ' dataset' : ' datasets'));
+
+    for(let dataset of removed)
+        await removeDir(uploadsFolder + dataset.id);
+}
+
+
+module.exports = {'handleDatasetUpload': handleDatasetUpload, 'getAllDatasets': getAllDatasets, 'updateDate': updateDate};

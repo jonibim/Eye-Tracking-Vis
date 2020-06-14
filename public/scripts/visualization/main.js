@@ -105,6 +105,7 @@ async function requestDataset(id){
     if(request.status === 404)
         return '';
 
+    // post used date update for dataset
     const update = new XMLHttpRequest();
     update.open('POST', '/dataset/date?id=' + datasetId);
     update.send();

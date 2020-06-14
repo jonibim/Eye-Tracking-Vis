@@ -1,29 +1,28 @@
+/**
+ Gaze Struoe visualization
+ */
+
 class GazeStripe extends Visualization {   
     constructor(box) {
 
-        /**
-         * the third parameter is used as a identifier for the HTML
-         * object so that it can be modified easily from the code
-         * Such modicaitons can be as adding a loader
-         */
         super(box, 'Gaze Stripe', 'gazestripeviz');
 
-        this.frameWidth = this.box.inner.clientWidth;
-        this.frameHeight = this.box.inner.clientHeight;
-        this.opacity = 1;
-        this.init = 1;
-        this.dimmerBoolean = false;       
+        this.frameWidth = this.box.inner.clientWidth;                               // width of the box shown to the user
+        this.frameHeight = this.box.inner.clientHeight;                             // height of the box shown to the user
+        this.opacity = 1;                                                           // opacity used for displaying either gaze stripes or animation
+        this.init = 1;                                                              // script is initilaized
+        this.dimmerBoolean = false;                                                 // visualization's dimmer boolean
 
-        this.svg = d3.select(this.box.inner)
+        this.svg = d3.select(this.box.inner)                                        // svg holding the gaze stripe visualization
             .classed('smalldot ', true)
             .append('svg')
             .attr('width', this.frameWidth)
             .attr('height', this.frameHeight)
 
-        this.graphics = this.svg.append('g');
-        this.userSelection = this.svg.append('g').style('opacity', 0)
+        this.graphics = this.svg.append('g');                                       // child of this.svg holding gaze stripe visualization
+        this.userSelection = this.svg.append('g').style('opacity', 0)               // chilc of this.svg hodling user animation
 
-        this.zoom = d3.zoom();
+        this.zoom = d3.zoom();                                                      // setting zoom for the main svg
         this.zoom.filter(() => (d3.event.type === 'mousedown' && d3.event.button === 1) || (d3.event.type === 'wheel' && d3.event.button === 0));
         this.svg.call(
             this.zoom.on('zoom', () => {
@@ -31,10 +30,14 @@ class GazeStripe extends Visualization {
             })
         );
 
-        this.image = new Image();
-        this.image.onload = () => {
+        this.image = new Image();                                                   // initializaing new image 
+        this.image.onload = () => {                                                 // upon load, draw the gaze stripes
             this.draw();
         }
+
+        /**
+         * setting listeners for used settings
+         */
 
         properties.setListener('gazestripe', 'image', () => {
             this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
@@ -57,14 +60,17 @@ class GazeStripe extends Visualization {
             }
         }, 100);
 
-        if (this.init ==  1) {
+        if (this.init ==  1) {                                                          // upon initializaiton draw the gaze stripes and disable dimmer
             this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
             properties.users === 0 ? this.dimmerBoolean = true : this.dimmerBoolean = false;
             this.dimmer();
-
             this.draw();
         }
 
+        /**
+         * context menu item
+         */
+         
         this.menu = [
             {
                 title: 'Download as image',
@@ -83,6 +89,10 @@ class GazeStripe extends Visualization {
         this.svg.on('contextmenu', d3.contextMenu(this.menu));
     }
 
+    /**
+     * draws the gaze stripe on the given box
+     */
+
     draw() {
 
         this.resetView();
@@ -91,22 +101,22 @@ class GazeStripe extends Visualization {
         if (!properties.image)
             return;
 
-        const imageData = dataset.getImageData(properties.image);
+        const imageData = dataset.getImageData(properties.image);                       // load image data
 
         this.graphics.selectAll('*').remove();
 
-        let usersx = {};
-        let usersy = {};
-        let shortestPath = Math.pow(10, 1000);
-        let longestTime = {};
+        let usersx = {};                                                                // object holding all x fixation points
+        let usersy = {};                                                                // object holding all y fixaiton points
+        let shortestPath = Math.pow(10, 1000);                                          // the number of observations of the user with the least data
+        let longestTime = {};                                                           // the timestamps for all users
 
-        properties.users.forEach(function(participant) {
+        properties.users.forEach(function(participant) {                                // add all users that are selected
             usersx[participant] = [];
             usersy[participant] = [];
             longestTime[participant] = [];
         })
 
-        imageData['scanpaths'].forEach(function(user) {
+        imageData['scanpaths'].forEach(function(user) {                                 // add the data to usersx, usersy and longestTime objects
             let participant = user['person'];
             if (properties.users.includes(participant)) {
                 user['points'].forEach(function(points) {
@@ -117,11 +127,17 @@ class GazeStripe extends Visualization {
             }
         })
         
-        for (const key of Object.keys(usersx)) {
+        for (const key of Object.keys(usersx)) {                                        // find the user with the least data present to set as shortestPath
             if(usersx[key].length <= shortestPath) {
                 shortestPath = usersx[key].length;
             }
         }
+
+        /**
+         * computing values for drawing all the gazes scaLed
+         * zoomvalue is a user changeable setting, allowing for the ability to change the level of zoom
+         */
+
         this.frameWidth = this.box.inner.clientWidth;
         this.frameHeight = this.box.inner.clientHeight;
         let width = (Math.floor(this.frameWidth / (shortestPath + 1))).toString();
@@ -131,6 +147,13 @@ class GazeStripe extends Visualization {
         let fontsize2 = ((Math.floor(this.frameWidth / shortestPath)) / 3) * 0.7 * 0.7;
         let height = Object.keys(usersx).length * (Number(this.imgHeight) + Number(this.textHeight));
         let zoomValue = properties.zoomValue ? properties.zoomValue : 50;
+
+        /**
+         * drawing the imageline and timeline using the earlier retrieved data
+         * imgLine holds all the images and the text showing the selected user
+         * timeLine holds all the timestamps  and the "Time (ms)"
+         * For each imgLine there is also a on click functionality, displaying an animation of what the user is was looking at in order
+         */
 
         let counter = 0;
         for (const key of Object.keys(usersx)) {
@@ -172,6 +195,10 @@ class GazeStripe extends Visualization {
                     .attr('font-size', fontsize2);
             }
             counter += 1;
+
+            /**
+             * on click animation functionality
+             */
         
             imgLine
                 .on('mouseover', function(d) {
@@ -239,6 +266,10 @@ class GazeStripe extends Visualization {
         }
     }
 
+    /**
+     * finds the width and height of the given box and if necessary redraws the visualizaiton
+     */
+
     scale() {
 
         this.frameWidth = this.box.inner.clientWidth;
@@ -251,6 +282,10 @@ class GazeStripe extends Visualization {
         this.draw();
     }
 
+    /**
+     * resets the zoom and deselcts the animation
+     */
+
     resetView() {
 
         this.opacity = 1;
@@ -258,6 +293,10 @@ class GazeStripe extends Visualization {
         this.userSelection.selectAll('*').remove();
         this.svg.call(this.zoom.transform, d3.zoomIdentity.scale(1));
     }
+
+    /*
+     * Dims the canvas if no users are selected
+     */
 
     dimmer() {
         if (this.dimmerBoolean) {

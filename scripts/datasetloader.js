@@ -5,7 +5,7 @@ const csvToJson = require('./csvtojson');
 const getDirSize = require('./getdirsize');
 const removeDir = require('./removedir');
 
-const uploadsSizeLimit = 1 * 1024 * 1024 * 1024; // 10 GB
+const uploadsSizeLimit = 10 * 1024 * 1024 * 1024; // 10 GB
 
 const datasetsFolder = __dirname + '/../public/datasets/';
 const defaultFolder = datasetsFolder + 'default/';

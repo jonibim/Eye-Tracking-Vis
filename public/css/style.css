@@ -63,7 +63,11 @@ input.hide-spinner::-webkit-inner-spin-button {
 }
 
 input.hide-spinner[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+    -moz-appearance:textfield !important; /* Firefox */
+}
+
+.inline.fields > input[type=number] {
+    max-width: 45% !important;
 }
 
 body.pushable {

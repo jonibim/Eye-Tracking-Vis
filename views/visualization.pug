@@ -155,23 +155,23 @@ block sidebars
                         i(class="ui ruler horizontal icon")
                         label Point Range:
                             div(class="ui inline input")
-                                input(type="number" id="pointrange" min="50" max="250" class="ui basic label pointrange-preview")
+                                input(type="number" id="pointrange" min="50" max="250" class="ui basic label pointrange-preview hide-spinner")
                     div(class="ui teal slider eyecloudsliders pointrange small-padding")
                     //- Radius Slider -//
                     div(class="ui inline input")
                         i(class="ui bullseye icon")
                         label Radius:
                             div(class="ui inline fields" style="margin-bottom:0px !important;")
-                                input(type="number" id="minradius" min="10" max="250" class="minradius-preview")
+                                input(type="number" id="minradius" min="10" max="250" class="minradius-preview hide-spinner")
                                 | -
-                                input(type="number" id="maxradius" min="10" max="250" class="maxradius-preview")
+                                input(type="number" id="maxradius" min="10" max="250" class="maxradius-preview hide-spinner")
                     div(class="ui teal range slider eyecloudsliders radius small-padding")
                     //- Maximum Circles Slider -//
                     div(class="ui inline fields" style="margin-bottom:0px !important;")
                         i(class="ui hashtag icon")
                         label Max Circles:
                             div(class="ui inline input")
-                                input(type="number" id="maxcircles" min="1" max="100" class="maxcircles-preview")
+                                input(type="number" id="maxcircles" min="1" max="100" class="maxcircles-preview hide-spinner")
                     div(class="ui teal slider eyecloudsliders maxcircles small-padding")
                     div(class="field" style="text-align:center;")
                         div(class="ui basic button" onclick="resetSettings('EyeCloud')") Reset to Default

@@ -173,7 +173,7 @@ function readSlidersRGBA(id, value) {
 
 //- Zoom Lever Slider -//
 function readSlidersZoom(value) {
-    zoomValue = value;
+    zoomValue = parseInt(value);
     $('.zoom-preview').val(value);
 }
 
@@ -181,16 +181,16 @@ function readSlidersZoom(value) {
 function readEyeCloudSliders(uclass, value) {
     switch (uclass) {
         case 'pointrange':
-            ecRange = value
+            ecRange = parseInt(value);
             break
         case 'minradius':
-            ecMinRadius = value
+            ecMinRadius = parseInt(value);
             break
         case 'maxradius':
-            ecMaxRadius = value
+            ecMaxRadius = parseInt(value);
             break
         case 'maxcircles':
-            ecMaxCircles = value
+            ecMaxCircles = parseInt(value);
             break
     }
     $('.'+uclass+'-preview').val(value);

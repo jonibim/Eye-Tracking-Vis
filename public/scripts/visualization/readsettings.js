@@ -214,10 +214,12 @@ $("input").change(function(){
 //- Show Help Icons on Hover -//
 $('.item.setting')
     .hover(function () {
-        $(this).find('.settinghelp').toggleClass("hidden");
+        $(this).find('.settinghelp').removeClass("hidden");
+    }, function () {
+        $(this).find('.settinghelp').addClass("hidden");
     });
 
-//-
+//- Reset Setting Function -//
 function resetSettings(setting) {
     if (setting === "GazeStripe") {
         readSlidersZoom(50);

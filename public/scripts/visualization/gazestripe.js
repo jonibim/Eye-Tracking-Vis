@@ -83,7 +83,14 @@ class GazeStripe extends Visualization {
             {
                 title: 'Center visualization',
                 action: () => {
-                    this.svg.call(this.zoom.transform, d3.zoomIdentity.scale(1));
+                    //this.svg.call(this.zoom.transform, d3.zoomIdentity.scale(1));
+                    this.scale();
+                }
+            }, 
+            {
+                title: 'Open gaze stripe settings',
+                action: () => {
+                    showGazeStripeSettings();
                 }
             }
         ];
@@ -201,93 +208,43 @@ class GazeStripe extends Visualization {
             /**
              * on click animation functionality
              */
+
+            let animationMenu = [
+                {
+                    title: 'Download as image',
+                    action: () => {
+                    downloadSVG(this.svg.node(), 'Gaze Stripe');
+                    }
+                },
+                {
+                    title: 'Center visualization',
+                    action: () => {
+                        //this.svg.call(this.zoom.transform, d3.zoomIdentity.scale(1));
+                        this.scale();
+                    }
+                }, 
+                {
+                    title: 'Open gaze stripe settings',
+                    action: () => {
+                        showGazeStripeSettings();
+                    }
+                },
+                {
+                    title: 'Run animation',
+                    action: () => {
+                        this.animation(key, shortestPath, usersx, usersy, longestTime, divisor, timestamp);
+                    }
+                }
+            ];
+
+            imgLine.on('contextmenu', d3.contextMenu(animationMenu));
         
             imgLine
                 .on('mouseover', function(d) {
                     d3.select(this).style('cursor', 'pointer')
                 })
                 .on('click', () => {
-
-                    let oldOpacity = this.opacity
-                    if (this.opacity == 0) {
-                        this.opacity = 1;
-                    } else {
-                        this.opacity = 0;
-                    }
-
-                    this.scale();
-
-                    let runNumber = 0;
-                    this.graphics.style('opacity', this.opacity);
-                    this.userSelection.style('opacity', oldOpacity);
-                    this.userSelection.append('image')
-                        .attr('xlink:href', this.image.src)
-                        .attr('width', this.image.naturalWidth)
-                        .attr('height', this.image.naturalHeight)
-                        .attr('x', 200)
-                        .attr('y', 0);
-
-                    this.userSelection
-                        .append('text')
-                        .attr('x', 0)
-                        .attr('y', 250)
-                        .text(key)
-                        .attr('font-size', 100)
-
-                    let delayDuartion = 1000;
-
-                    for (var i = 0; i < shortestPath; i++) {
-
-                        let rounder = Math.round(divisor * i);
-                        let x = usersx[key][rounder] - zoomValue / 2 + 200;
-                        let y = usersy[key][rounder] - zoomValue / 2;
-                        delayDuartion += timestamp[i];
-
-                        console.log(timestamp[i]);
-
-                        this.userSelection.append('rect')
-                            .attr('x', x)
-                            .attr('y', y)
-                            .attr('width', zoomValue)
-                            .attr('height', zoomValue)
-                            .attr('fill', 'rgba(0,0,0,0)')
-                            .attr('stroke', properties.getColorHex())
-                            .attr('stroke-width', this.image.naturalWidth / 100)
-                            .attr('stroke-dasharray', '10,5')
-                            .attr('stroke-linecap', 'butt')
-                            .style('opacity', 0)
-                            .transition()
-                            .duration(500)
-                            .style('opacity', 1)
-                            .delay(delayDuartion)
-                            .transition()
-                            .duration(1000)
-                            .style('opacity', 0)
-                            .delay(timestamp[i])
-
-                        runNumber += 1;
-                        this.userSelection
-                            .append('text')
-                            .attr('x', x + (zoomValue / 2))
-                            .attr('y', y + (zoomValue / 2) + 6)
-                            .text(runNumber)
-                            .attr('font-size', this.image.naturalWidth / 40)
-                            .style('text-anchor', 'middle');
-
-                        this.userSelection
-                            .append('text')
-                            .attr('x', x + (zoomValue / 2))
-                            .attr('y', y + (zoomValue / 2) + 36)
-                            .text(timestamp[i])
-                            .attr('font-size', this.image.naturalWidth / 80)
-                            .style('text-anchor', 'middle');
-                    }                
-
-                    this.userSelection.on('click', () => {
-                        if (this.opacity == 0) {
-                            this.resetView();
-                        }
-                    });
+                    this.animation(key, shortestPath, usersx, usersy, longestTime, divisor, timestamp);
             });
         }
     }
@@ -307,14 +264,9 @@ class GazeStripe extends Visualization {
                 .attr('height', this.frameHeight) // Full screen.attr('transform', "translate(0 ,0)");
                 .attr('transform', "translate(0 ,0)");
             this.draw();
-        } else if (this.opacity == 0) {
-            console.log('zooomiiieees');
-
-           
+        } else if (this.opacity == 0) {         
             this.svg
                 .call(this.zoom.transform, d3.zoomIdentity.scale(1/3.7));
-          
-
         }
     }
 
@@ -369,5 +321,90 @@ class GazeStripe extends Visualization {
                 this.userSelection.style('opacity', 1);
             }
         }
+    }
+
+    animation(key, shortestPath, usersx, usersy, longestTime, divisor, timestamp) {
+        let oldOpacity = this.opacity
+        if (this.opacity == 0) {
+            this.opacity = 1;
+        } else {
+            this.opacity = 0;
+        }
+
+        this.scale();
+
+        let runNumber = 0;
+        this.graphics.style('opacity', this.opacity);
+        this.userSelection.style('opacity', oldOpacity);
+        this.userSelection.append('image')
+            .attr('xlink:href', this.image.src)
+            .attr('width', this.image.naturalWidth)
+            .attr('height', this.image.naturalHeight)
+            .attr('x', 200)
+            .attr('y', 0);
+
+        this.userSelection
+            .append('text')
+            .attr('x', 0)
+            .attr('y', 250)
+            .text(key)
+            .attr('font-size', 100)
+
+        let delayDuartion = 1000;
+
+        for (var i = 0; i < shortestPath; i++) {
+
+            let rounder = Math.round(divisor * i);
+            let x = usersx[key][rounder] - zoomValue / 2 + 200;
+            let y = usersy[key][rounder] - zoomValue / 2;
+            delayDuartion += timestamp[i];
+
+            console.log(timestamp[i]);
+
+            this.userSelection.append('rect')
+                .attr('x', x)
+                .attr('y', y)
+                .attr('width', zoomValue)
+                .attr('height', zoomValue)
+                .attr('fill', 'rgba(0,0,0,0)')
+                .attr('stroke', properties.getColorHex())
+                .attr('stroke-width', this.image.naturalWidth / 100)
+                .attr('stroke-dasharray', '10,5')
+                .attr('stroke-linecap', 'butt')
+                .style('opacity', 0)
+                .transition()
+                .duration(500)
+                .style('opacity', 1)
+                .delay(delayDuartion)
+                .transition()
+                .duration(1000)
+                .style('opacity', 0)
+                .delay(timestamp[i])
+
+            runNumber += 1;
+            this.userSelection
+                .append('text')
+                .attr('x', x + (zoomValue / 2))
+                .attr('y', y + (zoomValue / 2) + 6)
+                .text(runNumber)
+                .attr('font-size', this.image.naturalWidth / 40)
+                .style('text-anchor', 'middle');
+
+            this.userSelection
+                .append('text')
+                .attr('x', x + (zoomValue / 2))
+                .attr('y', y + (zoomValue / 2) + 36)
+                .text(timestamp[i])
+                .attr('font-size', this.image.naturalWidth / 60)
+                .style('text-anchor', 'middle')
+                .attr('stroke', '#ffffff')
+                .attr('stroke-width', 0.7);
+        }                
+
+        this.userSelection.on('click', () => {
+            if (this.opacity == 0) {
+                this.resetView();
+            }
+        });
     }
 }

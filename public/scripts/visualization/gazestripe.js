@@ -12,6 +12,7 @@ class GazeStripe extends Visualization {
         this.opacity = 1;                                                           // opacity used for displaying either gaze stripes or animation
         this.init = 1;                                                              // script is initilaized
         this.dimmerBoolean = false;                                                 // visualization's dimmer boolean
+        this.animationRunning = false;                                              // boolean expressing if animation is running
 
         this.svg = d3.select(this.box.inner)                                        // svg holding the gaze stripe visualization
             .classed('smalldot ', true)
@@ -41,17 +42,23 @@ class GazeStripe extends Visualization {
 
         properties.setListener('gazestripe', 'image', () => {
             this.image.src = properties.image ? dataset.url + '/images/' + properties.image : '';
-            this.draw();
+            if (this.init == 0) {
+                this.draw();
+            }
         });
         properties.setListener('gazestripe', 'zoom', () => {
-            this.draw();
+            if (this.init == 0) {
+                this.draw();
+            }
         });
         properties.setListener('gazestripe', 'users', () => {
             properties.users == 0 ? this.dimmerBoolean = true : this.dimmerBoolean = false;
             this.dimmer();
 
             this.users = properties.users;
-            this.draw();
+            if (this.init == 0) {
+                this.draw();
+            }
         })
 
         this.resizeTimer = setInterval(() => {
@@ -75,9 +82,9 @@ class GazeStripe extends Visualization {
          
         this.menu = [
             {
-                title: 'Download as image',
+                title: 'Open gaze stripe settings',
                 action: () => {
-                downloadSVG(this.svg.node(), 'Gaze Stripe');
+                    showGazeStripeSettings();
                 }
             },
             {
@@ -88,11 +95,11 @@ class GazeStripe extends Visualization {
                 }
             }, 
             {
-                title: 'Open gaze stripe settings',
+                title: 'Download as image',
                 action: () => {
-                    showGazeStripeSettings();
+                downloadSVG(this.svg.node(), 'Gaze Stripe');
                 }
-            }
+            },
         ];
 
         this.svg.on('contextmenu', d3.contextMenu(this.menu));
@@ -209,11 +216,24 @@ class GazeStripe extends Visualization {
              * on click animation functionality
              */
 
-            let animationMenu = [
+            let toggleAnimationMenu = [
                 {
-                    title: 'Download as image',
+                    title: 'Toggle animation',
                     action: () => {
-                    downloadSVG(this.svg.node(), 'Gaze Stripe');
+                        if (this.opacity == 1) {
+                            this.animation(key, shortestPath, usersx, usersy, longestTime, divisor, timestamp);     
+                        } else {
+                            this.resetView();
+                        }
+                    }
+                },
+                {
+                    divider: true
+                },
+                {
+                    title: 'Open gaze stripe settings',
+                    action: () => {
+                        showGazeStripeSettings();
                     }
                 },
                 {
@@ -224,20 +244,14 @@ class GazeStripe extends Visualization {
                     }
                 }, 
                 {
-                    title: 'Open gaze stripe settings',
+                    title: 'Download as image',
                     action: () => {
-                        showGazeStripeSettings();
+                    downloadSVG(this.svg.node(), 'Gaze Stripe');
                     }
                 },
-                {
-                    title: 'Run animation',
-                    action: () => {
-                        this.animation(key, shortestPath, usersx, usersy, longestTime, divisor, timestamp);
-                    }
-                }
             ];
 
-            imgLine.on('contextmenu', d3.contextMenu(animationMenu));
+            imgLine.on('contextmenu', d3.contextMenu(toggleAnimationMenu));
         
             imgLine
                 .on('mouseover', function(d) {
@@ -245,6 +259,8 @@ class GazeStripe extends Visualization {
                 })
                 .on('click', () => {
                     this.animation(key, shortestPath, usersx, usersy, longestTime, divisor, timestamp);
+                    this.svg.on('contextmenu', d3.contextMenu(toggleAnimationMenu));
+                    this.userSelection.on('contextmenu', d3.contextMenu(toggleAnimationMenu));
             });
         }
     }
@@ -276,10 +292,13 @@ class GazeStripe extends Visualization {
 
     resetView() {
 
+        this.animationRunning = false;
         this.opacity = 1;
         this.graphics.style('opacity', this.opacity);
         this.userSelection.selectAll('*').remove();
         this.svg.call(this.zoom.transform, d3.zoomIdentity.scale(1));
+        this.svg.on('contextmenu', d3.contextMenu(this.menu));
+        this.userSelection.on('contextmenu', d3.contextMenu(this.menu));
     }
 
     /*
@@ -324,6 +343,13 @@ class GazeStripe extends Visualization {
     }
 
     animation(key, shortestPath, usersx, usersy, longestTime, divisor, timestamp) {
+
+        if (this.animationRunning) {
+            return
+        } else {
+            this.animationRunning = true;
+        }
+
         let oldOpacity = this.opacity
         if (this.opacity == 0) {
             this.opacity = 1;
@@ -351,15 +377,19 @@ class GazeStripe extends Visualization {
             .attr('font-size', 100)
 
         let delayDuartion = 1000;
+        let fixationDuration = 0;
 
         for (var i = 0; i < shortestPath; i++) {
+
+            if (i !== 0) {
+                fixationDuration = (timestamp[i] - timestamp[i - 1]);
+            } else {
+                fixationDuration = timestamp[i];
+            }
 
             let rounder = Math.round(divisor * i);
             let x = usersx[key][rounder] - zoomValue / 2 + 200;
             let y = usersy[key][rounder] - zoomValue / 2;
-            delayDuartion += timestamp[i];
-
-            console.log(timestamp[i]);
 
             this.userSelection.append('rect')
                 .attr('x', x)
@@ -377,9 +407,9 @@ class GazeStripe extends Visualization {
                 .style('opacity', 1)
                 .delay(delayDuartion)
                 .transition()
-                .duration(1000)
+                .duration(500)
                 .style('opacity', 0)
-                .delay(timestamp[i])
+                .delay(fixationDuration);
 
             runNumber += 1;
             this.userSelection
@@ -387,18 +417,22 @@ class GazeStripe extends Visualization {
                 .attr('x', x + (zoomValue / 2))
                 .attr('y', y + (zoomValue / 2) + 6)
                 .text(runNumber)
-                .attr('font-size', this.image.naturalWidth / 40)
-                .style('text-anchor', 'middle');
+                .attr('font-size', this.image.naturalWidth / 35)
+                .style('text-anchor', 'middle')
+                .attr('stroke', '#ffffff')
+                .attr('stroke-width', 0.6);
 
             this.userSelection
                 .append('text')
                 .attr('x', x + (zoomValue / 2))
                 .attr('y', y + (zoomValue / 2) + 36)
                 .text(timestamp[i])
-                .attr('font-size', this.image.naturalWidth / 60)
+                .attr('font-size', this.image.naturalWidth / 55)
                 .style('text-anchor', 'middle')
                 .attr('stroke', '#ffffff')
-                .attr('stroke-width', 0.7);
+                .attr('stroke-width', 0.4);
+
+            delayDuartion += fixationDuration;
         }                
 
         this.userSelection.on('click', () => {

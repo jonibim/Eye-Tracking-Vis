@@ -109,14 +109,14 @@ block sidebars
                     label Users:
                 div(class="ui form content" style={'z-index': '5'})
                     //- Dropdown selection menu -//
-                    div(class="ui fluid search selection multiple dropdown user")
+                    div(class="ui fluid search selection multiple dropdown user" style="padding-right:2.5em;")
                         div(class="default text") Select users
                         i(class="ui dropdown icon")
                         div(class="menu")
                             //- Values are added in initiatesettings.js -//
-                    div(class="ui add circular green basic button")
+                    div(class="ui add circular green basic button" data-tooltip="Select All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         i(class="ui add fitted icon")
-                    div(class="ui clear circular red basic button")
+                    div(class="ui clear circular red basic button" data-tooltip="Deselect All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         i(class="ui remove fitted icon")
                     
         //- RGBA -//

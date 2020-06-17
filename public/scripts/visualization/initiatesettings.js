@@ -5,10 +5,10 @@ let settingHelpMap = {
     'Visualizations': 'Select the visualizations/viewports to display',
     'Image': 'Select the image to display',
     'Users': 'Select the users to display',
-    'Color': 'Modify the color of the fixations on the Attention Map and the main circle in the <br> Eye Cloud',
-    'AOI Editor': 'Instructs the navigation commands for the AOI editor',
+    'Color': 'Modify the fixation color of the Attention Map <br> and the accent color of the Eye Cloud and Gaze Stripe .',
+    'AOI Editor': 'Read the navigation commands for the AOI editor',
     'Gaze Stripes': 'Modify the zoom level of the thumbnails in the Gaze Stripes',
-    'Eye Cloud': 'Range: How close all coordinates are allowed to be to each other. <br> This variable determines the size of the fixations displayed inside a circle of the eye cloud. <br> Minimum radius: The maximum radius of a circle. The other circles are in proportion to this value. <br> Maximum radius: The minimum radius of a circle. The other circles are in proportion to this value. <br> Maximum circles: The limit to the amount of circles that can be displayed. (Maximum is 100)'
+    'Eye Cloud': 'Modify the Eye Cloud Constants. <br> Point Range is the range in which points are aggregated into a single circle. <br> Radius is the min. and max. values for the circles\' radius. <br> Max Circles is the max. amount of circles to be displayed at once.'
 }
 
 //- Update Dataset Dropdown with default value -//
@@ -94,7 +94,7 @@ function settingHelp(setting) {
         .toast({
             showIcon: 'info',
             title: setting + ' Setting(s)',
-            displayTime: 5000,
+            displayTime: 20000,
             message: settingHelpMap[setting],
             class: 'info settingHelp',
             position: 'top center',

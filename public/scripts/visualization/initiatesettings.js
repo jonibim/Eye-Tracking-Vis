@@ -325,10 +325,10 @@ $("#saveSettings").click(() => {
     d3.select("#previewImageLabel").text(properties.getCurrentImage())
     if (datasetId !== 'default') {
         d3.select("#previewId").html(
-            `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the dataset with id <br> <b> ${datasetId} </b>`)
+            `<i class='exclamation yellow triangle icon'></i> These settings wil be available only for the dataset with id <br> <b> ${datasetId} </b>`)
     } else {
         d3.select("#previewId").html(
-            `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the <b> default </b> dataset`)
+            `<i class='exclamation yellow triangle icon'></i> These settings wil be available only for the <b> default </b> dataset`)
     }
     $('#modalSave')
         .modal('show');

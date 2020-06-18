@@ -9,21 +9,21 @@ In this project, we are required to build a multi-visualization web-based tool s
 
 We will represent the objectives needed to be fulfilled for the project. 
 
-- [ ] The visualization tool should show at least four different visual techniques on different aspects (time, space, tasks, subjects etc.)
-- [ ] The visualization tool should include brushing and linking data. As an example, if the user is moving the timeline or selecting a group in one view, the other corresponding views included in the tool must also be synced to these changes. This is called a **multi coordinated view**
-- [ ] At least one out of  [7 categories of interactions](#7-categories-of-interactions) should be implemented in the project.
-- [ ] The visualization tool should be a web-based tool 
+- [x] The visualization tool should show at least four different visual techniques on different aspects (time, space, tasks, subjects etc.)
+- [x] The visualization tool should include brushing and linking data. As an example, if the user is moving the timeline or selecting a group in one view, the other corresponding views included in the tool must also be synced to these changes. This is called a **multi coordinated view**
+- [x] At least one out of  [7 categories of interactions](#7-categories-of-interactions) should be implemented in the project.
+- [x] The visualization tool should be a web-based tool 
 
 Now we present some features that the final product must satisfy. Note that not all the features must be completed in order to consider the project as finished. The principle is that the more features are included with the final product, the better the end results are guaranteed to be (probably even winning prices). In the final program the user must be able to:
 
 - [ ] identify an anomaly on the data easily
 - [ ] identify group and clusters
 - [ ] identify patterns 
-- [ ] select groups, clusters or outliers
-- [ ] change color coding 
-- [ ] filter various factors (such as people, space and time)
-- [ ] see labels of objects by hovering the mouse on the object (aka tooltips)
-- [ ]  screenshot a certain kind of view with the addition that all parameters of the view/visualization are attached to the screenshot such that it can be rebuilt later (aka screenshot + snapshot)
+- [x] select groups, clusters or outliers
+- [x] change color coding 
+- [x] filter various factors (such as people, space and time)
+- [x] see labels of objects by hovering the mouse on the object (aka tooltips)
+- [x]  screenshot a certain kind of view with the addition that all parameters of the view/visualization are attached to the screenshot such that it can be rebuilt later (aka screenshot + snapshot)
 
 ## The dataset
 
@@ -126,9 +126,37 @@ These are informations not included in the abstract, which require some reading 
 6. **FILTER**
 7. **CONNECT**
 
+# Developing
+
+## Starting the webserver
+
+First make sure you have **Node.js** installed
+
+```bash
+git clone https://github.com/t0xicdream/Eye-Tracking-Vis
+cd Eye-Tracking-Vis
+npm install #Install Dependecies 
+DEBUG=myapp:* npm start #MacOS or Linux
+set DEBUG=myapp:* & npm start #Windows
+```
+## Useful Resources
+
+* https://www.sitepoint.com/a-beginners-guide-to-pug/
+* https://devhints.io/pug
+* https://pugjs.org/api/getting-started.html
+* https://auth0.com/blog/create-a-simple-and-stylish-node-express-app/
+* https://closebrace.com/tutorials/2017-03-02/creating-a-simple-restful-web-app-with-nodejs-express-and-mongodb
+* https://www.c-sharpcorner.com/article/building-web-application-using-node-js/
+* https://code.tutsplus.com/tutorials/build-web-application-using-nodejs--cms-29652
 
 
 
+## Generating documentation
 
+The documentation is found at `out` folder at the root of the repository
 
+If you made changes to the comments, or added new documentations based on the `JSDoc` format, run the following command:
 
+```javascript
+yarn run jsdoc $REPOSITORY/public/scripts/visualization/
+```

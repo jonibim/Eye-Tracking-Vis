@@ -1,0 +1,186 @@
+#headbar {
+    margin-bottom: 0px;
+    overflow: visible;
+    z-index: 900;
+}
+
+#headbar .item {
+    width: 25%;
+}
+
+#headbar .item.middle {
+    width: 50%;
+}
+
+#headbar .dropdown .item {
+    width: 100%;
+}
+
+.content {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.pusher {
+    width: inherit;
+    height: inherit;
+    overflow: visible;
+    display: flex;
+    flex-flow: column;
+}
+
+.dropdown.dataset {
+    position: absolute;
+    top: 0px;
+    text-align: center;
+    width: 90%;
+    font-weight: 800;
+}
+
+.dropdown.dataset .filtered.text+label#dataset_icon {
+    visibility: hidden;
+}
+
+.dropdown.dataset input {
+    text-align: center;
+}
+
+.ui.segments.floating {
+    margin-top: 1rem;
+}
+
+.sidebar.visible.settings+.pusher {
+    width: calc(100% - 260px);
+}
+
+input.hide-spinner::-webkit-outer-spin-button,
+input.hide-spinner::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input.hide-spinner[type=number] {
+    -moz-appearance:textfield !important; /* Firefox */
+}
+
+.inline.fields > input[type=number] {
+    max-width: 45% !important;
+}
+
+body.pushable {
+    background-color: white;
+}
+
+.left-align {
+    text-align: left;
+}
+
+.right-align {
+    text-align: right;
+}
+
+.right-float {
+    float: right;
+}
+
+.small-right-padding {
+    padding-right: 5px;
+}
+
+.small-padding {
+    padding:3px !important;
+}
+
+.vertical-centered {
+    vertical-align: middle;
+}
+
+a.label:hover {
+    text-decoration: none;
+}
+
+.selectable {
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.selected {
+    opacity: 1 !important;
+    stroke: black;
+    stroke-width: 1px;
+    fill: black !important;
+}
+
+.underAoi {
+    opacity: 0.6 !important;
+    stroke: black;
+    stroke-width: 1px;
+    fill: blue !important;
+}
+
+.aoiText {
+    fill: white;
+    font-size: 30px;
+}
+
+.aoiRect {
+    opacity: 0.5;
+    fill: #878787;
+    z-index: 1;
+}
+
+.legend rect {
+    fill: white;
+    stroke: black;
+    opacity: 0.8;
+}
+
+.fileUpload {
+    width: 0px !important;
+    height: 0px;
+    padding: 0px !important;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    z-index: -1;
+}
+
+.realupload {
+    display: none
+}
+
+#consoleLogContent {
+    background: #000000c4;
+    text-align: left;
+    overflow-y: scroll;
+    height: 200px
+}
+
+#result {
+    color: lime;
+    font-family: monospace;
+}
+
+#drop-area {
+    transition: background-color 0.5s ease !important;
+}
+
+.highlight {
+    background: #e5f2f7 !important;
+    border-color: rgba(0, 106, 219, 0.31) !important;
+}
+
+#cat {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0.4;
+    transform: translate(-50%, -50%);
+}

@@ -1,0 +1,399 @@
+extends layout
+
+block styles
+    //- Load Style(s) -//
+    link(rel='stylesheet' href="/css/visualization.css")
+    link(rel='stylesheet' href="/css/patterns.css")
+    link(rel='stylesheet' href="/css/d3-context-menu.css")
+    link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
+
+block pre_scripts
+    //- Load Script(s) -//
+    // d3.js & additional libraries
+    script(src="https://d3js.org/d3.v5.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.0.1/math.js")
+    script(src="scripts/additional-modules/d3-context-menu.js")
+    script(src="scripts/additional-modules/jszip.js")
+    script(src="scripts/additional-modules/FileSaver.js")
+    script(src="scripts/additional-modules/jszip-utils.js")
+    script(src="scripts/additional-modules/cycle.js")
+    // framework
+    script(src='scripts/visualization/main.js')
+    script(src='scripts/visualization/dataset.js')
+    script(src='scripts/visualization/visualization.js')
+    script(src='scripts/visualization/boxmanager.js')
+    script(src='scripts/visualization/box.js')
+    script(src='scripts/visualization/properties.js')
+    script(src='scripts/visualization/styles.js')
+    script(src='scripts/visualization/registry.js')
+    script(src='scripts/visualization/svgtoimage.js')
+    // visualizations
+    script(src='scripts/visualization/transitiongraph.js')
+    script(src='scripts/visualization/eyecloud.js')
+    script(src='scripts/visualization/gazestripe.js')
+    script(src='scripts/visualization/attentionmap.js')
+    script(src='scripts/visualization/editor.js')
+
+block sidebars
+    //- Settings Sidebar -//
+    div(class="ui sidebar right vertical menu settings")
+        //- Settings Sidebar Header -//
+        div(class="item left aligned small-right-padding")
+            div(class="ui header") Settings:
+                i(class="ui times red inverted icon circular small fitted right-float" onclick="closeSettings()")
+        //- Visualization type(s) -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Visualizations')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui eye outline icon")
+                    label Visualizations:
+                div(class="ui form content")
+                    div(class="grouped fields left-align")
+                        //- Eye Cloud -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="eyecloud" class="settings visualization_type" checked="")
+                                label(for="eyecloud") Eye Cloud
+                        //- Gaze Strips -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="gazestripe" class="settings visualization_type" checked="")
+                                label(for="gazestripe") Gaze Stripes
+                        //- Transition Graph -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="transitiongraph" class="settings visualization_type" checked="")
+                                label(for="transitiongraph") Transition Graph
+                        //- Visual Attention Map -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="attentionmap" class="settings visualization_type" checked="")
+                                label(for="attentionmap") Visual Attention Map
+                        div(class="ui fitted divider")
+                        //- Editor -//
+                        div(class="field")
+                            div(class="ui toggle checked checkbox")
+                                input(type="checkbox" id="editor" class="settings visualization_type" checked="")
+                                label(for="editor") AOI Editor
+
+        //- Image Selection -//
+        //- Default image setDefaultImageHere -//
+        -var default_image = "01b_Antwerpen_S2.jpg"
+        script.let image = "#{default_image}";
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Image')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui map outline icon")
+                    label Image:
+                div(class="ui form content")
+                    //- Dropdown -//
+                    div(class="ui fluid search selection dropdown image")
+                        div(class="default text") #{default_image}
+                        i(class="ui dropdown icon")
+                        div(class="menu")
+                            //- Add all filenames to the dropdown; text: filename, data-value:tags[filename] -//
+                            for image in images
+                                div(class="item fitted image-selector" data-value=tags[image]) #{image}
+                            else
+                                div(class="item") No images were found
+
+        //- User Selection -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Users')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion usersettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i#usersLoadingIcon(class="ui users icon")
+                    label Users:
+                div(class="ui form content" style={'z-index': '5'})
+                    //- Dropdown -//
+                    div(class="ui fluid search selection multiple dropdown user" style="padding-right:2.5em;")
+                        div(class="default text") Select users
+                        i(class="ui dropdown icon")
+                        div(class="menu")
+                            //- Values are added from initiatesettings.js -//
+                    //- (De)Select All Users Buttons -//
+                    div(class="ui add circular green basic button" data-tooltip="Select All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui add fitted icon")
+                    div(class="ui clear circular red basic button" data-tooltip="Deselect All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui remove fitted icon")
+                    
+        //- RGB -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Color')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion colorsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    div(class="ui tiny right pointing inverted basic label color-preview")
+                        i(class="ui fitted inverted eye dropper icon color-preview")
+                    label Color:
+                div(class="ui form content")
+                    //- Red Slider -//
+                    div(class="ui inline fields")
+                        div(class="ui inverted label r-color-preview") R
+                        div(class="ui teal slider rgb small-padding" id="r")
+                    //- Green Slider -//
+                    div(class="ui inline fields")
+                        div(class="ui inverted label g-color-preview") G
+                        div(class="ui teal slider rgb small-padding" id="g")
+                    //- Blue Slider -//
+                    div(class="ui inline fields" style="margin-bottom:0px;")
+                        div(class="ui inverted label b-color-preview") B
+                        div(class="ui teal slider rgb small-padding" id="b")
+
+        //- Eye Cloud -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Eye Cloud')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion eyecloudsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui cloud icon")
+                    label Eye Cloud:
+                div(class="ui form content" style="text-align:left;")
+                    //- Range Slider -//
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui ruler horizontal icon")
+                        label Point Range:
+                            div(class="ui inline input")
+                                input(type="number" id="pointrange" min="50" max="250" class="ui basic label pointrange-preview hide-spinner")
+                    div(class="ui teal slider eyecloudsliders pointrange small-padding")
+                    //- Radius Slider -//
+                    div(class="ui inline input")
+                        i(class="ui bullseye icon")
+                        label Radius:
+                            div(class="ui inline fields" style="margin-bottom:0px !important;")
+                                input(type="number" id="minradius" min="10" max="250" class="minradius-preview hide-spinner")
+                                | -
+                                input(type="number" id="maxradius" min="10" max="250" class="maxradius-preview hide-spinner")
+                    div(class="ui teal range slider eyecloudsliders radius small-padding")
+                    //- Maximum Circles Slider -//
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui hashtag icon")
+                        label Max Circles:
+                            div(class="ui inline input")
+                                input(type="number" id="maxcircles" min="1" max="100" class="maxcircles-preview hide-spinner")
+                    div(class="ui teal slider eyecloudsliders maxcircles small-padding")
+                    //- Reset To Default Button -//
+                    div(class="field" style="text-align:center;")
+                        div(class="ui basic button" onclick="resetSettings('EyeCloud')") Reset to Default
+
+        //- Gaze Stripe -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Gaze Stripes')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion zoomsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i#gazestripeIcon(class="ui bars icon")
+                    label Gaze Stripes:
+                div(class="ui form content" style="text-align:left;")
+                    //- Zoom Level Setting -//
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui search icon")
+                        label Zoom Level:
+                            div(class="ui inline input")
+                                input(type="number" id="zoom" min="25" max="200" class="zoom-preview hide-spinner")
+                    div(class="ui teal slider zoom small-padding")
+                    //- Reset To Default Button -//
+                    div(class="field" style="text-align:center;")
+                            div(class="ui basic button" onclick="resetSettings('GazeStripe')") Reset to Default
+
+        //- Editor Mode -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('AOI Editor')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion editorsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i(class="ui pencil alternate icon")
+                    label AOI Editor:
+                div(class="ui form content" style="text-align: left")
+                    p  
+                    |  Use middle click to move the image around
+                    |  <br>  <br>
+                    |  In brush mode, you can create AOI by holding left click button
+                    |  <br>  <br>
+                    |  Use the context menu by pressing right click to switch between brush mode and view mode 
+
+
+        //- Apply Settings & Auto Apply -//
+        div(class="ui basic center aligned fitted segment")
+            //- Apply Settyings -//
+            div(class="field small-padding")
+                div(class="ui green basic button" onclick="applySettings()") Apply Settings
+            //- Auto Apply -//
+            div(class="field small-padding")
+                div(class="ui checkbox")
+                    input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
+                    label(for="auto_apply") Apply On Change
+            //- Save & Upload Settings -//
+            div(class="inline field small-padding")
+                //- Save Settings -//
+                div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
+                    i(class="ui fitted save icon")
+                //- Upload Settings -//
+                div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
+                    i(class="ui fitted upload icon")
+                
+
+        div(class='ui small modal' id='modalSave')
+            div(class='header') Save settings
+            div(class="content")
+                div(class='text' style='text-align:left')
+                    p(style="font-weight: bold;") Choose the desired data for export:
+                div(class='ui segments')
+                    #chooseContent(class="ui horizontal segments")
+                        div(style="min-width: 150px;display: flex;align-items: center;" class="ui left aligned large segment")
+                            div(class='ui list')
+                                div(class='item')
+                                    div(class="ui checkbox" id="usersCheck")
+                                        input(type="checkbox")
+                                        label Users
+                                div(class='item')
+                                    div(class="ui checkbox" id="aoiCheck")
+                                        input(type="checkbox")
+                                        label AOIs
+                                div(class='item')
+                                    div(class="ui checkbox" id="colorCheck")
+                                        input(type="checkbox")
+                                        label Color
+                                div(class='item')
+                                    div(class="ui checkbox" id="zoomCheck")
+                                        input(type="checkbox")
+                                        label Zoom Slider
+                                div(class='item')
+                                    div(class="ui checkbox" id="snapCheck")
+                                        input(type="checkbox")
+                                        label Snapshot
+                        div(class="ui segment")
+                            p Current Image
+                            img(id='previewImage' src="" class="ui large rounded centered fluid image")
+                            p(id='previewImageLabel')
+                    div(class="ui small segment")
+                        div(class="ui checkbox" id="imageCheck")
+                            input(type="checkbox")
+                            label Allow settings to be used on other images  
+                                i(class='question circle icon' onclick="saveSettingsImageWarning()")
+                                
+                div(class='ui segment')
+                    p(id='previewId') 
+                button(class="ui green button" id="submitRequest")
+                    i(class="i file code icon")
+                    | Download JSON
+                button(class="ui blue disabled button")
+                    i(class="i share icon")
+                    | Share via link
+
+
+        div(class='ui small modal' id='modalUpload')
+            div(class='header') Upload settings
+            div(class="content")
+                //- button(class='ui toggle blue button' id='togglePreview')
+                //-     i(class="bolt icon")
+                //-     #textLabel(style='display: inline;')
+                //-         | Quick apply
+                p(style="font-weight: bold;text-align:left") Drag and drop the settings file or open the file explorer by clicking on the button inside the box. The settings will be applied automatically. 
+                div(class="ui placeholder segment" id='drop-area')
+                    div(class="ui icon header")
+                        div(class="ui grid" style="display: block;")
+                            div(class="two wide column")
+                                i(class="i file code outline icon")
+                            div(class="two wide column")
+                                i(class="i file archive outline icon")
+                        |    Upload JSON object or the ZIP file
+                    input(type="file" id="fileElem" class="realupload" accept=".zip,.json" onchange="handleFiles(this.files)")
+                    label(class="ui button" for="fileElem") Select file
+                //- div(class="ui placeholder segment" id="previewContent")
+                //-     div(class="ui two column stackable center aligned grid")
+                //-         div(class="ui vertical divider") To
+                //-         div(class="middle aligned row")
+                //-         div(class="column" id='currentSettings')
+                //-             p Current Settings
+                //-         div(class="column" id='newSettings')
+                //-             p New Settings
+                div(class="ui styled accordion" id='consoleLog')
+                    div(class="title")
+                        i(class="terminal icon")
+                        |     Console log
+                    div(class="content" id="consoleLogContent")
+                        p
+                        #result Waiting for output...
+                div 
+                    br
+                //- button(class="ui disabled green button" id="submitDownload")
+                //-     i(class="i check icon")
+                //-     | Confirm   
+                //- button(class="ui disabled red button" id="resetDownload")
+                //-     i(class="i undo alternate icon")
+                //-     | Reset
+                button(class="ui button" id="clearLog") 
+                    i(class="trash alternate outline icon")
+                    | Clear Console
+        
+
+
+
+
+
+
+block header_content
+    //- Topbar Dataset Dropdown -//
+    div(class="ui item middle")
+        div(class="ui labeled icon search selection dropdown dataset")
+            input(class="search" name="dataset")
+            div(class="text")
+            label#dataset_icon(for="dataset")
+                i(class="file alternate outline icon" style="height:100%;")
+    //- Settings Sidebar Button -//
+    div(class="ui item")
+        div(class="ui right aligned container" style="margin-right:5px;")
+            i#settings_toggle(class="ui sliders icon circular fitted" onclick="openSettings()")
+
+block content
+    div#container(class='container')
+        div#frame(class='blurring frame')
+            //- Image Preview Dimmer -//
+            div(class="preview ui top aligned dimmer" style="text-align: -webkit-center;")
+                div(class="ui image" style="max-height: 90% !important; max-width: 90% !important;")
+                    img#preview-image(style="max-height: 90% !important;" src="/datasets/default/images/" + default_image)
+            //- Innerframe For Visualizations -//
+            div#innerframe(class='inner-frame')
+                h2(class="ui icon header" id='cat' style="display:none")
+                    i(class="cat icon")
+                    |It's empty in here...
+
+
+block post_scripts
+    //- Settings Sidebar behaviors -//
+    script.
+        function openSettings() {
+            $('#settings_toggle')
+                //- Hide Settings Icon -//            
+                .hide();
+            //- Open Settings -//
+            showSidebar('settings');
+            resizeBoxes();
+        };
+
+        function closeSettings() {
+            $('#settings_toggle')
+                //- Unhide Settings Icon -//
+                .show();
+            //- Close Settings -//
+            hideSidebar('settings');
+            resizeBoxes();
+        };
+
+        //- Prevent 'settings' sidebar from dimming the page -//
+        $('.ui.sidebar.settings').sidebar({dimPage: false, closable: false})
+
+    //- Load Settings Scripts -//
+    script(src='scripts/visualization/readsettings.js')
+    script(src="scripts/visualization/initiatesettings.js")
+
+    //- Set Active Page to Visualization in 'navigation' Sidebar -//
+    script.
+        $('#visualization_nav').addClass('active');

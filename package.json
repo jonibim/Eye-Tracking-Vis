@@ -1,0 +1,35 @@
+{
+  "name": "eye-tracking-vis",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npx nodemon ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "csvtojson": "^2.0.10",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-fileupload": "^1.1.7-alpha.3",
+    "fomantic-ui": "^2.8.4",
+    "fs": "^0.0.1-security",
+    "gulp": "^4.0.2",
+    "http-errors": "^1.7.3",
+    "iconv": "^3.0.0",
+    "jsdoc": "^3.6.4",
+    "jsdom": "^16.2.2",
+    "jszip": "^3.4.0",
+    "morgan": "~1.9.1",
+    "multipart": "^0.1.5",
+    "patternfills": "^0.4.1",
+    "pug": "^2.0.4",
+    "remove-accents": "^0.4.2",
+    "unidecode": "^0.1.8",
+    "uuid": "^7.0.3"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "uploads/*"
+    ]
+  }
+}

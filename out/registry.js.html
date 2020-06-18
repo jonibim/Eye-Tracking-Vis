@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: registry.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: registry.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Registry for all visualizations
+ * @property {Map&lt;string,VisualizationType>} map - map for all visualization types
+ */
+class Registry {
+
+    constructor() {
+        this.map = new Map();
+    }
+
+    /**
+     * All Visualizations need to be registered through this method
+     * @param {string} tag - unique name of the visualization
+     * @param {function(Box):Visualization} supplier - function to supply a new instance of the visualization
+     */
+    register(tag, supplier) {
+        // check for duplicates
+        if (this.getVisualizationType(tag))
+            console.error('registry.js - A visualization with tag \'' + tag + '\' has already been registered!');
+        // add the visualization
+        this.map.set(tag, new VisualizationType(tag, supplier));
+        console.log(this.map);
+    }
+
+    /**
+     * @param {string} tag - unique name of the visualization
+     * @returns {null|VisualizationType}
+     */
+    getVisualizationType(tag) {
+        for (const [key, value] of this.map.entries()) {
+            if (key === tag)
+                return value;
+        }
+        return null;
+    }
+
+    /**
+     * @param {string} tag - unique name of the visualization
+     * @param {int} [column] - the column to place the visualization
+     * @param {int} [row] - the row to place the visualization
+     */
+    enable(tag, column, row) {
+        let type = this.getVisualizationType(tag);
+        if (!type)
+            console.error('registry.js - Could not find a visualization for tag \'' + tag + '\'!');
+        if (type.enabled)
+            console.console('registry.js - Visualization \'' + tag + '\' was already enabled when trying to enable it.');
+        type.enable(column, row);
+    }
+
+    /**
+     * @param {string} tag - unique name of the visualization
+     */
+    disable(tag) {
+        let type = this.getVisualizationType(tag);
+        if (!type)
+            console.error('registry.js - Could not find a visualization for tag \'' + tag + '\'!');
+        if (type.enabled)
+            console.console('registry.js - Visualization \'' + tag + '\' was already disabled when trying to disable it.');
+        type.disable();
+    }
+
+    /**
+     * @param {string} tag - unique name of the visualization
+     * @returns {boolean}
+     */
+    isEnabled(tag) {
+        let type = this.getVisualizationType(tag);
+        if (!type)
+            console.error('registry.js - Could not find a visualization for tag \'' + tag + '\'!');
+        return type.enabled;
+    }
+
+    /**
+     * Enables all visualization types
+     */
+    enableAll() {
+        this.map.forEach(value => value.enable());
+    }
+
+    /**
+     * Disables all visualization types
+     */
+    disableAll() {
+        this.map.forEach(value => value.disable());
+    }
+
+}
+
+/**
+ * Unique instance per type of visualization
+ * @property {string} tag - unique name of the visualization
+ * @property {function(Box):Visualization} supplier - function to supply a new instance of the visualization
+ * @property {boolean} enabled - whether the visualization is enabled
+ * @property {Visualization} instance - instance of the visualization
+ */
+class VisualizationType {
+
+    /**
+     * @param {string} tag - unique name of the visualization
+     * @param {function(Box):Visualization} supplier - function to supply a new instance of the visualization
+     */
+    constructor(tag, supplier) {
+        this.tag = tag;
+        this.supplier = supplier;
+
+        this.enabled = false;
+        this.instance = null;
+    }
+
+    /**
+     * Creates a new instance of the visualization
+     * @param {int} column
+     * @param {int} row
+     */
+    enable(column = 0, row = 0) {
+        console.log('enabling \'' + this.tag + '\'');
+        let box = boxManager.createBox(column, row);
+        this.instance = this.supplier(box);
+        this.enabled = true;
+    }
+
+    /**
+     * Removes the visualization instance
+     */
+    disable() {
+        this.instance.onRemove();
+        boxManager.removeBox(this.instance.box);
+        properties.onchange.delete(this.tag);
+        this.instance = null;
+        this.enabled = false;
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Box.html">Box</a></li><li><a href="BoxManager.html">BoxManager</a></li><li><a href="Dataset.html">Dataset</a></li><li><a href="ExampleVisualization.html">ExampleVisualization</a></li><li><a href="ImageData.html">ImageData</a></li><li><a href="Properties.html">Properties</a></li><li><a href="Registry.html">Registry</a></li><li><a href="ScanPath.html">ScanPath</a></li><li><a href="ScanPoint.html">ScanPoint</a></li><li><a href="Visualization.html">Visualization</a></li><li><a href="VisualizationType.html">VisualizationType</a></li></ul><h3>Global</h3><ul><li><a href="global.html#boxManager">boxManager</a></li><li><a href="global.html#dataset">dataset</a></li><li><a href="global.html#frame">frame</a></li><li><a href="global.html#properties">properties</a></li><li><a href="global.html#registry">registry</a></li><li><a href="global.html#topbar">topbar</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue May 05 2020 01:21:05 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

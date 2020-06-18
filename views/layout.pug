@@ -1,0 +1,81 @@
+doctype html
+html
+    head
+        title= title
+        //- Load Styles -//
+        link(rel="stylesheet" type="text/css" href="./semantic/dist/semantic.min.css")
+        link(rel = 'stylesheet', href = '/css/style.css')
+        //- Load Required Scripts -//
+        script(src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous")
+        script(src="./semantic/dist/semantic.min.js")
+
+        //- Load Page Specific Style(s) -//
+        block styles
+        //- Load Page Specific Required Script(s) -//
+        block pre_scripts
+
+    body
+        //-  Navigation Sidebar -//
+        div(class="ui sidebar thin vertical menu nav")
+            //-  Home -//
+            a#index_nav(class="item nav" href="/")
+                i(class="ui home icon large")
+                p(class="content") Home
+            //-  Visualize -//
+            a#visualization_nav(class="item nav" href="/visualization?id=default")
+                i(class="ui eye icon large")
+                p(class="content") Visualize
+            //-  Upload Data -//
+            a#upload_nav(class="item nav"  href="/upload")
+                i(class="ui upload icon large")
+                p(class="content") Upload Data
+            //-  About -//
+            a#about_nav(class="item nav" href="/about")
+                i(class="ui info icon large")
+                p(class="content") About
+
+        //- Load Page Specific Sidebar(s) into Body Element -//
+        block sidebars
+
+        div.pusher
+            //- Top Menu -//
+            div#headbar(class="ui horizontal borderless large three item menu fitted")
+                //-  Navigation Sidebar Button -//
+                div(class="ui item")
+                    div(class="ui left aligned container" style="margin-left:5px;")
+                        i(class="ui bars icon circular fitted" onclick="showSidebar('nav')")
+                //- Load Page Specific Top Menu Content -//
+                block header_content
+            //- Load Page Specific Main Content -//
+            block content
+
+    //- Load Page Specific Required Script(s) -//
+    block post_scripts
+
+    //- Enable Site Wide Scripts/Behaviors -//
+    script.
+        //- Show Sidebar Based on Unique Class(es) -//
+        function showSidebar(bar) {
+            $('.ui.sidebar.'+bar).sidebar('show')
+        };
+
+        //- Hide Sidebar Based on Unique Class(es) -//
+        function hideSidebar(bar) {
+            $('.ui.sidebar.'+bar).sidebar('hide');
+        };
+
+        //- Pulse Image Based on Unique Class(es) -//
+        function pulseImage(cls) {
+            $('.'+cls).transition('pulse');
+        };
+
+        //- Enable Accordion Functionaliy -//
+        $('.ui.accordion')
+          .accordion({
+            selector: {
+              trigger: '.title'
+            }
+          });
+
+        //- Set Sidebar Transition to 'overlay' -//
+        $('.ui.sidebar').sidebar('setting', 'transition', 'overlay');

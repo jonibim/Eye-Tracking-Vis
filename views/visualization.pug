@@ -1,12 +1,14 @@
 extends layout
 
 block styles
+    //- Load Style(s) -//
     link(rel='stylesheet' href="/css/visualization.css")
     link(rel='stylesheet' href="/css/patterns.css")
     link(rel='stylesheet' href="/css/d3-context-menu.css")
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
+    //- Load Script(s) -//
     // d3.js & additional libraries
     script(src="https://d3js.org/d3.v5.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js")
@@ -34,12 +36,13 @@ block pre_scripts
     script(src='scripts/visualization/editor.js')
 
 block sidebars
-    //-  Settings Sidebar -//
+    //- Settings Sidebar -//
     div(class="ui sidebar right vertical menu settings")
+        //- Settings Sidebar Header -//
         div(class="item left aligned small-right-padding")
             div(class="ui header") Settings:
                 i(class="ui times red inverted icon circular small fitted right-float" onclick="closeSettings()")
-        //-  Visualization type(s) -//
+        //- Visualization type(s) -//
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Visualizations')" style="margin-left:0px !important;")
                 i(class="ui fitted question icon")
@@ -75,11 +78,11 @@ block sidebars
                             div(class="ui toggle checked checkbox")
                                 input(type="checkbox" id="editor" class="settings visualization_type" checked="")
                                 label(for="editor") AOI Editor
+
         //- Image Selection -//
         //- Default image setDefaultImageHere -//
         -var default_image = "01b_Antwerpen_S2.jpg"
         script.let image = "#{default_image}";
-
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Image')" style="margin-left:0px !important;")
                 i(class="ui fitted question icon")
@@ -88,7 +91,7 @@ block sidebars
                     i(class="ui map outline icon")
                     label Image:
                 div(class="ui form content")
-                    //- Dropdown selection menu -//
+                    //- Dropdown -//
                     div(class="ui fluid search selection dropdown image")
                         div(class="default text") #{default_image}
                         i(class="ui dropdown icon")
@@ -108,18 +111,19 @@ block sidebars
                     i#usersLoadingIcon(class="ui users icon")
                     label Users:
                 div(class="ui form content" style={'z-index': '5'})
-                    //- Dropdown selection menu -//
+                    //- Dropdown -//
                     div(class="ui fluid search selection multiple dropdown user" style="padding-right:2.5em;")
                         div(class="default text") Select users
                         i(class="ui dropdown icon")
                         div(class="menu")
-                            //- Values are added in initiatesettings.js -//
+                            //- Values are added from initiatesettings.js -//
+                    //- (De)Select All Users Buttons -//
                     div(class="ui add circular green basic button" data-tooltip="Select All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         i(class="ui add fitted icon")
                     div(class="ui clear circular red basic button" data-tooltip="Deselect All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         i(class="ui remove fitted icon")
                     
-        //- RGBA -//
+        //- RGB -//
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Color')" style="margin-left:0px !important;")
                 i(class="ui fitted question icon")
@@ -141,6 +145,7 @@ block sidebars
                     div(class="ui inline fields" style="margin-bottom:0px;")
                         div(class="ui inverted label b-color-preview") B
                         div(class="ui teal slider rgb small-padding" id="b")
+
         //- Eye Cloud -//
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Eye Cloud')" style="margin-left:0px !important;")
@@ -173,6 +178,7 @@ block sidebars
                             div(class="ui inline input")
                                 input(type="number" id="maxcircles" min="1" max="100" class="maxcircles-preview hide-spinner")
                     div(class="ui teal slider eyecloudsliders maxcircles small-padding")
+                    //- Reset To Default Button -//
                     div(class="field" style="text-align:center;")
                         div(class="ui basic button" onclick="resetSettings('EyeCloud')") Reset to Default
 
@@ -185,12 +191,14 @@ block sidebars
                     i#gazestripeIcon(class="ui bars icon")
                     label Gaze Stripes:
                 div(class="ui form content" style="text-align:left;")
+                    //- Zoom Level Setting -//
                     div(class="ui inline fields" style="margin-bottom:0px !important;")
                         i(class="ui search icon")
                         label Zoom Level:
                             div(class="ui inline input")
                                 input(type="number" id="zoom" min="25" max="200" class="zoom-preview hide-spinner")
                     div(class="ui teal slider zoom small-padding")
+                    //- Reset To Default Button -//
                     div(class="field" style="text-align:center;")
                             div(class="ui basic button" onclick="resetSettings('GazeStripe')") Reset to Default
 
@@ -213,15 +221,20 @@ block sidebars
 
         //- Apply Settings & Auto Apply -//
         div(class="ui basic center aligned fitted segment")
+            //- Apply Settyings -//
             div(class="field small-padding")
                 div(class="ui green basic button" onclick="applySettings()") Apply Settings
+            //- Auto Apply -//
             div(class="field small-padding")
                 div(class="ui checkbox")
                     input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
                     label(for="auto_apply") Apply On Change
+            //- Save & Upload Settings -//
             div(class="inline field small-padding")
+                //- Save Settings -//
                 div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted save icon")
+                //- Upload Settings -//
                 div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted upload icon")
                 
@@ -327,14 +340,14 @@ block sidebars
 
 
 block header_content
-    //- Topbar Centered Text -//
+    //- Topbar Dataset Dropdown -//
     div(class="ui item middle")
         div(class="ui labeled icon search selection dropdown dataset")
             input(class="search" name="dataset")
             div(class="text")
             label#dataset_icon(for="dataset")
                 i(class="file alternate outline icon" style="height:100%;")
-    //-  Settings Sidebar Button -//
+    //- Settings Sidebar Button -//
     div(class="ui item")
         div(class="ui right aligned container" style="margin-right:5px;")
             i#settings_toggle(class="ui sliders icon circular fitted" onclick="openSettings()")
@@ -342,9 +355,11 @@ block header_content
 block content
     div#container(class='container')
         div#frame(class='blurring frame')
+            //- Image Preview Dimmer -//
             div(class="preview ui top aligned dimmer" style="text-align: -webkit-center;")
                 div(class="ui image" style="max-height: 90% !important; max-width: 90% !important;")
                     img#preview-image(style="max-height: 90% !important;" src="/datasets/default/images/" + default_image)
+            //- Innerframe For Visualizations -//
             div#innerframe(class='inner-frame')
                 h2(class="ui icon header" id='cat' style="display:none")
                     i(class="cat icon")
@@ -356,7 +371,7 @@ block post_scripts
     script.
         function openSettings() {
             $('#settings_toggle')
-                //- Hide Icon -//            
+                //- Hide Settings Icon -//            
                 .hide();
             //- Open Settings -//
             showSidebar('settings');
@@ -365,7 +380,7 @@ block post_scripts
 
         function closeSettings() {
             $('#settings_toggle')
-                //- Unhide Icon -//
+                //- Unhide Settings Icon -//
                 .show();
             //- Close Settings -//
             hideSidebar('settings');
@@ -375,10 +390,10 @@ block post_scripts
         //- Prevent 'settings' sidebar from dimming the page -//
         $('.ui.sidebar.settings').sidebar({dimPage: false, closable: false})
 
-    //- Load settings scripts -//
+    //- Load Settings Scripts -//
     script(src='scripts/visualization/readsettings.js')
     script(src="scripts/visualization/initiatesettings.js")
 
-    //- Set Active page to Visualization in 'navigation' sidebar -//
+    //- Set Active Page to Visualization in 'navigation' Sidebar -//
     script.
         $('#visualization_nav').addClass('active');

@@ -1,6 +1,7 @@
 extends layout
 
 block styles
+    //- Load Style(s) -//
     link(rel="icon" type="image/png" href="resources/favicon_about.png")
 
 block header_content
@@ -14,18 +15,21 @@ block header_content
             a(href="https://www.tue.nl/en/")
                 img(class="ui small image right floated tue_link" src="resources/tue_logo.png" onmouseover="pulseImage('tue_link')") 
 block content
-    //-  Page Content -//
+    //- Page Content -//
     div.content
+        //- Large Logo -//
         img(class="ui large image centered" src="resources/logoETVIZ.svg" style="margin-top: 14px;") 
-        //-  About Segment -//
+        //- About Segment -//
         div(class="ui floating raised segments")
+            //- Info Icon -//
             div(class="ui segment")
                 i(class="ui blue inverted circular info large icon")
+            //- Eye Tracking Segment -//
             div(class="ui secondary segment")
                 p(class="ui small dividing header") Eye Tracking
                 p Advances in technology have pushed the boundaries of eye tracking research such that it is nowadays considered as a new tool for further exploration. This is also followed by a demand from researchers for better eye tracking tools and analyzing techniques. Therefore, we present an eye tracking visualization tool that demonstrates new data-processing techniques.
                 p This tool includes the following visualization types:
-
+                //- Visualization Type List -//
                 div(class="ui divided list")
                     div(class="item")
                         p(class="ui tiny header") #[a(href="https://dl.acm.org/doi/pdf/10.1145/3356422.3356423") Eye Cloud]
@@ -39,13 +43,16 @@ block content
                     div(class="item")
                         p(class="ui tiny header") #[a(href="http://www.profitippliga.de/papers/58.pdf") Attention Map]
                         p Visualizes all 'hotspots' as a heatmap on a stimuli.
+            //- Default Dataset Segment -//
             div(class="ui secondary segment")
                 p(class="ui small dividing header") Default Dataset
                 p The provided dataset is the result of #[a(href="https://www.tandfonline.com/doi/abs/10.1080/13875868.2016.1226839") a study] with 40 participants using schematic metro maps. The study focused on two aspects: determining different reading strategies and assessing user performance.
+            //- University of Technology Eindhoven Segment -//
             div(class="ui secondary segment")
                 p(class="ui small dividing header") University of Technology Eindhoven
                 p This online tool was created by 5 Computer Science and Engineering students from the #[a(href="https://www.tue.nl/en/") University of Technology Eindhoven]. It was developed for the WebTech course, during the 4th quartile of academic year 2019-2020.
 
+    //- Extend Page To Allow Scrolling -//
     footer(class="ui vertical footer segment")
         div(class="ui container")
             h1(class="ui header") 
@@ -53,7 +60,7 @@ block content
             h1(class="ui header") 
 
 block post_scripts
-    //- Set Active page to About in 'navigation' sidebar -//
+    //- Set Active Page to About in 'navigation' Sidebar -//
     script.
         $('#about_nav').addClass('active');
         $('.pusher').css('overflow', 'scroll')

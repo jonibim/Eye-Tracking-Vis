@@ -31,22 +31,31 @@ function handleFormSubmit(event) {
     request.send(new FormData(event.target));
 }
 
+//- Used to Detect Changes in Images, Prevent Some Unnecessary Loading of Images -//
 let imagesChanged = false;
 
+//- Set Labels Next to Selection Buttons to Show Selected File(s) -//
 $(document).ready(function() {
+    //- Detect Input Change -//
     $('input[type="file"]').change(function(e){
         let targetElement = document.getElementsByClassName("filePreview " + e.target.id)[0];
+        //- Detect Single or Multiple Files -//
         let text = (e.target.files.length > 1) ? e.target.files.length + " files selected" : e.target.files[0].name;
         targetElement.innerText = text;
-        imagesChanged = true;
+        //- Images Changed if Image Input Changed -//
+        if (e.target.id === "images") imagesChanged = true;
     });
 });
 
+//- Set Labels Next to Selection Buttons to Show Selected File(s) -//
 function previewImages() {
+    //- Only if Images Changed, Update Content -//
     if (imagesChanged) {
+        //- Clear Content and Get Images -//
         let content = document.getElementById('imagePreviewContent');
         content.innerHTML = "";
         let images = document.getElementById('images').files;
+        //- Set Message if no Images Are Selected -//
         if (images.length == 0) {
             let hdr = document.createElement("div");
             hdr.className = "ui header";
@@ -54,7 +63,9 @@ function previewImages() {
             content.appendChild(hdr);
         }
 
+        //- Set Content for Selected Images -//
         else {
+            //- Define Size of Image Preview Thumbnails -//
             let images = document.getElementById('images').files;
             let size = undefined;
             if (images.length < 2) {
@@ -71,6 +82,7 @@ function previewImages() {
                 size = "mini";
             }
 
+            //- Set Attributes for each Image -//
             for (let image of images) {
                 let img = document.createElement("img");
                 img.className = "ui " + size + " image";
@@ -78,28 +90,38 @@ function previewImages() {
                 img.src = window.URL.createObjectURL(image);
                 img.alt = image.name;
                 img.title = image.name;
+                //- If there is more than one Image Selected, Allow Individual Previews on Click -//
                 if (images.length > 1) img.onclick = function(){previewImage(this.src, this.alt);};
                 content.appendChild(img);
             }
         }
     }
 
+    //- Show Modal -//
     $('.ui.preview.modal')
         .modal('show');
+    //- Reset Images Changed Tracker to False -//
     imagesChanged = false;
 }
 
+//- Set Labels Next to Selection Buttons to Show Selected File(s) -//
 function previewImage(src, name) {
+    //- Set Image Source and Modal Header -//
     document.getElementById("imagePreview").src = src;
     document.getElementById('ImagePreviewText').textContent = name;
+    //- Show Individual Image Preview Modal -//
     $('.ui.individualPreview.modal')
         .modal({allowMultiple: true})
         .modal('show');
+    //- Close Multiple Image Preview Modal -//
     closeModal('preview');
 }
 
+//- Close Modal Based on Unique Class -//
 function closeModal(modalUniqueClass) {
+    //- If Individual Image Preview is Closed -> Reopen Multiple Image Preview -//
     if (modalUniqueClass === 'individualPreview') {$('.ui.preview.modal').modal('show');}
+    //- Close Selected Modal -//
     $('.ui.modal.' + modalUniqueClass)
         .modal('hide');
 }

@@ -1,9 +1,11 @@
 extends layout
 
 block styles
+    //- Load Style(s) -//
     link(rel="icon" type="image/png" href="resources/favicon_upload.png")
 
 block pre_scripts
+    //- Load Script(s) -//
     script(src='scripts/upload/upload.js')
 
 block header_content
@@ -18,24 +20,31 @@ block header_content
                 img(class="ui small image right floated tue_link" src="resources/tue_logo.png" onmouseover="pulseImage('tue_link')") 
 
 block content
-    //-  Page Content -//
+    //- Page Content -//
     div.content
         div(class="ui floating raised segments")
-            //-  Primary Segment -//
+            //- Upload Icon -//
             div(class="ui segment")
                 i(class="ui green inverted circular upload large icon")
+            //- Main Segment -//
             div(class="ui segment")
+                //- Custom Data -//
                 p(class="ui small dividing header") Custom Data
                 p On this page you can upload your own custom dataset. This can then be used to visualize the data, as long as you used the format specified below.
+                //- Format -//
                 p(class="ui small dividing header") Format
                 p To make sure that the visualizations work on your dataset, the dataset must follow the specified format. The faded rows are not used in the current algorithms, however they should be included.
+                //- CSV Format -//
                 div(class="ui styled accordion")
                     div(class="title") #[i(class="dropdown icon")] CSV Format
                     div(class="content")
                         table(class="ui celled definition table")
+                            //- Table Header -//
                             thead
                                 tr #[th] #[th Type] #[th Example]
+                            //- Table Body -//
                             tbody
+                                //- Table Rows (with tooltips on first column) -//
                                 tr #[td(data-position="right center" data-tooltip="Time since start of experiment") Timestamp] #[td Number] #[td 462478]
                                 tr #[td(data-position="right center" data-tooltip="Filename of stimuli") StimuliName] #[td Filename] #[td 14b_Düsseldorf_S2.jpg]
                                 tr #[td(data-position="right center" data-tooltip="Fixation counter, not used, still required") FixationIndex] #[td(class="disabled") Number] #[td(class="disabled") 1285]
@@ -44,58 +53,77 @@ block content
                                 tr #[td(data-position="right center" data-tooltip="Y-value of fixation point") MappedFixationPointY] #[td Number] #[td 378]
                                 tr #[td(data-position="right center" data-tooltip="Participant id") user] #[td 'p'Number] #[td p24]
                                 tr #[td(data-position="right center" data-tooltip="Color or Gray, not used, still required") description] #[td(class="disabled") "Color"/"Gray"] #[td(class="disabled") gray]
+                //- Image Format -//
                 div(class="ui styled accordion")
                     div(class="title") #[i(class="dropdown icon")] Image Format
                     div(class="content")
                         p Any of the following image extensions can be used: 
                         div(class="ui horizontal celled list") #[div(class="item") .png] #[div(class="item") .jpg] #[div(class="item") .jpeg]
 
-                //-  Interactive form -//
+                //- Interactive Form -//
                 p(class="ui small dividing header") Upload Form
                 form(id="datasetForm" enctype="multipart/form-data" method="POST" class="ui form")
+                    //- Dataset Name -//
                     div(class="field")
                         div(class="ui blue input")
                             input(type="text" name="name" required placeholder="Dataset Name" maxlength="30")
+                    //- Dataset CSV -//
                     div(class="inline field")
                         label(for="dataset" class="ui basic blue button") Select dataset
                             input(id="dataset" type="file" name="dataset" accept=".csv" required class="fileUpload")
                         div(class="ui large basic grey label filePreview dataset") No dataset selected yet
+                    //- Dataset Image(s) -//
                     div(class="inline field")
                         label(for="images" class="ui basic blue button") Select images
                             input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")
                         div(class="ui large basic grey label filePreview images") No images selected yet 
+                    //- Submit Button -//
                     input(type="submit" class="ui green submit button" value="Upload")
+                    //- Preview Images Button -//
                     div(class="ui blue icon button" onclick="previewImages()") Preview Images 
                         i(class="ui search icon")
-            //-  Placeholder Segment -//
+
+            //- Placeholder Segment -//
             div(id="tempSection" class="ui placeholder secondary segment")
                 div(class="ui icon header")
                     i(class="ui file icon")
                     p No files uploaded yet!
+            //- Succes Segment -//
             div(id="successSection" class="ui placeholder secondary segment" style="display: none")
                 div(class="ui icon header")
                     i(class="ui green check icon")
                     p Dataset uploaded successfully!
                     a(id='visualizationButton' type="button" class="ui blue button") Open Visualization
+            //- Failure Segment -//
             div(id="failureSection" class="ui placeholder secondary segment" style="display: none")
                 div(class="ui icon header")
                     i(class="ui red exclamation icon")
                     p Failed to upload dataset!
                     p(id='failureMessage')
 
+            //- Multiple Image Preview Modal -//
             div(class="ui preview modal")
+                //- Close Icon -//
                 div(class="ui icon circular red left floated button small" onclick="closeModal('preview')" style="margin:5px;")
                     i(class="ui close icon") 
+                //- Header Text -//
                 div(class="ui centered large header") Image Preview
+                //- Content -//
                 div#imagePreviewContent(class="content" style="max-width:1000px;")
                     div(class="ui header") No images were selected yet!
 
+            //- Single Image Preview Modal -//
             div(class="ui individualPreview modal")
+                //- Close Icon -//
                 div(class="ui icon circular red left floated button" onclick="closeModal('individualPreview')" style="margin:5px;")
                     i(class="ui close icon") 
+                //- Header Text -//
                 div#ImagePreviewText(class="ui centered large header") Image Preview
+                //- Content -//
                 div(class="content" style="max-width:1000px;")
                     img#imagePreview(class="ui centered big image")
+
+    //- Extend Page To Allow Scrolling -//
     footer(class="ui vertical footer segment")
         div(class="ui container")
             h1(class="ui header") 
@@ -103,7 +131,7 @@ block content
             h1(class="ui header")     
 
 block post_scripts
-    //- Set Active page to Upload in 'navigation' sidebar -//
+    //- Set Active Page to Upload in 'navigation' Sidebar -//
     script.
         $('#upload_nav').addClass('active');
         $('.pusher').css('overflow', 'scroll')

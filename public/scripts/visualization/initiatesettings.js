@@ -72,7 +72,7 @@ function showGazeStripeSettings() {
 //- Update the Dataset Dropdown Options -//
 async function updateDatasets() {
     //- Get Images From Dataset -//
-    const url = '/dataset/available';
+    const url = '/dataset/available?id=' + datasetId;
     const request = fetch(url, { method: 'GET' });
     await request.then(response => response.arrayBuffer()).then(buffer => {
         let decoder = new TextDecoder("utf8");

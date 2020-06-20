@@ -226,23 +226,21 @@ block sidebars
 
         //- Apply Settings & Auto Apply -//
         div(class="item setting"  style="text-align:center;")
-                //- Apply Settyings -//
-                div(class="field small-padding")
-                    div(class="ui green basic button" onclick="applySettings()" data-tooltip="Manually Apply Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic") Apply Settings
+                div(class="inline field small-padding")
+                    //- Apply Settyings -//
+                    div(class="ui green circular button" onclick="applySettings()" data-tooltip="Apply Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted sync icon")
+                    //- Save Settings -//
+                    div(id="saveSettings" class="ui blue circular button" onclick="" data-tooltip="Save Settings and Images" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted save icon")
+                    //- Upload Settings -//
+                    div(id="uploadSettings" class="ui teal circular button" onclick="" data-tooltip="Upload Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted upload icon")
                 //- Auto Apply -//
                 div(class="field small-padding")
                     div(class="ui checkbox" data-tooltip="Apply Settings on Setting Change" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
                         label(for="auto_apply") Apply On Change
-        div(class="item setting"  style="text-align:center;")
-            //- Save & Upload Settings -//
-            div(class="inline field small-padding")
-                //- Save Settings -//
-                div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="bottom center" data-inverted="" data-variation="tiny basic")
-                    i(class="ui fitted save icon")
-                //- Upload Settings -//
-                div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic")
-                    i(class="ui fitted upload icon")
                 
 
         div(class='ui small modal' id='modalSave')

@@ -218,24 +218,30 @@ block sidebars
                     |  <br>  <br>
                     |  Use the context menu by pressing right click to switch between brush mode and view mode 
 
+        //- Tutorial Button -//
+        div(class="item tutorial setting" style="text-align:center;")
+            div(id="tutorial" class="ui teal circular fluid labeled icon button" onclick="" data-tooltip="Display Tutorial for the Visualization Tool" data-position="bottom center" data-inverted="" data-variation="tiny basic") 
+                i(class="ui fitted question icon")
+                p Tutorial
 
         //- Apply Settings & Auto Apply -//
-        div(class="ui basic center aligned fitted segment")
-            //- Apply Settyings -//
-            div(class="field small-padding")
-                div(class="ui green basic button" onclick="applySettings()") Apply Settings
-            //- Auto Apply -//
-            div(class="field small-padding")
-                div(class="ui checkbox")
-                    input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
-                    label(for="auto_apply") Apply On Change
+        div(class="item setting"  style="text-align:center;")
+                //- Apply Settyings -//
+                div(class="field small-padding")
+                    div(class="ui green basic button" onclick="applySettings()" data-tooltip="Manually Apply Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic") Apply Settings
+                //- Auto Apply -//
+                div(class="field small-padding")
+                    div(class="ui checkbox" data-tooltip="Apply Settings on Setting Change" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
+                        label(for="auto_apply") Apply On Change
+        div(class="item setting"  style="text-align:center;")
             //- Save & Upload Settings -//
             div(class="inline field small-padding")
                 //- Save Settings -//
-                div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
+                div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted save icon")
                 //- Upload Settings -//
-                div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
+                div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                     i(class="ui fitted upload icon")
                 
 

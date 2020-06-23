@@ -9,7 +9,8 @@ function createWindow () {
 
     window.loadURL('http://localhost:3000/');
     window.focus();
-    window.webContents.openDevTools();
+    // window.webContents.openDevTools();
+    window.maximize();
 }
 
 app.whenReady().then(() => {

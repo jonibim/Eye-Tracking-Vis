@@ -319,6 +319,17 @@ $('.ui.slider.maxcircles')
         }
     });
 
+//- Show Tutorial -//
+function showTutorial() {
+    $('#tutorialModal')
+        .modal('show');
+}
+
+//- Hide Tutorial -//
+function hideTutorial() {
+    $('#tutorialModal')
+        .modal('hide');
+}
 
 //- Save Configuration -//
 function saveSettingsImageWarning() {

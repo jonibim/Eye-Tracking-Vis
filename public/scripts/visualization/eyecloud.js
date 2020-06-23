@@ -27,6 +27,7 @@ class EyeCloud extends Visualization {
         let densities = []; // the density of each coordinate in the coordinates array
 
         let drawing = false; // Boolean that is true when the eye cloud is being drawn
+        let enabledDisabled = false; // Boolean that is true when the circles has been enabled or disabled
 
         let clickedObject; // Holds the object that is being right clicked
 
@@ -38,12 +39,12 @@ class EyeCloud extends Visualization {
         let disableMenuItem ;
         let generalMenuItems;
         let menu; // Default context menu
-        let circleMenu;
+        let circleMenu; // Context menu for the circles
 
         setContextMenus(); // Initialize the context menu items
 
         /**
-         * Create an svg- and g-tag inside the graph class
+         * Create an svg- and g-tag inside the box
          */
         let svg = d3.select(box.inner)
             .classed('smalldot', true)
@@ -113,9 +114,14 @@ class EyeCloud extends Visualization {
             minRadius = ecProperties[1];
             maxRadius = ecProperties[2];
             maxCircles = ecProperties[3];
+
             removeAreaGroup();
-            generateData(dataset.getImageData(properties.image));
-            draw();
+
+            if (!drawing) { // If we are not already drawing the eye cloud
+                drawing = true;
+                generateData(dataset.getImageData(properties.image));
+                draw();
+            }
         });
 
         /**
@@ -168,7 +174,6 @@ class EyeCloud extends Visualization {
                     if (distance <= range) {
                         densityScores[i].density++;
                     }
-
                 }
             }
 
@@ -297,7 +302,7 @@ class EyeCloud extends Visualization {
             d3.select('#cloud_group').selectAll('circle').on('click', function (object) {
                 clickedObject = object; // Store object that is being left clicked
             });
-            // Assing the show area functionality to a left click on a circle
+            // Assigning the show area functionality to a left click on a circle
             d3.select('#cloud_group').on('click', function () {
                 showArea();
             });
@@ -322,7 +327,11 @@ class EyeCloud extends Visualization {
             }
 
             thisClass.svg = d3.select('#cloud_svg'); // Update the svg property of the visualization
-            thisClass.setDefaultScale(); // Set the default scale after drawing the eye cloud
+            if (!enabledDisabled) { // If a circle hasn't been enabled or disabled
+                thisClass.setDefaultScale(); // Set the default scale after drawing the eye cloud
+            };
+
+            enabledDisabled = false; // Reset boolean
             drawing = false; // Reset drawing variable
         }
 
@@ -621,6 +630,7 @@ class EyeCloud extends Visualization {
             coordinates = coordinates.filter(coordinate => coordinate.index !== object.index);
             // Remove density that belongs to the removed circle
             densities.splice(object.index, 1);
+            enabledDisabled = true; // So that the visualization won't be rescaled
             draw(); // Redraw
         }
 
@@ -629,6 +639,7 @@ class EyeCloud extends Visualization {
          */
         function enableCircles() {
             generateData(dataset.getImageData(properties.image)); // Regenerate all coordinates
+            enabledDisabled = true; // So that the visualization won't be rescaled
             draw(); // Redraw
         }
 

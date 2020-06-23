@@ -4,13 +4,18 @@ function createWindow () {
     // Create the browser window.
     let window = new BrowserWindow({
         width: 800,
-        height: 600
+        height: 600,
+        icon: './public/resources/favicon_visualization.png'
     });
 
     window.loadURL('http://localhost:3000/');
     window.focus();
     // window.webContents.openDevTools();
     window.maximize();
+
+    window.webContents.on('page-favicon-updated', (event, favicons) => {
+        window.setIcon('./public/' + favicons[0].substr('http://localhost:3000/'.length));
+    });
 }
 
 app.whenReady().then(() => {

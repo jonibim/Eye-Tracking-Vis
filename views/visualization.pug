@@ -220,7 +220,7 @@ block sidebars
 
         //- Tutorial Button -//
         div(class="item tutorial setting" style="text-align:center;")
-            div(id="tutorial" class="ui teal circular fluid labeled icon button" onclick="" data-tooltip="Display Tutorial for the Visualization Tool" data-position="bottom center" data-inverted="" data-variation="tiny basic") 
+            div(id="tutorial" class="ui teal circular fluid labeled icon button" onclick="showTutorial()" data-tooltip="Display Tutorial for the Visualization Tool" data-position="bottom center" data-inverted="" data-variation="tiny basic") 
                 i(class="ui fitted question icon")
                 p Tutorial
 
@@ -241,7 +241,58 @@ block sidebars
                     div(class="ui checkbox" data-tooltip="Apply Settings on Setting Change" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
                         label(for="auto_apply") Apply On Change
-                
+        
+        //- Tutorial Modal -//
+        div(class='ui compact modal' id='tutorialModal')
+            //- Close Icon -//
+            div(class="ui icon circular red left floated button" onclick="hideTutorial()" style="margin:5px;")
+                i(class="ui close icon")
+            //- Title Header -//
+            div(class="ui large center aligned header") Tutorial
+            div(class="content" style="max-width:1000px;")
+                div(class="ui grid")
+                    //- Navigation Menu -//
+                    div(class="four wide column")
+                        div(class="ui vertical fluid tabular menu")
+                            div(class="active item" data-tab="vis_tool")
+                                div(class="small header") Visualization Tool
+                            div(class="ui divider" style="margin:0.3rem;")
+                            div(class="item" data-tab="eye_cloud")
+                                div(class="small header") Eye Cloud
+                            div(class="item" data-tab="gaze_stripe")
+                                div(class="small header") Gaze Stripes
+                            div(class="item" data-tab="att_map")
+                                div(class="small header") Attention Map
+                            div(class="item" data-tab="trans_graph")
+                                div(class="small header") Transition Graph
+                            div(class="item" data-tab="aoi_edit")
+                                div(class="small header") AOI Editor
+                            div(class="ui divider" style="margin:0.3rem;")
+                            div(class="item" data-tab="save_settings")
+                                div(class="small header") Save & Upload Settings
+                    //- Content Tabs -//
+                    div(class="twelve wide column")
+                        //- Visualization Tool -//
+                        div(class="ui tab segment" data-tab="vis_tool" style="margin-top:0;")
+                            p Fill this area with text/images/info for the Visualization Tool
+                        //- Eye Cloud -//
+                        div(class="ui tab segment" data-tab="eye_cloud" style="margin-top:0;")
+                            p Fill this area with text/images/info for the Eye Cloud
+                        //- Gaze Stripes -//
+                        div(class="ui tab segment" data-tab="gaze_stripe" style="margin-top:0;")
+                            p Fill this area with text/images/info for the Gaze Stripes
+                        //- Attention Map -//
+                        div(class="ui tab segment" data-tab="att_map" style="margin-top:0;")
+                            p Fill this area with text/images/info for the Attention Map
+                        //- Transition Graph -//
+                        div(class="ui tab segment" data-tab="trans_graph" style="margin-top:0;")
+                            p Fill this area with text/images/info for the Transition Graph
+                        //- AOI Editor -//
+                        div(class="ui tab segment" data-tab="aoi_edit" style="margin-top:0;")
+                            p Fill this area with text/images/info for the AOI Editor
+                        //- Save & Upload Settings -//
+                        div(class="ui tab segment" data-tab="save_settings" style="margin-top:0;")
+                            p Fill this area with text/images/info for Saving & Uploading Settings
 
         div(class='ui small modal' id='modalSave')
             div(class='header') Save settings
@@ -390,6 +441,9 @@ block post_scripts
             hideSidebar('settings');
             resizeBoxes();
         };
+
+        //- Enable Tutorial Tab Menu Functionality -//
+        $('.tabular.menu .item').tab();
 
         //- Prevent 'settings' sidebar from dimming the page -//
         $('.ui.sidebar.settings').sidebar({dimPage: false, closable: false})

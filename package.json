@@ -2,8 +2,10 @@
   "name": "eye-tracking-vis",
   "version": "0.0.0",
   "private": true,
+  "main": "main.js",
   "scripts": {
-    "start": "npx nodemon ./bin/www"
+    "start": "npx nodemon ./bin/www",
+    "electron": "electron ."
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

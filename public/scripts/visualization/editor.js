@@ -131,6 +131,13 @@ class Editor extends Visualization {
                 action: () => this.startBrush()
             },
             {
+
+                title: 'Download as image',
+                action: () => {
+                    downloadSVG(this.svg.node(), 'AOI Editor');
+                }
+            },
+            {
                 divider: true
             },
             this.clearAllAoiMenu,
@@ -162,8 +169,28 @@ class Editor extends Visualization {
                 action: () => {
                     this.addAoi(this.extent[0][1], this.extent[0][0], this.extent[1][1], this.extent[1][0], true)
                     this.sync();
-                }
+                },
             };
+
+            /**
+             * This entry in the context menu removes the last element
+             * The deleteAOI entry takes an html object and then check each corresponding
+             * classList. In order to satisfy these requirments, we take the last element added from 
+             * the properties AOI map and then we create a temporary HTML object where we attach
+             * the classes "temp" and "aoi[id]". The "temp" class is needed in order to push the 
+             * aoi[id] positon into classList[1] as that is what the deleteAOI method is checking
+             */
+            let removeLastElement = {
+                title: 'Undo AOI',
+                action: () => {
+                    var temp = document.createElement("div");
+                    temp.classList.add('temp')
+                    temp.classList.add('aoi' + properties.getCurrentAOI().slice(-1)[0].id)
+                    this.deleteAOI(temp)
+                },
+
+            }
+
 
             let result = [];
 
@@ -180,6 +207,8 @@ class Editor extends Visualization {
                     this.right = this.extent[1][0] - this.extent[0][0]
                     if (this.bottom > 50 && this.right > 50) {
                         result.push(addAoiMenu)
+                        if (properties.getCurrentAOIsize() > 0)
+                            result.push(removeLastElement)
                         result.push({
                             divider: true
                         })
@@ -195,6 +224,13 @@ class Editor extends Visualization {
                     {
                         title: 'Enable Brush',
                         action: () => this.startBrush()
+                    },
+                    {
+
+                        title: 'Download as image',
+                        action: () => {
+                            downloadSVG(this.svg.node(), 'AOI Editor');
+                        }
                     },
                     {
                         divider: true
@@ -323,7 +359,9 @@ class Editor extends Visualization {
         if (this.previousAOIs) {
             this.previousAOIs.forEach(aoi => {
                 var tempName = 'aoi' + aoi.id
-                this.drawAOI(aoi.id, tempName, aoi.right, aoi.bottom, aoi.left, aoi.top)
+                var AOIheight = aoi.bottom - aoi.top
+                var AOIwidth = aoi.right - aoi.left
+                this.drawAOI(aoi.id, tempName, AOIwidth, AOIheight, aoi.left, aoi.top)
             })
         }
 
@@ -518,11 +556,12 @@ class Editor extends Visualization {
             if ('aoi' + aois.id !== object.classList[1]) {
                 this.newAOI.push(aois)
                 //console.log('add')
-                //console.log('The object ->>', aois.object)
+                //console.log('The object ->>', aois.id)
+                //console.log('new AOI',this.newAOI)
             }
-
-            this.sync();
         });
+        properties.aoi.set(properties.image, this.newAOI)
+        this.sync();
     }
 
     sync() {

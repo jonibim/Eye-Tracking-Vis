@@ -257,7 +257,7 @@ block sidebars
                     //- Content Tabs -//
                     div(class="twelve wide column")
                         //- Visualization Tool -//
-                        div(class="ui tab segment" data-tab="vis_tool" style="margin-top:0;text-align:left;height: 700px; overflow: auto;")
+                        div(class="ui tab segment" data-tab="vis_tool" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
                             p 
                             | The visualization tool provides five different visualization:
                             | Gaze-Stripes, Attention Map, Eye Cloud, Transition Graph and AOI Editor
@@ -318,7 +318,7 @@ block sidebars
                             |    <br> <br>
                             | 
                         //- Eye Cloud -//
-                        div(class="ui tab segment" data-tab="eye_cloud" style="margin-top:0;text-align:left;height: 700px; overflow: auto;")
+                        div(class="ui tab segment" data-tab="eye_cloud" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
                             p 
                             | The Eye Cloud shows viewed areas as thumbnails inside a cluster of circles. The size of these circles is proportionate to the frequency the area is gazed upon.
                             |    The visualization can be used to get a customizable, visual overview of the most frequently viewed areas on the stimulus and to determine these most viewed areas themselves. 
@@ -356,7 +356,7 @@ block sidebars
                             |    The most viewed area can be distinguished by the colored outline of its circle. This color can be adjusted by the color setting in the settings tab. This setting also affects the drawn circles for the "Show area on map" functionality.
                             |    <br> <br>                         
                         //- Gaze Stripes -//
-                        div(class="ui tab segment" data-tab="gaze_stripe" style="margin-top:0;text-align:left;height: 700px; overflow: auto;")
+                        div(class="ui tab segment" data-tab="gaze_stripe" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
                             p 
                             |    The gaze stripe visualization tools consists of horizontal bars for each selected user. These bars contain information such as the timestamps and the respective gazes at those timestamps.
                             |    The advantage of this visualization is that it displays a vast amount of the data without being cluttered, allowing you to find any patterns that are possibly present.
@@ -382,10 +382,10 @@ block sidebars
                             |    More options are available by right clicking. These actions include: centering the visualization, opening the appropriate settings, download the shown image and toggling of the animation.
                             |    <br> <br>
                         //- Attention Map -//
-                        div(class="ui tab segment" data-tab="att_map" style="margin-top:0;text-align:left")
+                        div(class="ui tab segment" data-tab="att_map" style="margin-top:0;text-align:justify")
                             p
                             |The Attention Map shows a general overview of the data in the defined areas of interest. The areas of interest can be changed through the AOI editor.
-                            br
+                            | <br> <br>
                             |The color for the Attention Map can be changed through the color options in the sidebar.
                             div(style="display:flex")
                                 img(src='resources/Tutorial/attentionmap/attentionmap_color_demo.gif' style="scale: 80%;")
@@ -393,7 +393,7 @@ block sidebars
                                 | Changing the color of the attention map
                             br
                         //- Transition Graph -//
-                        div(class="ui tab segment" data-tab="trans_graph" style="margin-top:0;text-align:left")
+                        div(class="ui tab segment" data-tab="trans_graph" style="margin-top:0;text-align:justify")
                             p 
                             | The transition graph displays the relationship between different AOIs in the stimuli. In this graph, each AOI is represented as a node and each relation consists of an directed edge from one node to another node depending on the relation. The relation is defined by the following conditional: For any fixation which is an element of a scanpath of a corresponding user under an AOI, there exists a relation with another AOI if and only if the proceeding fixation under the same scanpath and user is an element of that AOI.
                             div(style="display:flex")
@@ -408,7 +408,7 @@ block sidebars
                             | The transition graph is updated on every modification that is made to the AOIs on the AOI editor. It is also possible to download a screenshot of an AOI through the context menu
                             |
                         //- AOI Editor -//
-                        div(class="ui tab segment" data-tab="aoi_edit" style="margin-top:0;text-align:left;height: 700px; overflow: auto;")
+                        div(class="ui tab segment" data-tab="aoi_edit" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
                             p
                             |  The AOI Editor is similar to a scanpath visualization. However, its main purpose is to manage AOIs in real-time. This visualization comes with a set of tools implemented for creating and deleting AOIs.
                             |  In the AOI editor, a scanpath visualization is displayed which corresponds to the selected user list. The visualization also contains a context menu which can be activated by right clikcing inside the visualizations.
@@ -446,7 +446,7 @@ block sidebars
                             |  <br>  <br>
                             |  
                         //- Save & Upload Settings -//
-                        div(class="ui tab segment" data-tab="save_settings" style="margin-top:0;text-align:left;height: 700px; overflow: auto;")
+                        div(class="ui tab segment" data-tab="save_settings" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
                             p
                             | The visualization tool allows users to export and upload their modifications made on a dataset. A user can choose to save the desired settings such as AOIs, users, color choice and screenshots of every active visualization independently and a JSON file will be generated containing the chosen settings 
                             | or a ZIP containing the screenshots and the JSON file. Uploading these settings is relatively straightforward as they are applied automatically on the visualization after they have been uploaded. Moreover, the tool allows the user to import the settings to different stimulus, however it is advised to use such 

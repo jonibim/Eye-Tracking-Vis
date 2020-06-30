@@ -7,7 +7,6 @@
 --------------------*/
 
 @margin: 1rem 0;
-@borderStyle: solid;
 
 @highlightWidth: 1px;
 @highlightColor: @whiteBorderColor;

@@ -117,9 +117,7 @@ $.fn.dropdown = function(parameters) {
             module.setup.layout();
 
             if(settings.values) {
-              module.set.initialLoad();
               module.change.values(settings.values);
-              module.remove.initialLoad();
             }
 
             module.refreshData();
@@ -543,7 +541,6 @@ $.fn.dropdown = function(parameters) {
           } else if( module.can.click() ) {
               module.unbind.intent();
           }
-          iconClicked = false;
         },
 
         hideOthers: function() {
@@ -1775,7 +1772,7 @@ $.fn.dropdown = function(parameters) {
             return $text.text();
           },
           query: function() {
-            return String($search.val()).trim();
+            return $.trim($search.val());
           },
           searchWidth: function(value) {
             value = (value !== undefined)
@@ -1918,8 +1915,8 @@ $.fn.dropdown = function(parameters) {
               return ($choice.data(metadata.text) !== undefined)
                 ? $choice.data(metadata.text)
                 : (preserveHTML)
-                  ? $choice.html().trim()
-                  : $choice.text().trim()
+                  ? $.trim($choice.html())
+                  : $.trim($choice.text())
               ;
             }
           },
@@ -1931,11 +1928,11 @@ $.fn.dropdown = function(parameters) {
             return ($choice.data(metadata.value) !== undefined)
               ? String( $choice.data(metadata.value) )
               : (typeof choiceText === 'string')
-                ? String(
+                ? $.trim(
                   settings.ignoreSearchCase
                   ? choiceText.toLowerCase()
                   : choiceText
-                ).trim()
+                )
                 : String(choiceText)
             ;
           },

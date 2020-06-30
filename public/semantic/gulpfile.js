@@ -15,7 +15,6 @@ var
  *******************************/
 
 require('./tasks/collections/build')(gulp);
-require('./tasks/collections/various')(gulp);
 require('./tasks/collections/install')(gulp);
 
 gulp.task('default', gulp.series('watch'));

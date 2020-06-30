@@ -10,9 +10,9 @@ var https = require('https');
 //var http = require('https')
 var fs = require('fs');
 
-var privateKey = fs.readFileSync('/etc/letsencrypt/live/etviz.germanywestcentral.cloudapp.azure.com/privkey.pem');
-var certificate = fs.readFileSync('/etc/letsencrypt/live/etviz.germanywestcentral.cloudapp.azure.com/cert.pem');
-var chain = fs.readFileSync('/etc/letsencrypt/live/etviz.germanywestcentral.cloudapp.azure.com/chain.pem');
+var privateKey = fs.readFileSync('/etc/letsencrypt/live/etviz.sytes.net/privkey.pem');
+var certificate = fs.readFileSync('/etc/letsencrypt/live/etviz.sytes.net/cert.pem');
+var chain = fs.readFileSync('/etc/letsencrypt/live/etviz.sytes.net/chain.pem');
 
 var credentials = {key: privateKey, cert: certificate, ca: chain };
 
@@ -21,6 +21,8 @@ var credentials = {key: privateKey, cert: certificate, ca: chain };
  */
 
 var port = normalizePort(process.env.PORT || '443');
+//var port = normalizePort(process.env.PORT || '80');
+
 app.set('port', port);
 
 /**
@@ -28,6 +30,7 @@ app.set('port', port);
  */
 
 var server = https.createServer(credentials, app);
+//var server = https.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.

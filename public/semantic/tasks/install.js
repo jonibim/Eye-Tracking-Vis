@@ -57,7 +57,7 @@ var
 module.exports = function (callback) {
 
   var
-    currentConfig = requireDotFile('semantic.json', process.cwd()),
+    currentConfig = requireDotFile('semantic.json'),
     manager       = install.getPackageManager(),
     rootQuestions = questions.root,
     installFolder = false,

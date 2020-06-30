@@ -51,7 +51,16 @@ block content
             div(class="ui secondary segment")
                 p(class="ui small dividing header") University of Technology Eindhoven
                 p This online tool was created by 5 Computer Science and Engineering students from the #[a(href="https://www.tue.nl/en/") University of Technology Eindhoven]. It was developed for the WebTech course, during the 4th quartile of academic year 2019-2020.
-
+        //- Video Tag - //
+        div(class='container' style="margin-top: 50px;")
+            img(src='resources/Video/overlay.png' style="height: 310px;z-index: 4;position: absolute;display: flex;pointer-events: none;margin-top: -20px;margin-left: -30px;")
+            video(width="500" controls)
+                source(src="resources/Video/video.mp4" type="video/mp4")
+                source(src="resources/Video/video.ogg" type="video/ogg")
+                | Your browser does not support HTML video.
+            br
+            div(class="ui segment" style="width: 300px;display: inline-block;")
+                | This is a video representing our work 
     //- Extend Page To Allow Scrolling -//
     footer(class="ui vertical footer segment")
         div(class="ui container")

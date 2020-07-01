@@ -621,3 +621,14 @@ block post_scripts
     //- Set Active Page to Visualization in 'navigation' Sidebar -//
     script.
         $('#visualization_nav').addClass('active');
+        var workspace = document.getElementById('innerframe')
+        var dimmer = document.createElement('div')
+        dimmer.classList.add('ui','active', 'dimmer')
+        dimmer.setAttribute("style", "z-index:1000")
+        dimmer.id = 'vizloader'
+        var loader = document.createElement('div')
+        loader.innerHTML = 'Loading the visualization tool'
+        loader.classList.add('ui', 'indeterminate', 'text', 'loader')
+        dimmer.appendChild(loader);
+        workspace.appendChild(dimmer)
+

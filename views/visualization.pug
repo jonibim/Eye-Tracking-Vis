@@ -271,14 +271,14 @@ block sidebars
                             | as well as it's corresponding name. The ID of the dataset can be found
                             | by going through the Save Settings function or by looking at the 
                             | URL of the visualization. By clicking the top bar with the dataset name, 
-                            | a dropdown of other available datasets uploaded by other users. A dataset is
+                            | a dropdown of other available datasets will be shown. These datasets might be uploaded by other users. A dataset is
                             | visible on the dropdown menu only and only if it has been uploaded without marking 
-                            | it as unlisted dataset. An unlisted dataset is only accesible through the URL. 
-                            | It is to possible add a dataset of your own by uploading one on the upload page.   
+                            | it as an unlisted dataset. An unlisted dataset is only accesible through the URL. 
+                            | It is to possible add a dataset of your own by uploading one on the upload page as long as the required formatting is followed.
                             |    <br> <br>
                             | Each visualization comes with different features 
-                            | which can be accessed via the context menu. The corresponding
-                            | tutorial menus of the visualizations will dive more into each of
+                            | which can be accessed via the context menu. Each of the corresponding
+                            | tutorial entries of the visualizations will dive more into each of
                             | these features
                             |    <br> <br>
                             | The sidebar on the right provides control over the dataset and as well additional 
@@ -312,7 +312,7 @@ block sidebars
                             div(style="text-align: center;font-style: italic;")
                                 | Changing the users
                             br
-                            | The users corresponding to a stimuli are shown in the "Users" section. It is possible to add specfific users from the dropdown 
+                            | The users corresponding to a stimulus are shown in the "Users" section. It is possible to add specfific users from the dropdown 
                             | menu or hide users by clicking on the users from the list of selected users shown in this section. In addition, a button for 
                             | removing or adding all users is provided.  
                             |    <br> <br>
@@ -320,7 +320,7 @@ block sidebars
                         //- Eye Cloud -//
                         div(class="ui tab segment" data-tab="eye_cloud" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
                             p 
-                            | The Eye Cloud shows viewed areas as thumbnails inside a cluster of circles. The size of these circles is proportionate to the frequency the area is gazed upon.
+                            | The Eye Cloud visualizes areas obeserved by the participants as thumbnails inside a cluster of circles. The size of these circles is proportionate to the frequency the area is gazed upon.
                             |    The visualization can be used to get a customizable, visual overview of the most frequently viewed areas on the stimulus and to determine these most viewed areas themselves. 
                             div(style="display:flex")
                                 img(src='resources/Tutorial/eyecloud/eyecloud_tutorial_screenshot.png' style="scale: 80%;")
@@ -405,7 +405,7 @@ block sidebars
                             |  <br> <br>
                             | For every outgoing edge, the visualization assigns an color which corresponds to the origin node. The color for the origin node is represented on a legend inside the visualization.
                             |  <br> <br> 
-                            | The transition graph is updated on every modification that is made to the AOIs on the AOI editor. It is also possible to download a screenshot of an AOI through the context menu
+                            | The transition graph is updated on every modification that is made to the AOIs on the AOI editor. It is also possible to download a screenshot of an AOI through the context menu.
                             |
                         //- AOI Editor -//
                         div(class="ui tab segment" data-tab="aoi_edit" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
@@ -422,17 +422,17 @@ block sidebars
                                 | The AOI editor
                             br
                             |  The unique feature of this visualization is the brush mode, which generates an environment for managing AOIs. This mode allows the user to make selections
-                            |  on top of the visualization. The selections are resizable and they can be moved, if the mouse is not pressed outside the selection area.
-                            |  The brush mode is intitalized in the start of the visualization tool. Using the context menu, a user can switch between brush mode and view mode. 
+                            |  on top of the visualization. This mode is intitalized in the start of the visualization tool. The selections are resizable and they can be moved as long as mouse is not pressed outside the selection area. 
                             |  When a selection is made, an additional entry is created on the context menu of the visualization. This entry allows to convert the selection into an AOI.
                             |  When the user initializes this entry, an ID and a name is generated for the requested AOI. The points under the selection are saved into a list of points in the AOI. Finally, the stimuli name is saved in the AOI object and a copy of the selection object 
                             |  is made on the visualizations which servers as a reference to the created AOI. This object displays the AOI's name and it is an  static object which means that it cannot be dragged or moved. 
+                            |  Nonetheless, the context memu allows the user to switch between brush mode and view mode
                             div(style="display:flex")
                                 img(src='resources/Tutorial/aoieditor/Adding AOIs.gif' style="scale: 80%;")
                             div(style="text-align: center;font-style: italic;")
                                 | Adding AOIs
                             br
-                            |  In brush mode, it is not possible to delete a specific AOI, however it is possible to undo AOIs which that the most recent AOI will be deleted.
+                            |  In brush mode, it is not possible to delete a specific AOI, however it is possible to undo AOIs which means that the most recent AOI will be deleted.
                             |  In order to detele a specific AOI, the user must switch to the view mode.
                             div(style="display:flex")
                                 img(src='resources/Tutorial/aoieditor/Delete specific AOI.gif' style="scale: 80%;")
@@ -449,8 +449,8 @@ block sidebars
                         div(class="ui tab segment" data-tab="save_settings" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
                             p
                             | The visualization tool allows users to export and upload their modifications made on a dataset. A user can choose to save the desired settings such as AOIs, users, color choice and screenshots of every active visualization independently and a JSON file will be generated containing the chosen settings 
-                            | or a ZIP containing the screenshots and the JSON file. Uploading these settings is relatively straightforward as they are applied automatically on the visualization after they have been uploaded. Moreover, the tool allows the user to import the settings to different stimulus, however it is advised to use such 
-                            | an option with stimulus with similar properties, such as comparing a colored stimuli with a grayscaled stimuli.
+                            | or a ZIP containing the screenshots and the JSON file altogether. Uploading these settings is relatively straightforward as they are applied automatically on the visualization after they have been uploaded. Moreover, the tool allows the user to import the settings to different stimulis, however it is advised to use such 
+                            | an option on a stimulus with similar properties, such as comparing a colored stimulus with a grayscaled stimulus.
                             |
                             div(style="display:flex")
                                 img(src='resources/Tutorial/saveupload/Saving.gif' style="scale: 80%;")

@@ -55,6 +55,21 @@
     width: calc(100% - 260px);
 }
 
+input.hide-spinner::-webkit-outer-spin-button,
+input.hide-spinner::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input.hide-spinner[type=number] {
+    -moz-appearance:textfield !important; /* Firefox */
+}
+
+.inline.fields > input[type=number] {
+    max-width: 45% !important;
+}
+
 body.pushable {
     background-color: white;
 }

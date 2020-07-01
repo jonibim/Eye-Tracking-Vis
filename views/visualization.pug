@@ -1,12 +1,14 @@
 extends layout
 
 block styles
+    //- Load Style(s) -//
     link(rel='stylesheet' href="/css/visualization.css")
     link(rel='stylesheet' href="/css/patterns.css")
     link(rel='stylesheet' href="/css/d3-context-menu.css")
     link(rel="icon" type="image/png" href="resources/favicon_visualization.png")
 
 block pre_scripts
+    //- Load Script(s) -//
     // d3.js & additional libraries
     script(src="https://d3js.org/d3.v5.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js")
@@ -34,12 +36,13 @@ block pre_scripts
     script(src='scripts/visualization/editor.js')
 
 block sidebars
-    //-  Settings Sidebar -//
+    //- Settings Sidebar -//
     div(class="ui sidebar right vertical menu settings")
+        //- Settings Sidebar Header -//
         div(class="item left aligned small-right-padding")
             div(class="ui header") Settings:
                 i(class="ui times red inverted icon circular small fitted right-float" onclick="closeSettings()")
-        //-  Visualization type(s) -//
+        //- Visualization type(s) -//
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Visualizations')" style="margin-left:0px !important;")
                 i(class="ui fitted question icon")
@@ -74,12 +77,12 @@ block sidebars
                         div(class="field")
                             div(class="ui toggle checked checkbox")
                                 input(type="checkbox" id="editor" class="settings visualization_type" checked="")
-                                label(for="editor") Editor
+                                label(for="editor") AOI Editor
+
         //- Image Selection -//
         //- Default image setDefaultImageHere -//
         -var default_image = "01b_Antwerpen_S2.jpg"
         script.let image = "#{default_image}";
-
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Image')" style="margin-left:0px !important;")
                 i(class="ui fitted question icon")
@@ -88,7 +91,7 @@ block sidebars
                     i(class="ui map outline icon")
                     label Image:
                 div(class="ui form content")
-                    //- Dropdown selection menu -//
+                    //- Dropdown -//
                     div(class="ui fluid search selection dropdown image")
                         div(class="default text") #{default_image}
                         i(class="ui dropdown icon")
@@ -108,18 +111,19 @@ block sidebars
                     i#usersLoadingIcon(class="ui users icon")
                     label Users:
                 div(class="ui form content" style={'z-index': '5'})
-                    //- Dropdown selection menu -//
-                    div(class="ui fluid search selection multiple dropdown user")
+                    //- Dropdown -//
+                    div(class="ui fluid search selection multiple dropdown user" style="padding-right:2.5em;")
                         div(class="default text") Select users
                         i(class="ui dropdown icon")
                         div(class="menu")
-                            //- Values are added in initiatesettings.js -//
-                    div(class="ui add circular green basic button")
+                            //- Values are added from initiatesettings.js -//
+                    //- (De)Select All Users Buttons -//
+                    div(class="ui add circular green basic button" data-tooltip="Select All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         i(class="ui add fitted icon")
-                    div(class="ui clear circular red basic button")
+                    div(class="ui clear circular red basic button" data-tooltip="Deselect All Users" data-position="bottom center" data-inverted="" data-variation="tiny basic")
                         i(class="ui remove fitted icon")
                     
-        //- RGBA -//
+        //- RGB -//
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Color')" style="margin-left:0px !important;")
                 i(class="ui fitted question icon")
@@ -142,37 +146,6 @@ block sidebars
                         div(class="ui inverted label b-color-preview") B
                         div(class="ui teal slider rgb small-padding" id="b")
 
-        //- Editor Mode -//
-        div(class="item setting")
-            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Editor')" style="margin-left:0px !important;")
-                i(class="ui fitted question icon")
-            div(class="ui styled accordion editorsettings" style="margin-top:0px !important;")
-                div(class="title")
-                    i(class="ui pencil alternate icon")
-                    label AOI Editor:
-                div(class="ui form content" style="text-align: left")
-                    p  
-                    |  Use middle click to move the image around
-                    |  <br>  <br>
-                    |  In brush mode, you can create AOI by holding left click button
-                    |  <br>  <br>
-                    |  Use the context menu by pressing right click to switch between brush mode and view mode 
-
-        //- Gaze Stripe -//
-        div(class="item setting")
-            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Zoom')" style="margin-left:0px !important;")
-                i(class="ui fitted question icon")
-            div(class="ui styled accordion zoomsettings" style="margin-top:0px !important;")
-                div(class="title")
-                    i(class="ui bars icon")
-                    label Gaze Stripe:
-                div(class="ui form content" style="text-align:left;")
-                    i(class="ui search icon")
-                    label Zoom Level:
-                        div(class="ui basic label zoom-preview")
-                    div(class="ui inline fields" style="margin-bottom:0px;")
-                        div(class="ui teal slider zoom small-padding")
-
         //- Eye Cloud -//
         div(class="item setting")
             div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Eye Cloud')" style="margin-left:0px !important;")
@@ -183,41 +156,312 @@ block sidebars
                     label Eye Cloud:
                 div(class="ui form content" style="text-align:left;")
                     //- Range Slider -//
-                    i(class="ui ruler horizontal icon")
-                    label Coordinate Range:
-                        div(class="ui basic label pointrange-preview")
-                    div(class="ui inline fields")
-                        div(class="ui teal slider eyecloudsliders pointrange small-padding")
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui ruler horizontal icon")
+                        label Point Range:
+                            div(class="ui inline input")
+                                input(type="number" id="pointrange" min="50" max="250" class="pointrange-preview hide-spinner")
+                    div(class="ui teal slider eyecloudsliders pointrange small-padding")
                     //- Radius Slider -//
-                    i(class="ui bullseye icon")
-                    label Radius:
-                        div(class="ui basic label minradius-preview")
-                        | -
-                        div(class="ui basic label maxradius-preview")
-                    div(class="ui inline fields")
-                        div(class="ui teal range slider eyecloudsliders radius small-padding")
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui bullseye icon")
+                        label Radius:
+                            div(class="ui inline fields" style="margin-bottom:0px !important;")
+                                input(type="number" id="minradius" min="10" max="250" class="minradius-preview hide-spinner")
+                                | -
+                                input(type="number" id="maxradius" min="10" max="250" class="maxradius-preview hide-spinner")
+                    div(class="ui teal range slider eyecloudsliders radius small-padding")
                     //- Maximum Circles Slider -//
-                    i(class="ui hashtag icon")
-                    label Maximum Circles:
-                        div(class="ui basic label maxcircles-preview")
-                    div(class="ui inline fields" style="margin-bottom:0px;")
-                        div(class="ui teal slider eyecloudsliders maxcircles small-padding")
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui hashtag icon")
+                        label Max Circles:
+                            div(class="ui inline input")
+                                input(type="number" id="maxcircles" min="1" max="100" class="maxcircles-preview hide-spinner")
+                    div(class="ui teal slider eyecloudsliders maxcircles small-padding")
+                    //- Reset To Default Button -//
+                    div(class="field" style="text-align:center;")
+                        div(class="ui basic button" onclick="resetSettings('EyeCloud')") Reset to Default
 
+        //- Gaze Stripe -//
+        div(class="item setting")
+            div(class="ui teal tiny top right attached label hidden settinghelp" onclick="settingHelp('Gaze Stripes')" style="margin-left:0px !important;")
+                i(class="ui fitted question icon")
+            div(class="ui styled accordion zoomsettings" style="margin-top:0px !important;")
+                div(class="title")
+                    i#gazestripeIcon(class="ui bars icon")
+                    label Gaze Stripes:
+                div(class="ui form content" style="text-align:left;")
+                    //- Zoom Level Setting -//
+                    div(class="ui inline fields" style="margin-bottom:0px !important;")
+                        i(class="ui search icon")
+                        label Zoom Level:
+                            div(class="ui inline input")
+                                input(type="number" id="zoom" min="25" max="200" class="zoom-preview hide-spinner")
+                    div(class="ui teal slider zoom small-padding")
+                    //- Reset To Default Button -//
+                    div(class="field" style="text-align:center;")
+                            div(class="ui basic button" onclick="resetSettings('GazeStripe')") Reset to Defaul
+
+        //- Tutorial Button -//
+        div(class="item tutorial setting" style="text-align:center;")
+            div(id="tutorial" class="ui teal circular fluid labeled icon button" onclick="showTutorial()" data-tooltip="Display Tutorial for the Visualization Tool" data-position="bottom center" data-inverted="" data-variation="tiny basic") 
+                i(class="ui fitted book open icon" style="top:2.5px")
+                p(style="margin-right: 30px;") Manual
 
         //- Apply Settings & Auto Apply -//
-        div(class="ui basic center aligned fitted segment")
-            div(class="field small-padding")
-                div(class="ui green basic button" onclick="applySettings()") Apply Settings
-            div(class="field small-padding")
-                div(class="ui checkbox")
-                    input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
-                    label(for="auto_apply") Apply On Change
-            div(class="inline field small-padding")
-                div(id="saveSettings" class="ui blue basic circular button bottom floated" onclick="" data-tooltip="Save Settings and Images" data-position="top center" data-inverted="" data-variation="tiny basic")
-                    i(class="ui fitted save icon")
-                div(id="uploadSettings" class="ui green basic circular button bottom floated" onclick="" data-tooltip="Upload Settings" data-position="top center" data-inverted="" data-variation="tiny basic")
-                    i(class="ui fitted upload icon")
-                
+        div(class="item setting"  style="text-align:center;")
+                div(class="inline field small-padding")
+                    //- Apply Settyings -//
+                    div(class="ui green circular button" onclick="applySettings()" data-tooltip="Apply Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted sync icon")
+                    //- Save Settings -//
+                    div(id="saveSettings" class="ui blue circular button" onclick="" data-tooltip="Save Settings and Images" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted save icon")
+                    //- Upload Settings -//
+                    div(id="uploadSettings" class="ui teal circular button" onclick="" data-tooltip="Upload Settings" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        i(class="ui fitted upload icon")
+                //- Auto Apply -//
+                div(class="field small-padding")
+                    div(class="ui checkbox" data-tooltip="Apply Settings on Setting Change" data-position="bottom center" data-inverted="" data-variation="tiny basic")
+                        input#auto_apply(type="checkbox" name="auto_apply_settings" checked=":checked")
+                        label(for="auto_apply") Apply On Change
+        
+        //- Tutorial Modal -//
+        div(class='ui compact modal' id='tutorialModal')
+            //- Close Icon -//
+            div(class="ui icon circular red left floated button" onclick="hideTutorial()" style="margin:5px;")
+                i(class="ui close icon")
+            //- Title Header -//
+            div(class="ui large center aligned header") Manual
+            div(class="content" style="max-width:1000px;")
+                div(class="ui grid")
+                    //- Navigation Menu -//
+                    div(class="four wide column")
+                        div(class="ui vertical fluid tabular menu")
+                            div(class="active item" data-tab="vis_tool")
+                                div(class="small header") Visualization Tool
+                            div(class="ui divider" style="margin:0.3rem;")
+                            div(class="item" data-tab="eye_cloud")
+                                div(class="small header") Eye Cloud
+                            div(class="item" data-tab="gaze_stripe")
+                                div(class="small header") Gaze Stripes
+                            div(class="item" data-tab="att_map")
+                                div(class="small header") Attention Map
+                            div(class="item" data-tab="trans_graph")
+                                div(class="small header") Transition Graph
+                            div(class="item" data-tab="aoi_edit")
+                                div(class="small header") AOI Editor
+                            div(class="ui divider" style="margin:0.3rem;")
+                            div(class="item" data-tab="save_settings")
+                                div(class="small header") Save & Upload Settings
+                    //- Content Tabs -//
+                    div(class="twelve wide column")
+                        //- Visualization Tool -//
+                        div(class="ui tab segment" data-tab="vis_tool" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
+                            p 
+                            | The visualization tool provides five different visualization:
+                            | Gaze-Stripes, Attention Map, Eye Cloud, Transition Graph and AOI Editor
+                            br
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/settings/dataset.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Choosing another dataset
+                            br
+                            | The dataset is displayed on the top of the screen
+                            | as well as it's corresponding name. The ID of the dataset can be found
+                            | by going through the Save Settings function or by looking at the 
+                            | URL of the visualization. By clicking the top bar with the dataset name, 
+                            | a dropdown of other available datasets will be shown. These datasets might be uploaded by other users. A dataset is
+                            | visible on the dropdown menu only and only if it has been uploaded without marking 
+                            | it as an unlisted dataset. An unlisted dataset is only accesible through the URL. 
+                            | It is to possible add a dataset of your own by uploading one on the upload page as long as the required formatting is followed.
+                            |    <br> <br>
+                            | Each visualization comes with different features 
+                            | which can be accessed via the context menu. Each of the corresponding
+                            | tutorial entries of the visualizations will dive more into each of
+                            | these features
+                            |    <br> <br>
+                            | The sidebar on the right provides control over the dataset and as well additional 
+                            | settings for the visualizations. This is called the Settings sidebar.
+                            | The settings corresponding to the visulaizations will be disucssed on their visualizations 
+                            | tutorial page. For this page we will focus on the settings corresponding to the visualization tool
+                            | and manipulating the properties of the dataset.
+                            |    <br> <br>
+                            | In the settings page, one can show or hide the desired visualizations, change the stimuli 
+                            | or select the desired users to be shown on the visualizations. A collections of settings which provide 
+                            | functionalites over a same subject are grouped into sections. For example, settings related to the visibility
+                            | of the visualizations are grouped into the "Visualizations" section. Each section can be collapsed or expanded
+                            br
+                            div(style="display:flex;margin-left: auto;margin-right: auto")
+                                img(src='resources/Tutorial/settings/visualizations.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Configuring the visualization page
+                            br
+                            | The visualizations can be hidden by toggling the corresponding buttons in the "Visualizations" section.
+                            br
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/settings/image.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Changing the stimuli
+                            br
+                            | The stimuli can be changed by selecting the desired image from the database in the "Image" section. A preview 
+                            | of the image is shown when the mouse is howvered into one of the stimulis in the dropdown menu.
+                            br
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/settings/users.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Changing the users
+                            br
+                            | The users corresponding to a stimulus are shown in the "Users" section. It is possible to add specfific users from the dropdown 
+                            | menu or hide users by clicking on the users from the list of selected users shown in this section. In addition, a button for 
+                            | removing or adding all users is provided.  
+                            |    <br> <br>
+                            | 
+                        //- Eye Cloud -//
+                        div(class="ui tab segment" data-tab="eye_cloud" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
+                            p 
+                            | The Eye Cloud visualizes areas obeserved by the participants as thumbnails inside a cluster of circles. The size of these circles is proportionate to the frequency the area is gazed upon.
+                            |    The visualization can be used to get a customizable, visual overview of the most frequently viewed areas on the stimulus and to determine these most viewed areas themselves. 
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/eyecloud/eyecloud_tutorial_screenshot.png' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | The eye cloud visualization
+                            br
+                            |    The Eye Cloud can be moved by holding the middle mouse button and can be up- or downscaled by scrolling the mouse wheel. The right mouse button opens a context menu that contains a list of additional features. For some of these functionalities it is necessary to right click upon one of the circles to select it. Left-clicking a circle activates the functionality "Show area on map".
+                            |    <br> <br>
+                            |  The context menu contains the following items:
+                            ul  
+                                li    - "Show info" provides the user with some information about the selected circle. Namely, what x- and y-coordinate the center of the circle represents and how many other points are inside the range of its area.
+                                li    - "Show area on map" displays the seleted circle as a dashed line and the actual area it represents as a filled line on top of the map. This functionality can be closed by clicking anywhere inside the box or by reopening the context menu and clicking 'Close area on map'.
+                                li    - "Disable cricle" removes the selected circle.
+                                li    - "Enable all circles" reactives all circles again.
+                                li    - "Open settings tab" opens the settings for the Eye Cloud in the settings tab.
+                                li    - "Center visualization" centers the Eye Cloud such that it is fully visible inside the box.
+                                li    - "Download as image" allows the user to save the circles exactly as they are inside the box as a PNG-file. Generating the image could take some time.
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/eyecloud/eyecloud_show_area_on_map_gif.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Showing the area on the map gif from the context menu
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/eyecloud/eyecloud disable enable gif.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Enabling/Disabling cricles from the context menu
+                            br
+                            |    The settings for the Eye Cloud in the settings tab allow for the modification of constants used to generate the Eye Cloud. Namely, the point range, the minimum and maximum radius and the maximum amount of circles.
+                            |    The point range is the range in which points on the map are aggregated or clustered together. It can also be seen as the size of the area each circle represents. Furthermore, the range is used to determine the order of most viewed areas. Its value can be set between 50 and 250.
+                            |    The minimum and maximum radius determine the size of the circles and its values can be set between 10 and 250. The eventual size of the circles is dependent on the amount of points that are inside the point range.
+                            |    The maximum amount of circles slider is quite self-explanatory, but note that it can be used to, for example, view the 5 most viewed areas as the most viewed areas are drawn in descending order. Its value can be set between 1 and 100.
+                            |    The settings can be easily reset to its default values by clicking the 'Reset to Default' button.
+                            |    <br> <br>
+                            |    The most viewed area can be distinguished by the colored outline of its circle. This color can be adjusted by the color setting in the settings tab. This setting also affects the drawn circles for the "Show area on map" functionality.
+                            |    <br> <br>                         
+                        //- Gaze Stripes -//
+                        div(class="ui tab segment" data-tab="gaze_stripe" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
+                            p 
+                            |    The gaze stripe visualization tools consists of horizontal bars for each selected user. These bars contain information such as the timestamps and the respective gazes at those timestamps.
+                            |    The advantage of this visualization is that it displays a vast amount of the data without being cluttered, allowing you to find any patterns that are possibly present.
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/gazestripes/Image_1.jpg' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | The gaze stripe visualization
+                            br
+                            |    The visualization is zoomable, using the scroll wheel,  and pannable, by pressing the middle mouse button, enabling you to search for any part that shows promise.
+                            |    To increase the uses of the visualization a zoom slider is present to allow you to zoom the gazes in and out, making it possible to visualize your areas of interest.
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/gazestripes/gif1.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Using the zoom slider for the gaze stripe visualization
+                            br
+                            |    To enhance this visualization, you can show an animation of the results of the participant. This shows the gazes encircled on top of the shown stimuli, these boxes are highlighted for the recorded fixation duration.
+                            |    This animation can be started by either left clicking on any gaze or by right clicking on any gaze and selecting toggle animation, this will start the user's corresponding animation.
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/gazestripes/gif2.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Toggling antimations from the context menu
+                            br
+                            |    More options are available by right clicking. These actions include: centering the visualization, opening the appropriate settings, download the shown image and toggling of the animation.
+                            |    <br> <br>
+                        //- Attention Map -//
+                        div(class="ui tab segment" data-tab="att_map" style="margin-top:0;text-align:justify")
+                            p
+                            |The Attention Map shows a general overview of the data in the defined areas of interest. The areas of interest can be changed through the AOI editor.
+                            | <br> <br>
+                            |The color for the Attention Map can be changed through the color options in the sidebar.
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/attentionmap/attentionmap_color_demo.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Changing the color of the attention map
+                            br
+                        //- Transition Graph -//
+                        div(class="ui tab segment" data-tab="trans_graph" style="margin-top:0;text-align:justify")
+                            p 
+                            | The transition graph displays the relationship between different AOIs in the stimuli. In this graph, each AOI is represented as a node and each relation consists of an directed edge from one node to another node depending on the relation. The relation is defined by the following conditional: For any fixation which is an element of a scanpath of a corresponding user under an AOI, there exists a relation with another AOI if and only if the proceeding fixation under the same scanpath and user is an element of that AOI.
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/transitiongraph/transitiongraph.png')
+                            div(style="text-align: center;font-style: italic;")
+                                | The transition graph
+                            br
+                            | In addition, the visualization is interactive, so the nodes are draggable and the corresponding edges stretches according to the position of the node in real-time. Therefore, the graph maintains it's shape while being modified. 
+                            |  <br> <br>
+                            | For every outgoing edge, the visualization assigns an color which corresponds to the origin node. The color for the origin node is represented on a legend inside the visualization.
+                            |  <br> <br> 
+                            | The transition graph is updated on every modification that is made to the AOIs on the AOI editor. It is also possible to download a screenshot of an AOI through the context menu.
+                            |
+                        //- AOI Editor -//
+                        div(class="ui tab segment" data-tab="aoi_edit" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
+                            p
+                            |  The AOI Editor is similar to a scanpath visualization. However, its main purpose is to manage AOIs in real-time. This visualization comes with a set of tools implemented for creating and deleting AOIs.
+                            |  In the AOI editor, a scanpath visualization is displayed which corresponds to the selected user list. The visualization also contains a context menu which can be activated by right clikcing inside the visualizations.
+                            |  This menu extends the functionality of the visualization as it allows the user to switch to the AOI management environment. It also displays information about the fixation, if the pointer is on top a fixation in the visualiaztion. 
+                            br
+                            br
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/aoieditor/editor.png')
+                            div(style="text-align: center;font-style: italic;")
+                                br
+                                | The AOI editor
+                            br
+                            |  The unique feature of this visualization is the brush mode, which generates an environment for managing AOIs. This mode allows the user to make selections
+                            |  on top of the visualization. This mode is intitalized in the start of the visualization tool. The selections are resizable and they can be moved as long as mouse is not pressed outside the selection area. 
+                            |  When a selection is made, an additional entry is created on the context menu of the visualization. This entry allows to convert the selection into an AOI.
+                            |  When the user initializes this entry, an ID and a name is generated for the requested AOI. The points under the selection are saved into a list of points in the AOI. Finally, the stimuli name is saved in the AOI object and a copy of the selection object 
+                            |  is made on the visualizations which servers as a reference to the created AOI. This object displays the AOI's name and it is an  static object which means that it cannot be dragged or moved. 
+                            |  Nonetheless, the context memu allows the user to switch between brush mode and view mode
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/aoieditor/Adding AOIs.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Adding AOIs
+                            br
+                            |  In brush mode, it is not possible to delete a specific AOI, however it is possible to undo AOIs which means that the most recent AOI will be deleted.
+                            |  In order to detele a specific AOI, the user must switch to the view mode.
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/aoieditor/Delete specific AOI.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Deleting specific AOIs
+                            br
+                            |  The view mode disables the selection and displays information about specific points in the context menu. It also enables the functionality to download images. Moreover, it is possible to delete specific by hovering on the desired AOI. The context menu will 
+                            |  display an entry to delete that AOI. 
+                            |  <br>  <br>
+                            |  In both modes, the user can use middle click to move the image around. The transition graph is updated on every modification that is made to the AOIs. 
+                            |  <br>  <br>
+                            |  
+                        //- Save & Upload Settings -//
+                        div(class="ui tab segment" data-tab="save_settings" style="margin-top:0;text-align:justify;height: 700px; overflow: auto;")
+                            p
+                            | The visualization tool allows users to export and upload their modifications made on a dataset. A user can choose to save the desired settings such as AOIs, users, color choice and screenshots of every active visualization independently and a JSON file will be generated containing the chosen settings 
+                            | or a ZIP containing the screenshots and the JSON file altogether. Uploading these settings is relatively straightforward as they are applied automatically on the visualization after they have been uploaded. Moreover, the tool allows the user to import the settings to different stimulis, however it is advised to use such 
+                            | an option on a stimulus with similar properties, such as comparing a colored stimulus with a grayscaled stimulus.
+                            |
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/saveupload/Saving.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Demonstrating the saving tool 
+                            br
+                            div(style="display:flex")
+                                img(src='resources/Tutorial/saveupload/Uploading.gif' style="scale: 80%;")
+                            div(style="text-align: center;font-style: italic;")
+                                | Using the upload tool to pass the data from a colored image to a grayscaled image
+                            br
 
         div(class='ui small modal' id='modalSave')
             div(class='header') Save settings
@@ -263,9 +507,6 @@ block sidebars
                 button(class="ui green button" id="submitRequest")
                     i(class="i file code icon")
                     | Download JSON
-                button(class="ui blue disabled button")
-                    i(class="i share icon")
-                    | Share via link
 
 
         div(class='ui small modal' id='modalUpload')
@@ -320,14 +561,14 @@ block sidebars
 
 
 block header_content
-    //- Topbar Centered Text -//
+    //- Topbar Dataset Dropdown -//
     div(class="ui item middle")
         div(class="ui labeled icon search selection dropdown dataset")
             input(class="search" name="dataset")
             div(class="text")
             label#dataset_icon(for="dataset")
                 i(class="file alternate outline icon" style="height:100%;")
-    //-  Settings Sidebar Button -//
+    //- Settings Sidebar Button -//
     div(class="ui item")
         div(class="ui right aligned container" style="margin-right:5px;")
             i#settings_toggle(class="ui sliders icon circular fitted" onclick="openSettings()")
@@ -335,9 +576,11 @@ block header_content
 block content
     div#container(class='container')
         div#frame(class='blurring frame')
+            //- Image Preview Dimmer -//
             div(class="preview ui top aligned dimmer" style="text-align: -webkit-center;")
                 div(class="ui image" style="max-height: 90% !important; max-width: 90% !important;")
                     img#preview-image(style="max-height: 90% !important;" src="/datasets/default/images/" + default_image)
+            //- Innerframe For Visualizations -//
             div#innerframe(class='inner-frame')
                 h2(class="ui icon header" id='cat' style="display:none")
                     i(class="cat icon")
@@ -349,7 +592,7 @@ block post_scripts
     script.
         function openSettings() {
             $('#settings_toggle')
-                //- Hide Icon -//            
+                //- Hide Settings Icon -//            
                 .hide();
             //- Open Settings -//
             showSidebar('settings');
@@ -358,20 +601,23 @@ block post_scripts
 
         function closeSettings() {
             $('#settings_toggle')
-                //- Unhide Icon -//
+                //- Unhide Settings Icon -//
                 .show();
             //- Close Settings -//
             hideSidebar('settings');
             resizeBoxes();
         };
 
+        //- Enable Tutorial Tab Menu Functionality -//
+        $('.tabular.menu .item').tab();
+
         //- Prevent 'settings' sidebar from dimming the page -//
         $('.ui.sidebar.settings').sidebar({dimPage: false, closable: false})
 
-    //- Load settings scripts -//
+    //- Load Settings Scripts -//
     script(src='scripts/visualization/readsettings.js')
     script(src="scripts/visualization/initiatesettings.js")
 
-    //- Set Active page to Visualization in 'navigation' sidebar -//
+    //- Set Active Page to Visualization in 'navigation' Sidebar -//
     script.
         $('#visualization_nav').addClass('active');

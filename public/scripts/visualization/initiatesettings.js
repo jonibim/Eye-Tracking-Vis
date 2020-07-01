@@ -1,14 +1,16 @@
 //****************** Set default values ******************//
+//- Define Default RGB Values -//
 let RGBA = { 'r': 255, 'g': 0, 'b': 0, 'a': 1 }
 
+//- Define SettingHelp Texts -//
 let settingHelpMap = {
     'Visualizations': 'Select the visualizations/viewports to display',
     'Image': 'Select the image to display',
     'Users': 'Select the users to display',
-    'Color': 'Modify the color of the fixations on the Attention Map and the main circle in the <br> Eye Cloud',
-    'Editor': 'Instructs the navigation commands for the AOI editor',
-    'Zoom': 'Modify the zoom level of the thumbnails in the Gaze Stripes',
-    'Eye Cloud': 'Range: How close all coordinates are allowed to be to each other. <br> This variable determines the size of the fixations displayed inside a circle of the eye cloud. <br> Minimum radius: The maximum radius of a circle. The other circles are in proportion to this value. <br> Maximum radius: The minimum radius of a circle. The other circles are in proportion to this value. <br> Maximum circles: The limit to the amount of circles that can be displayed. (Maximum is 100)'
+    'Color': 'Modify the fixation color of the Attention Map <br> and the accent color of the Eye Cloud and Gaze Stripe .',
+    'AOI Editor': 'Read the navigation commands for the AOI editor',
+    'Gaze Stripes': 'Modify the zoom level of the thumbnails in the Gaze Stripes',
+    'Eye Cloud': 'Modify the Eye Cloud constants. <br> Point Range is the range in which points are aggregated into a single circle. <br> Radius holds the minimum and maximum values for the circles\' radii. <br> Max Circles represents the maximum amount of circles to be displayed at once.'
 }
 
 //- Update Dataset Dropdown with default value -//
@@ -18,13 +20,23 @@ updateDatasets()
 let defaultZoomValue = 50;
 readSlidersZoom(defaultZoomValue)
 
-//- Initialize State of RGBA sliders -//
+//- Initialize Default State of RGBA sliders -//
 for ([x, y] of Object.entries(RGBA)) {
     readSlidersRGBA(x, y);
 }
 
-//****************** Define Settings Functions ******************//
+//- Initialize Default Values For Eye Cloud sliders -//
+let defaultPointRange = 150
+let defaultMinRadius = 10
+let defaultMaxRadius = 100
+let defaultMaxCircles = 100
+readEyeCloudSliders("pointrange", defaultPointRange);
+readEyeCloudSliders("minradius", defaultMinRadius);
+readEyeCloudSliders("maxradius", defaultMaxRadius);
+readEyeCloudSliders("maxcircles", defaultMaxCircles);
 
+//****************** Define Settings Functions ******************//
+//- Show AOI Editor Panel in Settings -//
 function showEditorCommands() {
     openSettings();
     $('.ui.accordion.editorsettings').accordion('open', 0);
@@ -32,6 +44,7 @@ function showEditorCommands() {
     editorCommands.scrollIntoView(true);
 }
 
+//- Show Users Panel in Settings -//
 function showUserSettings() {
     openSettings();
     $('.ui.accordion.usersettings').accordion('open', 0);
@@ -40,6 +53,7 @@ function showUserSettings() {
     $('.ui.dropdown.user').dropdown('show');
 }
 
+//- Show Eye Cloud Panel in Settings -//
 function showEyeCloudSettings() {
     openSettings();
     $('.ui.accordion.eyecloudsettings').accordion('open', 0);
@@ -47,6 +61,7 @@ function showEyeCloudSettings() {
     eyecloudsettings.scrollIntoView(true);
 }
 
+//- Show Gaze Stripe Panel in Settings -//
 function showGazeStripeSettings() {
     openSettings();
     $('.ui.accordion.zoomsettings').accordion('open', 0);
@@ -56,7 +71,8 @@ function showGazeStripeSettings() {
 
 //- Update the Dataset Dropdown Options -//
 async function updateDatasets() {
-    const url = '/dataset/available';
+    //- Get Images From Dataset -//
+    const url = '/dataset/available?id=' + datasetId;
     const request = fetch(url, { method: 'GET' });
     await request.then(response => response.arrayBuffer()).then(buffer => {
         let decoder = new TextDecoder("utf8");
@@ -64,6 +80,7 @@ async function updateDatasets() {
         let datasets = JSON.parse(data);
 
         let values = [];
+        //- Create Dropdown Values for these Images -//
         for (let dataset of datasets) {
             let datasetValues = {};
             datasetValues['name'] = dataset['name'];
@@ -71,13 +88,13 @@ async function updateDatasets() {
             datasetValues['selected'] = datasetId === dataset['id'];
             values.push(datasetValues);
         }
+        //- Set Dropdown Behavior and Values -//
         $('.dropdown.search.selection.dataset')
             .dropdown({
                 values: values,
                 selectOnKeydown: false,
                 forceSelection: false,
                 fullTextSearch: 'exact',
-                //-minCharacters: 3,-// Causes a strange bug, just ignore this :)
                 match: 'both',
                 onChange: function (value) {
                     selectDataset(value);
@@ -88,13 +105,15 @@ async function updateDatasets() {
 
 //- Display Help Toast Per Setting -//
 function settingHelp(setting) {
+    //- Close Active SettingHelp Toast -//
     $('.toast.settingHelp')
         .toast('close')
+    //- Display Selected SettingHelp Toast -//
     $('body')
         .toast({
             showIcon: 'info',
-            title: setting + ' Setting',
-            displayTime: 5000,
+            title: setting + ' Setting(s)',
+            displayTime: 20000,
             message: settingHelpMap[setting],
             class: 'info settingHelp',
             position: 'top center',
@@ -113,16 +132,25 @@ function settingChanged() {
 //- Prevent Users Update Spam -//
 userTimer = undefined
 function usersChanged() {
+    //- Display Loading Icon -//
     $('#usersLoadingIcon').removeClass()
     $('#usersLoadingIcon').addClass("ui sync alternate loading icon");
+    //- Stop Timer if Available -//
     if (userTimer !== undefined) {
         clearTimeout(userTimer)
     }
+    //- Start Timer -//
     userTimer = setTimeout(function () {
+        //- Stop Loading and Push Values when no changes during a short interval (see delay below) -//
         $('#usersLoadingIcon').removeClass()
         $('#usersLoadingIcon').addClass("ui users icon");
         settingChanged();
-    }, 500);
+    }, 500); //<--- Change Delay to wait for User Changes
+}
+
+//- Set Value of Slider Based on an Unique Class -//
+function setSlider(uclass, value) {
+    $('.slider.'+uclass).slider('set value', value);
 }
 
 //****************** Set Element Behaviors/States ******************//
@@ -145,6 +173,7 @@ $('.dropdown.search.selection.image')
             selectImage(text);
             settingChanged();
         },
+        //- Show Image Preview -//
         onShow: function () {
             $('#frame').dimmer('show');
         },
@@ -154,16 +183,19 @@ $('.dropdown.search.selection.image')
     });
 
 //- Image Preview Source on Dropdown MouseOver and KeyDown (Arrow Up/Down or Page Up/Down) -//
+//- Show Hovered Image -//
 $('.image-selector')
     .on('mouseenter', function (evt) {
         $('#preview-image').attr("src", dataset.url + "/images/" + $(this).text());
     });
+//- If Mouse Left the Dropdown, Show Selected Image Preview -//
 $('.dropdown.search.selection.image .menu')
     .on('mouseleave', function (evt) {
         if ($('.image-selector.selected').length) {
             $('#preview-image').attr("src", dataset.url + "/images/" + $('.image-selector.selected').text());
         }
     });
+//- Show Keyboard Interaction Selected Image -//
 document.onkeydown = function (e) {
     if ($('.dropdown.search.selection.image').hasClass('active')) {
         setTimeout(function () {
@@ -177,7 +209,7 @@ document.onkeydown = function (e) {
 //- Image Preview Dimmer Behavior -//
 $('#frame').dimmer({ duration: 0 });
 
-//- User Dropdown -//
+//- User Dropdown Behavior -//
 $('.dropdown.search.selection.user')
     .dropdown({
         fullTextSearch: 'exact',
@@ -190,6 +222,7 @@ $('.dropdown.search.selection.user')
             usersRemove(removedText);
             usersChanged();
         },
+        //- Allow Removing Users when Pressing Specific Labels -//
         onLabelSelect: function (label) {
             let $label = $(label)
             $label.parent('.ui.multiple.dropdown')
@@ -232,7 +265,7 @@ $('.ui.slider.rgb')
     });
 
 //- Zoom Level Slider -//
-$('.zoom-preview').text(defaultZoomValue);
+$('.zoom-preview').val(defaultZoomValue);
 $('.ui.slider.zoom')
     .slider({
         min: 25,
@@ -245,14 +278,12 @@ $('.ui.slider.zoom')
         }
     });
 
-//- Range Eye Cloud Slider -//
-$('.pointrange-preview').text(150);
-readEyeCloudSliders("pointrange", 150);
+//- Range Eye Cloud Slider Behavior -//
 $('.ui.slider.pointrange')
     .slider({
         min: 50,
         max: 250,
-        start: 150,
+        start: defaultPointRange,
         step: 1,
         onChange: function (value) {
             readEyeCloudSliders("pointrange", value)
@@ -260,17 +291,13 @@ $('.ui.slider.pointrange')
         }
     });
 
-//- Radius Eye Cloud Slider -//
-$('.minradius-preview').text(10);
-readEyeCloudSliders("minradius", 10);
-$('.maxradius-preview').text(100);
-readEyeCloudSliders("maxradius", 100);
+//- Radius Eye Cloud Slider Behavior -//
 $('.ui.slider.radius')
     .slider({
         min: 10,
         max: 250,
-        start: 10,
-        end: 100,
+        start: defaultMinRadius,
+        end: defaultMaxRadius,
         step: 1,
         onChange: function (value, min, max) {
             readEyeCloudSliders("minradius", min)
@@ -279,14 +306,12 @@ $('.ui.slider.radius')
         }
     });
 
-//- Maximum Circles Eye Cloud Slider -//
-$('.maxcircles-preview').text(100);
-readEyeCloudSliders("maxcircles", 100);
+//- Maximum Circles Eye Cloud Slider Behavior -//
 $('.ui.slider.maxcircles')
     .slider({
         min: 1,
         max: 100,
-        start: 100,
+        start: defaultMaxCircles,
         step: 1,
         onChange: function (value) {
             readEyeCloudSliders("maxcircles", value)
@@ -294,11 +319,26 @@ $('.ui.slider.maxcircles')
         }
     });
 
+//- Show Tutorial -//
+function showTutorial() {
+    $('#tutorialModal')
+        .modal('show');
+}
+
+//- Hide Tutorial -//
+function hideTutorial() {
+    $('#tutorialModal')
+        .modal('hide');
+}
 
 //- Save Configuration -//
 function saveSettingsImageWarning() {
+    //- Close Active Image Save Warning & SettingHelp Toast -//
     $('.toast.ImageSaveWarning')
         .toast('close')
+    $('.toast.settingHelp')
+        .toast('close')
+    //- Display Image Save Warning -//
     $('body')
         .toast({
             showIcon: 'exclamation mark',
@@ -324,10 +364,10 @@ $("#saveSettings").click(() => {
     d3.select("#previewImageLabel").text(properties.getCurrentImage())
     if (datasetId !== 'default') {
         d3.select("#previewId").html(
-            `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the dataset with id <br> <b> ${datasetId} </b>`)
+            `<i class='exclamation yellow triangle icon'></i> These settings wil be available only for the dataset with id <br> <b> ${datasetId} </b>`)
     } else {
         d3.select("#previewId").html(
-            `<i class='exclamation yellow triangle icon'></i> This data wil be available only for the <b> default </b> dataset`)
+            `<i class='exclamation yellow triangle icon'></i> These settings wil be available only for the <b> default </b> dataset`)
     }
     $('#modalSave')
         .modal('show');

@@ -2,13 +2,16 @@
   "name": "eye-tracking-vis",
   "version": "0.0.0",
   "private": true,
+  "main": "main.js",
   "scripts": {
-    "start": "npx nodemon ./bin/www"
+    "start": "npx nodemon ./bin/www",
+    "electron": "electron ."
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "csvtojson": "^2.0.10",
     "debug": "~2.6.9",
+    "electron": "^9.0.5",
     "express": "~4.16.1",
     "express-fileupload": "^1.1.7-alpha.3",
     "fomantic-ui": "^2.8.4",

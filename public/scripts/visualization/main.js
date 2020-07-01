@@ -104,5 +104,11 @@ async function requestDataset(id){
     const request = await fetch(url + '/data.json', { method: 'GET' });
     if(request.status === 404)
         return '';
+
+    // post used date update for dataset
+    const update = new XMLHttpRequest();
+    update.open('POST', '/dataset/date?id=' + datasetId);
+    update.send();
+
     return {data: new TextDecoder("utf8").decode(await request.arrayBuffer()), url: url};
 }

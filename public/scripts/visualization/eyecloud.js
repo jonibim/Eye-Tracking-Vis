@@ -27,7 +27,7 @@ class EyeCloud extends Visualization {
         let densities = []; // the density of each coordinate in the coordinates array
 
         let drawing = false; // Boolean that is true when the eye cloud is being drawn
-        let enabledDisabled = false; // Boolean that is true when the circles has been enabled or disabled
+        let keepScale = false; // Boolean that is true when the scale ought to be maintained
 
         let simulation; // Holds the force simulation object
         let clickedObject; // Holds the object that is being right clicked
@@ -143,6 +143,7 @@ class EyeCloud extends Visualization {
                 resize();
                 if (!drawing) { // If we are not already drawing
                     drawing = true;
+                    keepScale = true; // Maintain scale
                     draw(); // Redraw to recenter the visualization and prevent issues with centering
                 }
             }
@@ -331,11 +332,9 @@ class EyeCloud extends Visualization {
             }
 
             thisClass.svg = d3.select('#cloud_svg'); // Update the svg property of the visualization
-            if (!enabledDisabled) { // If a circle hasn't been enabled or disabled
-                thisClass.setDefaultScale(); // Set the default scale after drawing the eye cloud
-            };
+            thisClass.setDefaultScale(keepScale); // Set the default scale after drawing the eye cloud
 
-            enabledDisabled = false; // Reset boolean
+            keepScale = false; // Reset boolean
             drawing = false; // Reset drawing variable
         };
 
@@ -499,16 +498,16 @@ class EyeCloud extends Visualization {
         function getInfo(object) {
             let x = object.co_x;
             let y = object.co_y;
-            let density = densities[object.index] - 1;
+            let density = densities[object.index] - 1; // Density scores have a minimum of 1
 
             let densityVerb;
             let pointOrPoints;
-            if (density === 0) {
+            if (density === 1) {
+                densityVerb = 'is';
+                pointOrPoints = 'point';
+            } else if (density === 0) { // If there is only one other point close, adjust the message to singular
                 densityVerb = 'is';
                 density = 'no';
-                pointOrPoints = 'point';
-            } else if (density === 1) { // If there is only one other point close, adjust the message to singular
-                densityVerb = 'is';
                 pointOrPoints = 'point';
             } else {
                 densityVerb = 'are';
@@ -638,7 +637,7 @@ class EyeCloud extends Visualization {
             coordinates = coordinates.filter(coordinate => coordinate.index !== object.index);
             // Remove density that belongs to the removed circle
             densities.splice(object.index, 1);
-            enabledDisabled = true; // So that the visualization won't be rescaled
+            keepScale = true; // So that the visualization won't be rescaled
             draw(); // Redraw
         };
 
@@ -647,7 +646,7 @@ class EyeCloud extends Visualization {
          */
         function enableCircles() {
             generateData(dataset.getImageData(properties.image)); // Regenerate all coordinates
-            enabledDisabled = true; // So that the visualization won't be rescaled
+            keepScale = true; // So that the visualization won't be rescaled
             draw(); // Redraw
         };
 
@@ -694,15 +693,19 @@ class EyeCloud extends Visualization {
     };
 
     /**
-     * Set the scale of the zoom to 0.5 after drawing the eye cloud.
+     * Set the translation to the center of the box after drawing the eye cloud
+     * and set the scale of the zoom to 0.5 if the parameter is set to false.
      */
-    setDefaultScale() {
+    setDefaultScale(keepScale) {
         let svg = d3.select('#cloud_svg');
 
         let svgWidth = svg.attr('width');
         let svgHeight = svg.attr('height');
 
-        svg.call(this.zoom.scaleTo, 0.5);
+        if (!keepScale) { // If the scale should not be kept
+            svg.call(this.zoom.scaleTo, 0.5); // Set the scale to 0.5
+        }
+
         svg.call(this.zoom.translateTo, svgWidth / 2, svgHeight / 2); // Center the eye cloud
     };
 }

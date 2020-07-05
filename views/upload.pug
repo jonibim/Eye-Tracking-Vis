@@ -77,6 +77,11 @@ block content
                         label(for="images" class="ui basic blue button") Select images
                             input(id="images" type="file" name="images" multiple accept=".png,.jpg,.jpeg" required class="fileUpload")
                         div(class="ui large basic grey label filePreview images") No images selected yet 
+                    //- Unlisted Option -//
+                    div(class="field")
+                        div(class="ui checkbox" id="listed")
+                            input(type="checkbox" name="unlisted")
+                            label Make dataset unlisted (only accessible via exact URL)
                     //- Submit Button -//
                     input(type="submit" class="ui green submit button" value="Upload")
                     //- Preview Images Button -//

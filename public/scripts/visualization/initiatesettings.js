@@ -10,7 +10,7 @@ let settingHelpMap = {
     'Color': 'Modify the fixation color of the Attention Map <br> and the accent color of the Eye Cloud and Gaze Stripe .',
     'AOI Editor': 'Read the navigation commands for the AOI editor',
     'Gaze Stripes': 'Modify the zoom level of the thumbnails in the Gaze Stripes',
-    'Eye Cloud': 'Modify the Eye Cloud Constants. <br> Point Range is the range in which points are aggregated into a single circle. <br> Radius is the min. and max. values for the circles\' radius. <br> Max Circles is the max. amount of circles to be displayed at once.'
+    'Eye Cloud': 'Modify the Eye Cloud constants. <br> Point Range is the range in which points are aggregated into a single circle. <br> Radius holds the minimum and maximum values for the circles\' radii. <br> Max Circles represents the maximum amount of circles to be displayed at once.'
 }
 
 //- Update Dataset Dropdown with default value -//
@@ -72,7 +72,7 @@ function showGazeStripeSettings() {
 //- Update the Dataset Dropdown Options -//
 async function updateDatasets() {
     //- Get Images From Dataset -//
-    const url = '/dataset/available';
+    const url = '/dataset/available?id=' + datasetId;
     const request = fetch(url, { method: 'GET' });
     await request.then(response => response.arrayBuffer()).then(buffer => {
         let decoder = new TextDecoder("utf8");
@@ -319,6 +319,17 @@ $('.ui.slider.maxcircles')
         }
     });
 
+//- Show Tutorial -//
+function showTutorial() {
+    $('#tutorialModal')
+        .modal('show');
+}
+
+//- Hide Tutorial -//
+function hideTutorial() {
+    $('#tutorialModal')
+        .modal('hide');
+}
 
 //- Save Configuration -//
 function saveSettingsImageWarning() {

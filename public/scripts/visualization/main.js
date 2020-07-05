@@ -48,8 +48,6 @@ window.onload = async () => {
     console.log("%cWelcome to ETViz project! 👁", "color:cyan; font-size:30px");
     console.log("%cSome errors might appear in here, please report them at https://github.com/t0xicdream/Eye-Tracking-Vis", "color:red; font-size:12px");
 
-    //console.log('main.js - Loading...');
-
     dataset = new Dataset();
     frame = document.getElementById('innerframe');
     boxManager = new BoxManager(frame);
@@ -70,7 +68,7 @@ window.onload = async () => {
 
     //console.log('main.js - Enabling visualizations...')
     window.onresize = resizeBoxes;
-    openSettings() // keep the settings opened in the start
+    //openSettings() // keep the settings opened in the start
     registry.enableAll();
     //console.log('main.js - Visualizations enabled')
 
@@ -91,6 +89,10 @@ window.onload = async () => {
     selectImage(dataset.images[0].image);
     applySettings();
     //console.log('main.js - Settings Initialized')
+    
+    setTimeout(() => {
+        if (dimmer.parentNode) dimmer.parentNode.removeChild(dimmer)
+    }, 0);
 }
 
 /**

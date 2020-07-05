@@ -18,10 +18,11 @@ const imagesFolderName = 'images/';
  * Handle dataset datasets
  * @param files - the uploaded files
  * @param {string} name - name of the dataset
+ * @param {boolean} unlisted - whether the dataset is private
  * @param response - the http response
  * @return {Promise<void>}
  */
-async function handleDatasetUpload(files, name, response) {
+async function handleDatasetUpload(files, name, unlisted, response) {
     console.log('datasetloader.js - Parsing uploaded dataset...');
 
     // get the file as a string
@@ -84,7 +85,7 @@ async function handleDatasetUpload(files, name, response) {
         fileSystem.mkdirSync(uploadsFolder + id);
 
         // write info file
-        fileSystem.writeFileSync(uploadsFolder + id + '/info.json', JSON.stringify({id: id, name: name, date: Date.now()}), 'utf-8');
+        fileSystem.writeFileSync(uploadsFolder + id + '/info.json', JSON.stringify({id: id, name: name, private: unlisted, date: Date.now()}), 'utf-8');
 
         // write the dataset
         let string = JSON.stringify(data, null, 1);
@@ -111,7 +112,7 @@ async function handleDatasetUpload(files, name, response) {
 
 
 /**
- * @return {{id: string, name: string, [date]: number}[]} info for all the datasets
+ * @return {{id: string, name: string, [private]: boolean, [date]: number}[]} info for all the datasets
  */
 function getAllDatasets() {
     if(!fileSystem.existsSync(uploadsFolder))

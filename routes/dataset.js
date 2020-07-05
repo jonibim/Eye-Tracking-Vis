@@ -14,13 +14,16 @@ router.post('/upload', function (req, res, next) {
     if (!req.files.dataset.name.endsWith('.csv'))
         return res.status(400).send({'status': 400, 'message': 'The dataset file format must be csv.'});
 
-    // Generate json-file from the uploaded csv-file
-    datasetloader.handleDatasetUpload(req.files, req.body.name, res);
+    let unlisted = req.body.unlisted === true || req.body.unlisted === 'true' || req.body.unlisted === 'on';
+
+        // Generate and save a dataset from the uploaded files
+    datasetloader.handleDatasetUpload(req.files, req.body.name, unlisted, res);
 });
 
 // handle request
 router.get('/available', function (req, res, next) {
     let datasets = datasetloader.getAllDatasets();
+    datasets = datasets.filter(dataset => !dataset.private || (req.query && dataset.id === req.query.id));
 
     res.status(200).send(datasets);
 });

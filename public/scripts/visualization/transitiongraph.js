@@ -47,6 +47,14 @@ class TransitionGraph extends Visualization {
         */
         this.zoom = d3.zoom()
 
+        this.downloadMenu =  [{
+
+            title: 'Download as image',
+            action: () => {
+                downloadSVG(this.svg.node(), 'Transition Graph');
+            }
+        }]
+
         /**
          * Create the graphic element for all the visualization
          * In here we also append the zoom function
@@ -56,6 +64,8 @@ class TransitionGraph extends Visualization {
                 this.svgG.attr("transform", d3.event.transform)
             }))
             .append("g")
+
+        this.svg.on('contextmenu', d3.contextMenu(this.downloadMenu));
 
         /**
          * This is used for maintaing the windows size 
@@ -153,7 +163,7 @@ class TransitionGraph extends Visualization {
                     .attr('class', 'exclamation icon')
 
                 content.append('div').text('No AOIs.')
-                content.append('div').attr("style","font-size: 12px").html("<a onclick='showEditorCommands()'>Check the editor commands for adding AOIs<\a>");
+                content.append('div').attr("style","font-size: 12px").html('Check the manual for adding AOIs');
                 return
             }
 
@@ -199,8 +209,9 @@ class TransitionGraph extends Visualization {
                 }
             }
 
-            let norm = math.norm(this.matrix, 1)
-            let normalized = math.add(0.5,(math.multiply(1/(norm/3), this.matrix)))
+            var maxRow = this.matrix.map(function(row){ return Math.max.apply(Math, row); });
+            let max = Math.max.apply(null, maxRow);
+            let normalized = math.add(0.5,(math.multiply(3/(max), this.matrix)))
 
             //console.log('Links', links)
             //console.log('Nodes', nodes)
@@ -235,7 +246,7 @@ class TransitionGraph extends Visualization {
                 .force("charge", d3.forceManyBody().strength(-1000))
                 .force("x", d3.forceX())
                 .force("y", d3.forceY());
-
+ 
             var color = d3.scaleOrdinal(nodes, d3.schemeCategory10)
 
             // Per-type markers, as they don't inherit styles.
@@ -295,6 +306,7 @@ class TransitionGraph extends Visualization {
                 return `
               M${d.source.x},${d.source.y}
               A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
+              // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
             `;
             }
 

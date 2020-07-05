@@ -27,7 +27,9 @@ class EyeCloud extends Visualization {
         let densities = []; // the density of each coordinate in the coordinates array
 
         let drawing = false; // Boolean that is true when the eye cloud is being drawn
+        let keepScale = false; // Boolean that is true when the scale ought to be maintained
 
+        let simulation; // Holds the force simulation object
         let clickedObject; // Holds the object that is being right clicked
 
         let thisClass = this; // To allow for a call to this class inside nested functions
@@ -38,12 +40,12 @@ class EyeCloud extends Visualization {
         let disableMenuItem ;
         let generalMenuItems;
         let menu; // Default context menu
-        let circleMenu;
+        let circleMenu; // Context menu for the circles
 
         setContextMenus(); // Initialize the context menu items
 
         /**
-         * Create an svg- and g-tag inside the graph class
+         * Create an svg- and g-tag inside the box.
          */
         let svg = d3.select(box.inner)
             .classed('smalldot', true)
@@ -59,7 +61,7 @@ class EyeCloud extends Visualization {
             .attr('transform', 'translate(0,0)');
 
         /**
-         * Create a defs-tag inside the svg-tag
+         * Create a defs-tag inside the svg-tag.
          */
         d3.select('#cloud_svg')
             .append('defs')
@@ -67,14 +69,14 @@ class EyeCloud extends Visualization {
 
         /**
          * Replace standard d3.zoom bindings with mouse wheel for zooming in and out
-         * and mouse wheel click for the Pan tool
+         * and mouse wheel click for the Pan tool.
          */
         this.zoom.filter(() =>
             (d3.event.type === 'mousedown' && d3.event.button === 1) || (d3.event.type === 'wheel' && d3.event.button === 0));
 
         /**
          * Upon any change of the properties class, check what settings have changed
-         * and apply the new settings to the visualization
+         * and apply the new settings to the visualization.
          */
         properties.setListener('eyecloud', 'image', event => {
             toggleDimmer(false); // Turn dimmer off
@@ -113,13 +115,18 @@ class EyeCloud extends Visualization {
             minRadius = ecProperties[1];
             maxRadius = ecProperties[2];
             maxCircles = ecProperties[3];
+
             removeAreaGroup();
-            generateData(dataset.getImageData(properties.image));
-            draw();
+
+            if (!drawing) { // If we are not already drawing the eye cloud
+                drawing = true;
+                generateData(dataset.getImageData(properties.image));
+                draw();
+            }
         });
 
         /**
-         * Workaround to draw visualization when turned off an on
+         * Workaround to draw visualization when turned off an on.
          */
         if (properties.image) {
             generateData(dataset.getImageData(properties.image));
@@ -133,13 +140,17 @@ class EyeCloud extends Visualization {
             if (width !== box.inner.clientWidth || height !== box.inner.clientHeight) {
                 width = box.inner.clientWidth;
                 height = box.inner.clientHeight;
-                //console.log("eyecloud.js - Size: " + box.inner.clientHeight, box.inner.clientWidth);
                 resize();
+                if (!drawing) { // If we are not already drawing
+                    drawing = true;
+                    keepScale = true; // Maintain scale
+                    draw(); // Redraw to recenter the visualization and prevent issues with centering
+                }
             }
         }, 100);
 
         /**
-         * Generate the necessary data for the eye cloud visualization
+         * Generate the necessary data for the eye cloud visualization.
          */
         function generateData(imageData) {
             allCoordinates = [];
@@ -154,7 +165,7 @@ class EyeCloud extends Visualization {
             //console.log(allCoordinates);
 
             /**
-             * Generate an array of 'density scores' for each coordinate
+             * Generate an array of 'density scores' for each coordinate.
              */
             densityScores = [];
             for (let i = 0; i < allCoordinates.length; i++) {
@@ -168,12 +179,11 @@ class EyeCloud extends Visualization {
                     if (distance <= range) {
                         densityScores[i].density++;
                     }
-
                 }
             }
 
             /**
-             * Sort the density scores in a descending order
+             * Sort the density scores in a descending order.
              */
             densityScores = densityScores.sort((a, b) => b.density - a.density); // Descending sort
 
@@ -214,17 +224,17 @@ class EyeCloud extends Visualization {
             let densityMax = Math.max.apply(Math, densities); // the maximum value in the densities array
             let densityMin = Math.min.apply(Math, densities); // the minimum value in the densities array
             radiusScale = d3.scaleSqrt().domain([densityMin, densityMax]).range([minRadius, maxRadius]);
-        }
+        };
 
         /**
-         * Draw the eye cloud visualization
+         * Draw the eye cloud visualization.
          */
         function draw() {
             d3.select('#cloud_group').selectAll('circle').remove(); // Remove already existing circles
             d3.select('#pattern_defs').selectAll('pattern').remove(); // Remove already existing patterns
 
             /**
-             * For every element in coordinates create a circle with the necessary attributes
+             * For every element in coordinates create a circle with the necessary attributes.
              */
             let radiusCount = -1; // Keeps track of the index of the densities array
             let circleCount = -1; // Keeps track of the circle number
@@ -248,10 +258,10 @@ class EyeCloud extends Visualization {
 
             /**
              * Collection of forces that dictate where the circles should go
-             * and how we want them to interact
+             * and how we want them to interact.
              */
             let collisionCount = -1; // Keeps track of the index of the densities array
-            let simulation = d3.forceSimulation()
+            simulation = d3.forceSimulation()
                 .force('x', d3.forceX(box.inner.clientWidth / 2).strength(0.045))
                 .force('y', d3.forceY(box.inner.clientHeight / 2).strength(0.15))
                 .force('collide', d3.forceCollide(function () {
@@ -260,7 +270,7 @@ class EyeCloud extends Visualization {
                 }))
 
             /**
-             * For each enabled coordinate object, create a pattern that contains the coordinates
+             * For each enabled coordinate object, create a pattern that contains the coordinates.
              */
             for (let i = 0; i < coordinates.length; i++) {
                 let circleRadius = document.getElementById('circle_' + i.toString()).getAttribute('r');
@@ -278,7 +288,7 @@ class EyeCloud extends Visualization {
             }
 
             /**
-             * Make the stroke of the most frequently viewed area the color of the global color variable and thicker
+             * Make the stroke of the most frequently viewed area the color of the global color variable and thicker.
              */
             d3.select('#circle_0')
                 .attr('stroke', strokeColor)
@@ -286,7 +296,7 @@ class EyeCloud extends Visualization {
 
             /**
              * Upon a right click, display a context menu
-             * and, if necessary, register the id of the clicked element
+             * and, if necessary, register the id of the clicked element.
              */
             d3.select('#cloud_svg').on('contextmenu', d3.contextMenu(menu));
             d3.select('#cloud_group').on('contextmenu', d3.contextMenu(circleMenu));
@@ -297,19 +307,19 @@ class EyeCloud extends Visualization {
             d3.select('#cloud_group').selectAll('circle').on('click', function (object) {
                 clickedObject = object; // Store object that is being left clicked
             });
-            // Assing the show area functionality to a left click on a circle
+            // Assigning the show area functionality to a left click on a circle
             d3.select('#cloud_group').on('click', function () {
                 showArea();
             });
 
             /**
-             * On every tick during the simulation, call the update function
+             * On every tick during the simulation, call the update function.
              */
             simulation.nodes(coordinates)
                 .on('tick', update);
 
             /**
-             * Automatically update the location of each circle
+             * Automatically update the location of each circle.
              */
             function update() {
                 circles
@@ -322,12 +332,14 @@ class EyeCloud extends Visualization {
             }
 
             thisClass.svg = d3.select('#cloud_svg'); // Update the svg property of the visualization
-            thisClass.setDefaultScale(); // Set the default scale after drawing the eye cloud
+            thisClass.setDefaultScale(keepScale); // Set the default scale after drawing the eye cloud
+
+            keepScale = false; // Reset boolean
             drawing = false; // Reset drawing variable
-        }
+        };
 
         /**
-         * Initialize the context menu items and context menus itself
+         * Initialize the context menu items and context menus itself.
          */
         function setContextMenus() {
             infoMenuItem = {
@@ -427,10 +439,10 @@ class EyeCloud extends Visualization {
 
                 return result;
             };
-        }
+        };
 
         /**
-         * Toggle a dimmer that covers the inner box with the appropriate Fomantic-UI icons
+         * Toggle a dimmer that covers the inner box with the appropriate Fomantic-UI icons.
          */
         function toggleDimmer(onof) {
             if (onof) { // Turn dimmer on
@@ -465,10 +477,10 @@ class EyeCloud extends Visualization {
                     document.getElementById('eyecloud_dimmer').remove(); // Remove the dimmer, if it exists
                 }
             }
-        }
+        };
 
         /**
-         * Set the stroke color of the largest circle and the area circle, if it's visible
+         * Set the stroke color of the largest circle and the area circle, if it's visible.
          */
         function setColor() {
             d3.select('#circle_0')
@@ -478,20 +490,24 @@ class EyeCloud extends Visualization {
                 .attr('stroke', properties.getColorHex());
             d3.select('#area_cloud')
                 .attr('stroke', properties.getColorHex());
-        }
+        };
 
         /**
-         * Display the coordinates and density of the selected circle object with the used range
+         * Display the coordinates and density of the selected circle object with the used range.
          */
         function getInfo(object) {
             let x = object.co_x;
             let y = object.co_y;
-            let density = densities[object.index];
+            let density = densities[object.index] - 1; // Density scores have a minimum of 1
 
             let densityVerb;
             let pointOrPoints;
-            if (density === 1) { // If there is only one other point close, adjust the message to singular
+            if (density === 1) {
                 densityVerb = 'is';
+                pointOrPoints = 'point';
+            } else if (density === 0) { // If there is only one other point close, adjust the message to singular
+                densityVerb = 'is';
+                density = 'no';
                 pointOrPoints = 'point';
             } else {
                 densityVerb = 'are';
@@ -503,10 +519,10 @@ class EyeCloud extends Visualization {
                 range + ' pixels to this point.';
 
             infoPopup(message);
-        }
+        };
 
         /**
-         * Displays an informative popup with Fomantic-UI that contains a message
+         * Displays an informative popup with Fomantic-UI that contains a message.
          */
         function infoPopup(message) {
             $('.eyecloud_info') // Close info toast
@@ -521,10 +537,10 @@ class EyeCloud extends Visualization {
                     position: 'bottom left',
                     closeIcon: true
                 });
-        }
+        };
 
         /**
-         * Draws the area on the map for a circle of the eye cloud
+         * Draws the area on the map for a circle of the eye cloud.
          */
         function showArea() {
             d3.select('#cloud_group').style('visibility', 'hidden'); // Hide the eye cloud
@@ -602,45 +618,47 @@ class EyeCloud extends Visualization {
             areaGroup.on('click', function () {
                 setContextMenus();
                 removeAreaGroup();
-            })
-        }
+            });
+        };
 
         /**
-         * Remove the svg-group that is created to show the area of a circle on the map
+         * Remove the svg-group that is created to show the area of a circle on the map.
          */
         function removeAreaGroup() {
             d3.select('#cloud_group').style('visibility', 'visible'); // Make eye cloud visible again
             d3.select('#area_group').remove();
-        }
+        };
 
         /**
-         * Disables circle by removing it from the coordinates array and removing its density
+         * Disables circle by removing it from the coordinates array and removing its density.
          */
         function disableCircle(object) {
             // Remove selected circle from the coordinates array
             coordinates = coordinates.filter(coordinate => coordinate.index !== object.index);
             // Remove density that belongs to the removed circle
             densities.splice(object.index, 1);
+            keepScale = true; // So that the visualization won't be rescaled
             draw(); // Redraw
-        }
+        };
 
         /**
-         * Enables all circles again by regenerating the data
+         * Enables all circles again by regenerating the data.
          */
         function enableCircles() {
             generateData(dataset.getImageData(properties.image)); // Regenerate all coordinates
+            keepScale = true; // So that the visualization won't be rescaled
             draw(); // Redraw
-        }
+        };
 
         /**
-         * Resize the SVG-element
+         * Resize the SVG-element.
          */
         function resize(){
             d3.select('#cloud_svg')
                 .attr('width', width)
                 .attr('height', height)
-        }
-    }
+        };
+    };
 
     /**
      * Centers the eye cloud on the box by making computations for a scale of 1.
@@ -650,10 +668,10 @@ class EyeCloud extends Visualization {
     center() {
         let svg = d3.select('#cloud_svg');
 
+        svg.call(this.zoom.scaleTo, 1); // First, set scale to 1
+
         let svgWidth = svg.attr('width');
         let svgHeight = svg.attr('height');
-
-        svg.call(this.zoom.scaleTo, 1); // First, set scale to 1
 
         let cloudWidth = document.getElementById('cloud_group').getBoundingClientRect().width;
 
@@ -672,18 +690,22 @@ class EyeCloud extends Visualization {
             svg.call(this.zoom.scaleTo, scale); // Set scale
             svg.call(this.zoom.translateTo, svgWidth / 2, svgHeight / 2); // Center the eye cloud
         }
-    }
+    };
 
     /**
-     * Set the scale of the zoom to 0.5 after drawing the eye cloud
+     * Set the translation to the center of the box after drawing the eye cloud
+     * and set the scale of the zoom to 0.5 if the parameter is set to false.
      */
-    setDefaultScale() {
+    setDefaultScale(keepScale) {
         let svg = d3.select('#cloud_svg');
 
         let svgWidth = svg.attr('width');
         let svgHeight = svg.attr('height');
 
-        svg.call(this.zoom.scaleTo, 0.5);
+        if (!keepScale) { // If the scale should not be kept
+            svg.call(this.zoom.scaleTo, 0.5); // Set the scale to 0.5
+        }
+
         svg.call(this.zoom.translateTo, svgWidth / 2, svgHeight / 2); // Center the eye cloud
-    }
+    };
 }
